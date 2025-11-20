@@ -18,7 +18,7 @@ import { KeysCapability } from './Keys.js';
 import { CoinSelection } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { CoreWallet } from './CoreWallet.js';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedTransaction, Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 
 const progress = (state: CoreWallet): StateChange.StateChange<CoreWallet>[] => {
   const appliedId = state.progress?.appliedId ?? 0n;
@@ -51,7 +51,7 @@ export declare namespace RunningV1Variant {
     coinsAndBalancesCapability: CoinsAndBalancesCapability<CoreWallet>;
     keysCapability: KeysCapability<CoreWallet>;
     coinSelection: CoinSelection<Utxo>;
-    transactionHistoryCapability: TransactionHistoryCapability<CoreWallet, TTransaction>;
+    transactionHistoryCapability: TransactionHistoryCapability<TTransaction>;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type AnyContext = Context<any, any, any>;
@@ -59,7 +59,7 @@ export declare namespace RunningV1Variant {
 
 export const V1Tag: unique symbol = Symbol('V1');
 
-export type DefaultRunningV1 = RunningV1Variant<string, WalletSyncUpdate, ledger.UnprovenTransaction>;
+export type DefaultRunningV1 = RunningV1Variant<string, WalletSyncUpdate, UnshieldedTransaction>;
 
 export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
   implements Variant.RunningVariant<typeof V1Tag, CoreWallet>

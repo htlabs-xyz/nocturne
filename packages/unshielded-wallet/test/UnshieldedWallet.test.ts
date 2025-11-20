@@ -10,16 +10,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { buildTestEnvironmentVariables, getComposeDirectory } from '@midnight-ntwrk/wallet-sdk-utilities/testing';
-import { filter, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { randomUUID } from 'node:crypto';
 import { DockerComposeEnvironment, StartedDockerComposeEnvironment, Wait } from 'testcontainers';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { UnshieldedWallet } from '../src/index.js';
-// import { createKeystore, PublicKey } from '../src/KeyStore.js';
-// import { InMemoryTransactionHistoryStorage } from '../src/tx-history-storage/InMemoryTransactionHistoryStorage.js';
-import { getUnshieldedSeed } from './testUtils.js';
+import { getUnshieldedSeed, createWalletConfig } from './testUtils.js';
+import { createKeystore, PublicKeys } from '../src/v1/KeyStore.js';
+import { InMemoryTransactionHistoryStorage, NoOpTransactionHistoryStorage } from '../src/v1/storage/index.js';
 
 vi.setConfig({ testTimeout: 100_000, hookTimeout: 100_000 });
 
@@ -47,156 +46,125 @@ describe('UnshieldedWallet', () => {
   });
 
   it('should build', async () => {
-    // const txHistoryStorage = new InMemoryTransactionHistoryStorage();
-    // const keystore = createKeystore(unshieldedSeed, NetworkId.NetworkId.Undeployed);
+    const txHistoryStorage = new InMemoryTransactionHistoryStorage();
+    const config = createWalletConfig(indexerPort, { txHistoryStorage });
+    const keystore = createKeystore(unshieldedSeed, config.networkId);
 
-    const configuration = {
-      indexerClientConnection: {
-        indexerWsUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-        indexerHttpUrl: `http://localhost:${indexerPort}/api/v3/graphql`,
-      },
-      networkId: NetworkId.NetworkId.Undeployed,
-    };
-
-    const Unshielded = UnshieldedWallet(configuration);
-    const unshieldedWallet = Unshielded.startWithSeed(unshieldedSeed);
-
-    // eslint-disable-next-line no-console
-    console.log('wallet created!');
+    const unshieldedWallet = UnshieldedWallet(config).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
 
     await unshieldedWallet.start();
 
-    // eslint-disable-next-line no-console
-    console.log('wallet started!');
-
     await unshieldedWallet.waitForSyncedState();
 
-    // eslint-disable-next-line no-console
-    console.log('wallet synced!');
-
     const state = await firstValueFrom(unshieldedWallet.state);
-
-    // eslint-disable-next-line no-console
-    console.log('state:', state);
 
     expect(state.address).toBe('mn_addr_undeployed1h3ssm5ru2t6eqy4g3she78zlxn96e36ms6pq996aduvmateh9p9sk96u7s');
     expect(state.availableCoins.length).toBeGreaterThan(0);
     expect(state.pendingCoins).toHaveLength(0);
+
+    const transactionHistory = await Array.fromAsync(state.transactionHistory);
+    // eslint-disable-next-line no-console
+    console.log(transactionHistory);
+    expect(transactionHistory.length).toBeGreaterThan(1);
   });
 
-  // it('should restore from serialized state with tx history', async () => {
-  //   const txHistoryStorage = new InMemoryTransactionHistoryStorage();
-  //   const keystore = createKeystore(unshieldedSeed, NetworkId.NetworkId.Undeployed);
+  it('should restore from serialized state with tx history', async () => {
+    const txHistoryStorage = new InMemoryTransactionHistoryStorage();
+    const initialConfig = createWalletConfig(indexerPort, { txHistoryStorage });
+    const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
 
-  //   const initialWallet = await WalletBuilder.build({
-  //     indexerUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-  //     publicKey: PublicKey.fromKeyStore(keystore),
-  //     networkId: NetworkId.NetworkId.Undeployed,
-  //     txHistoryStorage,
-  //   });
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
 
-  //   await initialWallet.start();
+    await initialWallet.start();
 
-  //   const initialState = await firstValueFrom(
-  //     initialWallet
-  //       .state()
-  //       .pipe(filter((state) => state.syncProgress?.synced === true && state.availableCoins.length > 0)),
-  //   );
+    await initialWallet.waitForSyncedState();
 
-  //   expect(initialState.syncProgress).toBeDefined();
-  //   expect(initialState.syncProgress?.applyGap).toBe(0);
+    const initialState = await firstValueFrom(initialWallet.state);
 
-  //   const serializedState = await initialWallet.serializeState();
+    expect(initialState.availableCoins.length).toBeGreaterThan(0);
+    expect(initialState.pendingCoins.length).toBe(0);
 
-  //   const serializedTxHistory = txHistoryStorage.serialize();
+    const serializedState = await initialWallet.serializeState();
 
-  //   await initialWallet.stop();
+    const serializedTxHistory = txHistoryStorage.serialize();
 
-  //   const restoredTxHistoryStorage = InMemoryTransactionHistoryStorage.fromSerialized(serializedTxHistory);
+    await initialWallet.stop();
 
-  //   const restoredWallet = await WalletBuilder.restore({
-  //     indexerUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-  //     publicKey: PublicKey.fromKeyStore(keystore),
-  //     networkId: NetworkId.NetworkId.Undeployed,
-  //     serializedState,
-  //     txHistoryStorage: restoredTxHistoryStorage,
-  //   });
+    const restoredTxHistoryStorage = InMemoryTransactionHistoryStorage.fromSerialized(serializedTxHistory);
 
-  //   const restoredState = await firstValueFrom(restoredWallet.state());
+    const restoredConfig = createWalletConfig(indexerPort, { txHistoryStorage: restoredTxHistoryStorage });
 
-  //   expect(restoredState.address).toBe(initialState.address);
-  //   expect(restoredState.balances.size).toBeGreaterThan(0);
-  //   expect(restoredState.pendingCoins.length).toBe(0);
-  //   expect(restoredState.syncProgress).toBeDefined();
-  //   expect(restoredState.syncProgress?.applyGap).toBe(0);
-  //   expect(restoredState.syncProgress?.synced).toBe(true);
+    const restoredWallet = UnshieldedWallet(restoredConfig).restore(serializedState);
 
-  //   await restoredWallet.stop();
-  // });
+    await restoredWallet.start();
 
-  // it('should instantiate without transaction history service', async () => {
-  //   const keystore = createKeystore(unshieldedSeed, NetworkId.NetworkId.Undeployed);
-  //   const wallet = await WalletBuilder.build({
-  //     indexerUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-  //     publicKey: PublicKey.fromKeyStore(keystore),
-  //     networkId: NetworkId.NetworkId.Undeployed,
-  //   });
+    await restoredWallet.waitForSyncedState();
 
-  //   await wallet.start();
+    const restoredState = await firstValueFrom(restoredWallet.state);
 
-  //   await firstValueFrom(
-  //     wallet.state().pipe(filter((state) => state.syncProgress?.synced === true && state.availableCoins.length > 0)),
-  //   );
-  //   expect(wallet.transactionHistory).toBeUndefined();
+    expect(restoredState.address).toBe(initialState.address);
+    expect(restoredState.availableCoins.length).toBeGreaterThan(0);
+    expect(restoredState.pendingCoins.length).toBe(0);
 
-  //   await wallet.stop();
-  // });
+    await restoredWallet.stop();
+  });
+
+  it('should instantiate without transaction history service', async () => {
+    const initialConfig = createWalletConfig(indexerPort, { txHistoryStorage: new NoOpTransactionHistoryStorage() });
+    const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+
+    await initialWallet.start();
+
+    await initialWallet.waitForSyncedState();
+
+    const initialState = await firstValueFrom(initialWallet.state);
+
+    expect(initialState.availableCoins.length).toBeGreaterThan(0);
+    expect(initialState.pendingCoins.length).toBe(0);
+
+    await initialWallet.stop();
+  });
+
+  it('should restore from serialized state', async () => {
+    const txHistoryStorage = new InMemoryTransactionHistoryStorage();
+    const initialConfig = createWalletConfig(indexerPort, {
+      txHistoryStorage,
+    });
+    const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+
+    await initialWallet.start();
+
+    await initialWallet.waitForSyncedState();
+
+    const initialState = await firstValueFrom(initialWallet.state);
+
+    expect(initialState.availableCoins.length).toBeGreaterThan(0);
+    expect(initialState.pendingCoins.length).toBe(0);
+
+    const serializedState = await initialWallet.serializeState();
+
+    await initialWallet.stop();
+
+    const restoreConfig = createWalletConfig(indexerPort, { txHistoryStorage });
+    const restoredWallet = UnshieldedWallet(restoreConfig).restore(serializedState);
+    await restoredWallet.start();
+
+    await restoredWallet.waitForSyncedState();
+
+    const restoredState = await firstValueFrom(restoredWallet.state);
+
+    expect(restoredState.address).toBe(initialState.address);
+    expect(restoredState.availableCoins.length).toBeGreaterThan(0);
+    expect(restoredState.pendingCoins.length).toBe(0);
+
+    await restoredWallet.stop();
+  });
 
   afterAll(async () => {
     if (startedEnvironment) {
       await startedEnvironment.down();
     }
   });
-
-  // it('should restore from serialized state', async () => {
-  //   const keystore = createKeystore(unshieldedSeed, NetworkId.NetworkId.Undeployed);
-  //   const initialWallet = await WalletBuilder.build({
-  //     indexerUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-  //     publicKey: PublicKey.fromKeyStore(keystore),
-  //     networkId: NetworkId.NetworkId.Undeployed,
-  //   });
-
-  //   await initialWallet.start();
-
-  //   const initialState = await firstValueFrom(
-  //     initialWallet
-  //       .state()
-  //       .pipe(filter((state) => state.syncProgress?.synced === true && state.availableCoins.length > 0)),
-  //   );
-
-  //   expect(initialState.syncProgress).toBeDefined();
-  //   expect(initialState.syncProgress?.applyGap).toBe(0);
-
-  //   const serializedState = await initialWallet.serializeState();
-
-  //   await initialWallet.stop();
-
-  //   const restoredWallet = await WalletBuilder.restore({
-  //     indexerUrl: `ws://localhost:${indexerPort}/api/v3/graphql/ws`,
-  //     publicKey: PublicKey.fromKeyStore(keystore),
-  //     networkId: NetworkId.NetworkId.Undeployed,
-  //     serializedState,
-  //   });
-
-  //   const restoredState = await firstValueFrom(restoredWallet.state());
-
-  //   expect(restoredState.address).toBe(initialState.address);
-  //   expect(restoredState.balances.size).toBeGreaterThan(0);
-  //   expect(restoredState.pendingCoins.length).toBe(0);
-  //   expect(restoredState.syncProgress).toBeDefined();
-  //   expect(restoredState.syncProgress?.applyGap).toBe(0);
-  //   expect(restoredState.syncProgress?.synced).toBe(true);
-
-  //   await restoredWallet.stop();
-  // });
 });

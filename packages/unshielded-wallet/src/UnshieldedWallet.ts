@@ -5,7 +5,7 @@ import { Effect, Either, Scope } from 'effect';
 import * as rx from 'rxjs';
 import { ProvingRecipe } from './v1/ProvingRecipe.js';
 import { SerializationCapability } from './v1/Serialization.js';
-import { ProgressUpdate, TransactionHistoryCapability } from './v1/TransactionHistory.js';
+import { TransactionHistoryCapability } from './v1/TransactionHistory.js';
 import { CoinsAndBalancesCapability } from './v1/CoinsAndBalances.js';
 import { KeysCapability } from './v1/Keys.js';
 import { TokenTransfer } from './v1/Transacting.js';
@@ -13,13 +13,15 @@ import { WalletSyncUpdate } from './v1/Sync.js';
 import { Variant, VariantBuilder, WalletLike } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { Runtime, WalletBuilder } from '@midnight-ntwrk/wallet-sdk-runtime';
 import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
-import { createKeystore } from './v1/KeyStore.js';
+import { PublicKeys } from './v1/KeyStore.js';
+import { SyncProgress } from './v1/SyncProgress.js';
+import { TransactionHistoryEntry } from './v1/storage/index.js';
 
 export type UnshieldedWalletCapabilities<TSerialized = string, TTransaction = ledger.FinalizedTransaction> = {
   serialization: SerializationCapability<CoreWallet, TSerialized>;
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
-  transactionHistory: TransactionHistoryCapability<CoreWallet, TTransaction>;
+  transactionHistory: TransactionHistoryCapability<TTransaction>;
 };
 
 export class UnshieldedWalletState<TSerialized = string, TTransaction = ledger.FinalizedTransaction> {
@@ -55,12 +57,12 @@ export class UnshieldedWalletState<TSerialized = string, TTransaction = ledger.F
     return this.capabilities.keys.getAddress(this.state);
   }
 
-  get progress(): ProgressUpdate {
-    return this.capabilities.transactionHistory.progress(this.state);
+  get progress(): SyncProgress {
+    return this.state.progress;
   }
 
-  get transactionHistory(): readonly TTransaction[] {
-    return this.capabilities.transactionHistory.transactionHistory(this.state);
+  get transactionHistory(): AsyncIterableIterator<TransactionHistoryEntry> {
+    return this.capabilities.transactionHistory.getAll();
   }
 
   constructor(
@@ -123,7 +125,7 @@ export interface CustomizedUnshieldedWalletClass<
   TConfig extends BaseV1Configuration = DefaultV1Configuration,
 > extends WalletLike.BaseWalletClass<[Variant.VersionedVariant<V1Variant<TSerialized, TSyncUpdate, TTransaction>>]> {
   configuration: TConfig;
-  startWithSeed(seed: Uint8Array): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
+  startWithPublicKeys(publicKeys: PublicKeys): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
   restore(serializedState: TSerialized): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
 }
 
@@ -158,11 +160,10 @@ export function CustomUnshieldedWallet<
     extends BaseWallet
     implements CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>
   {
-    static startWithSeed(seed: Uint8Array): CustomUnshieldedWalletImplementation {
-      const keystore = createKeystore(seed, configuration.networkId);
+    static startWithPublicKeys(publicKeys: PublicKeys): CustomUnshieldedWalletImplementation {
       return CustomUnshieldedWalletImplementation.startFirst(
         CustomUnshieldedWalletImplementation,
-        CoreWallet.init(keystore, configuration.networkId),
+        CoreWallet.init(publicKeys, configuration.networkId),
       );
     }
 

@@ -145,7 +145,7 @@ export const TransactionTrait = new (class {
       });
     },
     getImbalances(
-      tx: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
+      tx: ledger.FinalizedTransaction | ledger.UnprovenTransaction | ledger.ProofErasedTransaction,
     ): TransactionImbalances {
       const guaranteedImbalances = TransactionTrait.shared.getGuaranteedImbalances(tx);
       const fallibleImbalances = TransactionTrait.shared.getFallibleImbalances(tx);

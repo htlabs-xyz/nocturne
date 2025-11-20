@@ -1,7 +1,7 @@
 import { ProtocolVersion } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { Effect } from 'effect';
 import { createSyncProgress, SyncProgress, SyncProgressData } from './SyncProgress.js';
-import { UnshieldedKeystore, PublicKeys } from './KeyStore.js';
+import { PublicKeys } from './KeyStore.js';
 import {
   UnshieldedStateAPI,
   UnshieldedTransaction,
@@ -21,10 +21,9 @@ export type CoreWallet = Readonly<{
 }>;
 
 export const CoreWallet = {
-  init(keyStore: UnshieldedKeystore, networkId: string): CoreWallet {
+  init(publicKeys: PublicKeys, networkId: string): CoreWallet {
     return Effect.gen(function* () {
       const unshieldedStateAPI = yield* UnshieldedStateService;
-      const publicKeys = PublicKeys.fromKeyStore(keyStore);
 
       return {
         state: unshieldedStateAPI,

@@ -24,16 +24,23 @@ import { CoinsAndBalancesCapability, makeDefaultCoinsAndBalancesCapability } fro
 import { KeysCapability, makeDefaultKeysCapability } from './Keys.js';
 import { CoinSelection, chooseCoin } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { CoreWallet } from './CoreWallet.js';
-import { createKeystore } from './KeyStore.js';
-import { makeDefaultTransactionHistoryCapability, TransactionHistoryCapability } from './TransactionHistory.js';
+import {
+  makeDefaultTransactionHistoryCapability,
+  TransactionHistoryCapability,
+  DefaultTransactionHistoryConfiguration,
+} from './TransactionHistory.js';
 import { Expect, Equal, ItemType } from '@midnight-ntwrk/wallet-sdk-utilities/types';
 import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { createKeystore, PublicKeys } from './KeyStore.js';
 
 export type BaseV1Configuration = {
   networkId: NetworkId.NetworkId;
 };
 
-export type DefaultV1Configuration = BaseV1Configuration & DefaultSyncConfiguration & DefaultTransactingConfiguration;
+export type DefaultV1Configuration = BaseV1Configuration &
+  DefaultSyncConfiguration &
+  DefaultTransactingConfiguration &
+  DefaultTransactionHistoryConfiguration;
 
 const V1BuilderSymbol: {
   readonly typeId: unique symbol;
@@ -51,7 +58,7 @@ export type V1Variant<TSerialized, TSyncUpdate, TTransaction> = Variant.Variant<
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
   serialization: SerializationCapability<CoreWallet, TSerialized>;
-  transactionHistory: TransactionHistoryCapability<CoreWallet, TTransaction>;
+  transactionHistory: TransactionHistoryCapability<TTransaction>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -246,7 +253,13 @@ export class V1Builder<
 
   withTransactionHistoryDefaults(
     this: V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.UnprovenTransaction>,
-  ): V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.UnprovenTransaction> {
+  ): V1Builder<
+    TConfig & DefaultTransactionHistoryConfiguration,
+    TContext,
+    TSerialized,
+    TSyncUpdate,
+    ledger.UnprovenTransaction
+  > {
     return this.withTransactionHistory(makeDefaultTransactionHistoryCapability);
   }
 
@@ -257,7 +270,7 @@ export class V1Builder<
     transactionHistoryCapability: (
       configuration: TTransactionHistoryConfig,
       getContext: () => TTransactionHistoryContext,
-    ) => TransactionHistoryCapability<CoreWallet, TTransaction>,
+    ) => TransactionHistoryCapability<TTransaction>,
   ): V1Builder<
     TConfig & TTransactionHistoryConfig,
     TContext & TTransactionHistoryContext,
@@ -320,7 +333,7 @@ export class V1Builder<
       migrateState(_previousState) {
         const seed = WalletSeed.fromString('0000000000000000000000000000000000000000000000000000000000000001');
 
-        return Effect.succeed(CoreWallet.init(createKeystore(seed, networkId), networkId));
+        return Effect.succeed(CoreWallet.init(PublicKeys.fromKeyStore(createKeystore(seed, networkId)), networkId));
       },
 
       deserializeState: (serialized: TSerialized): Either.Either<CoreWallet, WalletError> => {
@@ -410,7 +423,7 @@ declare namespace V1Builder {
     readonly transactionHistoryCapability: (
       configuration: TConfig,
       getContext: () => TContext,
-    ) => TransactionHistoryCapability<CoreWallet, TTransaction>;
+    ) => TransactionHistoryCapability<TTransaction>;
   };
 
   type HasKeys<TConfig, TContext> = {

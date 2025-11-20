@@ -1,81 +1,74 @@
-import * as ledger from '@midnight-ntwrk/ledger-v6';
-import { CoreWallet } from './CoreWallet.js';
+// This file is part of MIDNIGHT-WALLET-SDK.
+// Copyright (C) 2025 Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+import { TransactionHistoryStorage, TransactionHistoryEntry, TransactionHash } from './storage/index.js';
+import { UnshieldedTransaction } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 
-export type ProgressUpdate = {
-  appliedIndex: bigint | undefined;
-  highestRelevantWalletIndex: bigint | undefined;
-  highestIndex: bigint | undefined;
-  highestRelevantIndex: bigint | undefined;
+export interface TransactionHistoryCapability<TTransaction> {
+  create(tx: TTransaction): Promise<void>;
+  get(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
+  getAll(): AsyncIterableIterator<TransactionHistoryEntry>;
+  delete(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
+}
+
+export type DefaultTransactionHistoryConfiguration = {
+  txHistoryStorage: TransactionHistoryStorage;
 };
 
-export type TransactionHistoryCapability<TState, TTransaction> = {
-  updateTxHistory(state: TState, newTxs: TTransaction[]): TState;
-  transactionHistory(state: TState): readonly TTransaction[];
-  progress(state: TState): ProgressUpdate;
-};
+const convertTransactionToEntry = (tx: UnshieldedTransaction): TransactionHistoryEntry => {
+  const isRegularTransaction = tx.type === 'RegularTransaction';
+  const transactionResult =
+    isRegularTransaction && tx.transactionResult
+      ? {
+          status: tx.transactionResult.status as 'SUCCESS' | 'FAILURE' | 'PARTIAL_SUCCESS',
+          segments:
+            tx.transactionResult.segments?.map((segment) => ({
+              id: segment.id.toString(),
+              success: segment.success,
+            })) ?? [],
+        }
+      : null;
 
-export const makeDefaultTransactionHistoryCapability = (): TransactionHistoryCapability<
-  CoreWallet,
-  ledger.UnprovenTransaction
-> => {
   return {
-    updateTxHistory: (state: CoreWallet): CoreWallet => {
-      return state;
-    },
-    transactionHistory: (): readonly ledger.UnprovenTransaction[] => {
-      return [];
-    },
-    progress: (): ProgressUpdate => {
-      return {
-        appliedIndex: undefined,
-        highestRelevantWalletIndex: undefined,
-        highestIndex: undefined,
-        highestRelevantIndex: undefined,
-      };
-    },
+    id: tx.id,
+    hash: tx.hash,
+    protocolVersion: tx.protocolVersion,
+    identifiers: isRegularTransaction ? tx.identifiers : [],
+    transactionResult,
+    timestamp: tx.block?.timestamp ?? null,
+    fees: isRegularTransaction ? (tx.fees?.paidFees ?? null) : null,
   };
 };
 
-export const makeSimulatorTransactionHistoryCapability = (): TransactionHistoryCapability<
-  CoreWallet,
-  ledger.ProofErasedTransaction
-> => {
-  return {
-    updateTxHistory: (state: CoreWallet, newTxs: ledger.ProofErasedTransaction[]): CoreWallet => {
-      return state;
-    },
-    transactionHistory: (state: CoreWallet): readonly ledger.ProofErasedTransaction[] => {
-      return [];
-    },
-    progress: (state: CoreWallet): ProgressUpdate => {
-      return {
-        appliedIndex: undefined,
-        highestRelevantWalletIndex: undefined,
-        highestIndex: undefined,
-        highestRelevantIndex: undefined,
-      };
-    },
-  };
-};
+export const makeDefaultTransactionHistoryCapability = <TTransaction>(
+  config: DefaultTransactionHistoryConfiguration,
+  _getContext: () => unknown,
+): TransactionHistoryCapability<TTransaction> => {
+  const { txHistoryStorage } = config;
 
-export const makeDiscardTransactionHistoryCapability = (): TransactionHistoryCapability<
-  CoreWallet,
-  ledger.FinalizedTransaction
-> => {
   return {
-    updateTxHistory: (state: CoreWallet): CoreWallet => {
-      return state;
+    create: async (tx: TTransaction): Promise<void> => {
+      // Cast to UnshieldedTransaction for storage - transactions in history are from sync
+      const entry = convertTransactionToEntry(tx as unknown as UnshieldedTransaction);
+      await txHistoryStorage.create(entry);
     },
-    transactionHistory: (state: CoreWallet): readonly ledger.FinalizedTransaction[] => {
-      return [];
+    get: async (hash: TransactionHash): Promise<TransactionHistoryEntry | undefined> => {
+      return await txHistoryStorage.get(hash);
     },
-    progress: (state: CoreWallet): ProgressUpdate => {
-      return {
-        appliedIndex: undefined,
-        highestRelevantWalletIndex: undefined,
-        highestIndex: undefined,
-        highestRelevantIndex: undefined,
-      };
+    getAll: (): AsyncIterableIterator<TransactionHistoryEntry> => {
+      return txHistoryStorage.getAll();
+    },
+    delete: async (hash: TransactionHash): Promise<TransactionHistoryEntry | undefined> => {
+      return txHistoryStorage.delete(hash);
     },
   };
 };

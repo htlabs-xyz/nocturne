@@ -1,4 +1,3 @@
-import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { Scope, Stream, Schema, pipe, Either } from 'effect';
 import { CoreWallet } from './CoreWallet.js';
 import { Simulator, SimulatorState } from './Simulator.js';
@@ -8,7 +7,7 @@ import { SyncWalletError, WalletError } from './WalletError.js';
 import { WsURL } from '@midnight-ntwrk/wallet-sdk-utilities/networking';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import { UnshieldedTransactionSchema } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedTransaction, UnshieldedTransactionSchema } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 
 export interface SyncService<TState, TUpdate> {
   updates: (state: TState) => Stream.Stream<TUpdate, WalletError, Scope.Scope>;
@@ -28,7 +27,7 @@ export type DefaultSyncConfiguration = {
 };
 
 export type DefaultSyncContext = {
-  transactionHistoryCapability: TransactionHistoryCapability<CoreWallet, ledger.FinalizedTransaction>;
+  transactionHistoryCapability: TransactionHistoryCapability<UnshieldedTransaction>;
 };
 
 const TransactionSchema = Schema.Struct({
@@ -120,6 +119,8 @@ export const makeDefaultSyncService = (config: DefaultSyncConfiguration): SyncSe
                 identifiers: isRegularTransaction ? transaction.identifiers : [],
                 protocolVersion: transaction.protocolVersion,
                 transactionResult,
+                block: transaction.block,
+                fees: isRegularTransaction ? transaction.fees : undefined,
                 createdUtxos: createdUtxos.map((utxo) => ({
                   value: utxo.value,
                   owner: utxo.owner,
@@ -149,7 +150,10 @@ export const makeDefaultSyncService = (config: DefaultSyncConfiguration): SyncSe
   };
 };
 
-export const makeDefaultSyncCapability = (): SyncCapability<CoreWallet, WalletSyncUpdate> => {
+export const makeDefaultSyncCapability = (
+  _config: DefaultSyncConfiguration,
+  getContext: () => DefaultSyncContext,
+): SyncCapability<CoreWallet, WalletSyncUpdate> => {
   return {
     applyUpdate: (state: CoreWallet, update: WalletSyncUpdate): CoreWallet => {
       if (update.type === 'UnshieldedTransactionsProgress') {
@@ -159,9 +163,14 @@ export const makeDefaultSyncCapability = (): SyncCapability<CoreWallet, WalletSy
         });
       }
 
-      return CoreWallet.updateProgress(CoreWallet.applyTx(state, update.transaction), {
+      const newState = CoreWallet.updateProgress(CoreWallet.applyTx(state, update.transaction), {
         appliedId: BigInt(update.transaction.id),
       });
+
+      const { transactionHistoryCapability } = getContext();
+      void transactionHistoryCapability.create(update.transaction);
+
+      return newState;
     },
   };
 };

@@ -3,7 +3,7 @@ import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { Effect, Either, Option, pipe, HashSet } from 'effect';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
 import { CoreWallet } from './CoreWallet.js';
-import { TransactingError, WalletError } from './WalletError.js';
+import { SignError, TransactingError, WalletError } from './WalletError.js';
 import { CoinSelection, getBalanceRecipe, Imbalances } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { isIntentBound, TransactionTrait } from './Transaction.js';
 import { CoinsAndBalancesCapability } from './CoinsAndBalances.js';
@@ -49,19 +49,24 @@ export interface TransactingCapability<TTransaction, TState> {
     wallet: CoreWallet,
     outputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Either.Either<TransactingResult<TTransaction, TState>, WalletError>;
+  ): Either.Either<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
 
   initSwap(
     wallet: CoreWallet,
     desiredInputs: Record<string, bigint>,
     outputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<TransactingResult<TTransaction, TState>, WalletError>;
+  ): Effect.Effect<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
 
   balanceTransaction(
     wallet: CoreWallet,
     transaction: TTransaction,
-  ): Either.Either<TransactingResult<TTransaction, TState>, WalletError>;
+  ): Either.Either<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
+
+  signTransaction(
+    transaction: ledger.UnprovenTransaction,
+    signSegment: (data: Uint8Array) => ledger.Signature,
+  ): Either.Either<ledger.UnprovenTransaction, WalletError>;
 }
 
 export type DefaultTransactingConfiguration = {
@@ -384,5 +389,25 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
       }),
       EitherOps.toEffect,
     );
+  }
+
+  signTransaction(
+    transaction: ledger.UnprovenTransaction,
+    signSegment: (data: Uint8Array) => ledger.Signature,
+  ): Either.Either<ledger.UnprovenTransaction, WalletError> {
+    return Either.gen(function* () {
+      const segments = TransactionTrait.default.getSegments(transaction);
+      if (!segments.length) {
+        throw new SignError({ message: 'No segments found in the provided transaction' });
+      }
+
+      for (const segment of segments) {
+        const signedData = yield* TransactionTrait.default.getOfferSignatureData(transaction, segment);
+        const signature = signSegment(signedData);
+        transaction = yield* TransactionTrait.default.addOfferSignature(transaction, signature, segment);
+      }
+
+      return transaction;
+    });
   }
 }

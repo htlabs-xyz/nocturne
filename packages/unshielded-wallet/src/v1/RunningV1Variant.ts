@@ -1,4 +1,3 @@
-import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { Effect, pipe, Record, Scope, Stream, SubscriptionRef, Schedule, Duration, Sink, Console } from 'effect';
 import { ProtocolVersion } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import {
@@ -8,7 +7,13 @@ import {
   VersionChangeType,
 } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import { ProvingRecipe, TRANSACTION_TO_PROVE } from './ProvingRecipe.js';
+import {
+  BALANCE_TRANSACTION_TO_PROVE,
+  BalanceTransactionToProve,
+  ProvingRecipe,
+  TRANSACTION_TO_PROVE,
+  TransactionToProve,
+} from './ProvingRecipe.js';
 import { SerializationCapability } from './Serialization.js';
 import { WalletSyncUpdate, SyncCapability, SyncService } from './Sync.js';
 import { TransactingCapability, TokenTransfer } from './Transacting.js';
@@ -19,6 +24,7 @@ import { CoinSelection } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { CoreWallet } from './CoreWallet.js';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
 import { UnshieldedTransaction, Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
 
 const progress = (state: CoreWallet): StateChange.StateChange<CoreWallet>[] => {
   const appliedId = state.progress?.appliedId ?? 0n;
@@ -141,21 +147,19 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
     );
   }
 
-  balanceTransaction(tx: TTransaction): Effect.Effect<ProvingRecipe<TTransaction>, WalletError> {
+  balanceTransaction(tx: TTransaction): Effect.Effect<BalanceTransactionToProve<TTransaction>, WalletError> {
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.balanceTransaction(state, tx),
         EitherOps.toEffect,
-        Effect.map(
-          ({ transaction, newState }) =>
-            [
-              {
-                type: TRANSACTION_TO_PROVE,
-                transaction: transaction as ledger.UnprovenTransaction,
-              },
-              newState,
-            ] as const,
-        ),
+        Effect.map(({ transaction, newState }) => [
+          {
+            type: BALANCE_TRANSACTION_TO_PROVE,
+            transactionToProve: transaction,
+            transactionToBalance: tx,
+          },
+          newState,
+        ]),
       );
     });
   }
@@ -163,21 +167,18 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
   transferTransaction(
     outputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<ProvingRecipe<TTransaction>, WalletError> {
+  ): Effect.Effect<TransactionToProve, WalletError> {
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.makeTransfer(state, outputs, ttl),
         EitherOps.toEffect,
-        Effect.map(
-          ({ transaction, newState }) =>
-            [
-              {
-                type: TRANSACTION_TO_PROVE,
-                transaction: transaction as ledger.UnprovenTransaction,
-              },
-              newState,
-            ] as const,
-        ),
+        Effect.map(({ transaction, newState }) => [
+          {
+            type: TRANSACTION_TO_PROVE,
+            transaction: transaction,
+          },
+          newState,
+        ]),
       );
     });
   }
@@ -190,22 +191,23 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.initSwap(state, desiredInputs, desiredOutputs, ttl),
-        Effect.map(
-          ({ transaction, newState }) =>
-            [
-              {
-                type: TRANSACTION_TO_PROVE,
-                transaction: transaction as ledger.UnprovenTransaction,
-              },
-              newState,
-            ] as const,
-        ),
+        Effect.map(({ transaction, newState }) => [
+          {
+            type: TRANSACTION_TO_PROVE,
+            transaction: transaction,
+          },
+          newState,
+        ]),
       );
     });
   }
 
-  // finalizeTransaction(recipe: ProvingRecipe<TTransaction>): Effect.Effect<TTransaction, WalletError> {
-  // }
+  signTransaction(
+    transaction: ledger.UnprovenTransaction,
+    signSegment: (data: Uint8Array) => ledger.Signature,
+  ): Effect.Effect<ledger.UnprovenTransaction, WalletError> {
+    return this.#v1Context.transactingCapability.signTransaction(transaction, signSegment);
+  }
 
   serializeState(state: CoreWallet): TSerialized {
     return this.#v1Context.serializationCapability.serialize(state);

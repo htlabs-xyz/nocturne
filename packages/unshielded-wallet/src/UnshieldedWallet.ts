@@ -3,7 +3,6 @@ import { BaseV1Configuration, DefaultV1Configuration, V1Builder, V1Tag, V1Varian
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { Effect, Either, Scope } from 'effect';
 import * as rx from 'rxjs';
-import { BalanceTransactionToProve, ProvingRecipe, TransactionToProve } from './v1/ProvingRecipe.js';
 import { SerializationCapability } from './v1/Serialization.js';
 import { TransactionHistoryCapability } from './v1/TransactionHistory.js';
 import { CoinsAndBalancesCapability } from './v1/CoinsAndBalances.js';
@@ -13,9 +12,9 @@ import { WalletSyncUpdate } from './v1/Sync.js';
 import { Variant, VariantBuilder, WalletLike } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { Runtime, WalletBuilder } from '@midnight-ntwrk/wallet-sdk-runtime';
 import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
-import { PublicKeys } from './v1/KeyStore.js';
+import { PublicKeys } from './KeyStore.js';
 import { SyncProgress } from './v1/SyncProgress.js';
-import { TransactionHistoryEntry } from './v1/storage/index.js';
+import { TransactionHistoryEntry } from './storage/index.js';
 
 export type UnshieldedWalletCapabilities<TSerialized = string, TTransaction = ledger.FinalizedTransaction> = {
   serialization: SerializationCapability<CoreWallet, TSerialized>;
@@ -79,16 +78,16 @@ export class UnshieldedWalletState<TSerialized = string, TTransaction = ledger.F
   }
 }
 
-export type UnshieldedWallet = CustomizedUnshieldedWallet<ledger.UnprovenTransaction, WalletSyncUpdate, string>;
+export type UnshieldedWallet = CustomizedUnshieldedWallet<ledger.FinalizedTransaction, WalletSyncUpdate, string>;
 
 export type UnshieldedWalletClass = CustomizedUnshieldedWalletClass<
-  ledger.UnprovenTransaction,
+  ledger.FinalizedTransaction,
   WalletSyncUpdate,
   string
 >;
 
 export interface CustomizedUnshieldedWallet<
-  TTransaction = ledger.FinalizedTransaction,
+  TTransaction = ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
   TSyncUpdate = WalletSyncUpdate,
   TSerialized = string,
 > extends WalletLike.WalletLike<[Variant.VersionedVariant<V1Variant<TSerialized, TSyncUpdate, TTransaction>>]> {
@@ -96,16 +95,17 @@ export interface CustomizedUnshieldedWallet<
 
   start(): Promise<void>;
 
-  // we can balance bound and unbound txs
-  balanceTransaction(tx: TTransaction): Promise<ProvingRecipe<TTransaction>>;
+  balanceTransaction(
+    tx: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
+  ): Promise<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>>;
 
-  transferTransaction(outputs: readonly TokenTransfer[], ttl: Date): Promise<ProvingRecipe<TTransaction>>;
+  transferTransaction(outputs: readonly TokenTransfer[], ttl: Date): Promise<ledger.UnprovenTransaction>;
 
   initSwap(
     desiredInputs: Record<ledger.RawTokenType, bigint>,
     desiredOutputs: readonly TokenTransfer[],
     ttl: Date,
-  ): Promise<ProvingRecipe<TTransaction>>;
+  ): Promise<ledger.UnprovenTransaction>;
 
   signTransaction(
     transaction: ledger.UnprovenTransaction,
@@ -120,7 +120,7 @@ export interface CustomizedUnshieldedWallet<
 }
 
 export interface CustomizedUnshieldedWalletClass<
-  TTransaction = ledger.FinalizedTransaction,
+  TTransaction = ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
   TSyncUpdate = WalletSyncUpdate,
   TSerialized = string,
   TConfig extends BaseV1Configuration = DefaultV1Configuration,
@@ -136,7 +136,7 @@ export function UnshieldedWallet(configuration: DefaultV1Configuration): Unshiel
 
 export function CustomUnshieldedWallet<
   TConfig extends BaseV1Configuration = DefaultV1Configuration,
-  TTransaction = ledger.UnprovenTransaction,
+  TTransaction = ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
   TSyncUpdate = WalletSyncUpdate,
   TSerialized = string,
 >(
@@ -196,7 +196,9 @@ export function CustomUnshieldedWallet<
       return this.runtime.dispatch({ [V1Tag]: (v1) => v1.startSyncInBackground() }).pipe(Effect.runPromise);
     }
 
-    balanceTransaction(tx: TTransaction): Promise<BalanceTransactionToProve<TTransaction>> {
+    balanceTransaction(
+      tx: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
+    ): Promise<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>> {
       return this.runtime
         .dispatch({
           [V1Tag]: (v1) => v1.balanceTransaction(tx),
@@ -204,7 +206,7 @@ export function CustomUnshieldedWallet<
         .pipe(Effect.runPromise);
     }
 
-    transferTransaction(outputs: readonly TokenTransfer[], ttl: Date): Promise<TransactionToProve> {
+    transferTransaction(outputs: readonly TokenTransfer[], ttl: Date): Promise<ledger.UnprovenTransaction> {
       return this.runtime
         .dispatch({
           [V1Tag]: (v1) => v1.transferTransaction(outputs, ttl),
@@ -216,7 +218,7 @@ export function CustomUnshieldedWallet<
       desiredInputs: Record<ledger.RawTokenType, bigint>,
       desiredOutputs: readonly TokenTransfer[],
       ttl: Date,
-    ): Promise<ProvingRecipe<TTransaction>> {
+    ): Promise<ledger.UnprovenTransaction> {
       return this.runtime
         .dispatch({ [V1Tag]: (v1) => v1.initSwap(desiredInputs, desiredOutputs, ttl) })
         .pipe(Effect.runPromise);

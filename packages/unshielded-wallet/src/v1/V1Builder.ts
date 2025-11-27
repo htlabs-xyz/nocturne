@@ -31,7 +31,7 @@ import {
 } from './TransactionHistory.js';
 import { Expect, Equal, ItemType } from '@midnight-ntwrk/wallet-sdk-utilities/types';
 import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
-import { createKeystore, PublicKeys } from './KeyStore.js';
+import { createKeystore, PublicKeys } from '../KeyStore.js';
 
 export type BaseV1Configuration = {
   networkId: NetworkId.NetworkId;
@@ -63,7 +63,11 @@ export type V1Variant<TSerialized, TSyncUpdate, TTransaction> = Variant.Variant<
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyV1Variant = V1Variant<any, any, any>;
-export type DefaultV1Variant = V1Variant<string, WalletSyncUpdate, ledger.UnprovenTransaction>;
+export type DefaultV1Variant = V1Variant<
+  string,
+  WalletSyncUpdate,
+  ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
+>;
 
 export type TransactionOf<T extends AnyV1Variant> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,10 +79,14 @@ export type SerializedStateOf<T extends AnyV1Variant> =
 
 export type DefaultV1Builder = V1Builder<
   DefaultV1Configuration,
-  RunningV1Variant.Context<string, WalletSyncUpdate, ledger.UnprovenTransaction>,
+  RunningV1Variant.Context<
+    string,
+    WalletSyncUpdate,
+    ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
+  >,
   string,
   WalletSyncUpdate,
-  ledger.UnprovenTransaction
+  ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
 >;
 
 export class V1Builder<
@@ -114,8 +122,14 @@ export class V1Builder<
     });
   }
 
-  withDefaultTransactionType(): V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.UnprovenTransaction> {
-    return this.withTransactionType<ledger.UnprovenTransaction>();
+  withDefaultTransactionType(): V1Builder<
+    TConfig,
+    TContext,
+    TSerialized,
+    TSyncUpdate,
+    ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
+  > {
+    return this.withTransactionType<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>>();
   }
 
   withSyncDefaults(): V1Builder<
@@ -175,13 +189,19 @@ export class V1Builder<
   }
 
   withTransactingDefaults(
-    this: V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.UnprovenTransaction>,
+    this: V1Builder<
+      TConfig,
+      TContext,
+      TSerialized,
+      TSyncUpdate,
+      ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
+    >,
   ): V1Builder<
     TConfig & DefaultTransactingConfiguration,
     TContext & DefaultTransactingContext,
     TSerialized,
     TSyncUpdate,
-    ledger.UnprovenTransaction
+    ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>
   > {
     return this.withTransacting(makeDefaultTransactingCapability);
   }
@@ -252,13 +272,13 @@ export class V1Builder<
   }
 
   withTransactionHistoryDefaults(
-    this: V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.UnprovenTransaction>,
+    this: V1Builder<TConfig, TContext, TSerialized, TSyncUpdate, ledger.FinalizedTransaction>,
   ): V1Builder<
     TConfig & DefaultTransactionHistoryConfiguration,
     TContext,
     TSerialized,
     TSyncUpdate,
-    ledger.UnprovenTransaction
+    ledger.FinalizedTransaction
   > {
     return this.withTransactionHistory(makeDefaultTransactionHistoryCapability);
   }

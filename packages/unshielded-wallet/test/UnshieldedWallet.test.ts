@@ -17,8 +17,8 @@ import { DockerComposeEnvironment, StartedDockerComposeEnvironment, Wait } from 
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { UnshieldedWallet } from '../src/index.js';
 import { getUnshieldedSeed, createWalletConfig } from './testUtils.js';
-import { createKeystore, PublicKeys } from '../src/v1/KeyStore.js';
-import { InMemoryTransactionHistoryStorage, NoOpTransactionHistoryStorage } from '../src/v1/storage/index.js';
+import { createKeystore, PublicKeys } from '../src/KeyStore.js';
+import { InMemoryTransactionHistoryStorage, NoOpTransactionHistoryStorage } from '../src/storage/index.js';
 
 vi.setConfig({ testTimeout: 100_000, hookTimeout: 100_000 });
 
@@ -63,8 +63,7 @@ describe('UnshieldedWallet', () => {
     expect(state.pendingCoins).toHaveLength(0);
 
     const transactionHistory = await Array.fromAsync(state.transactionHistory);
-    // eslint-disable-next-line no-console
-    console.log(transactionHistory);
+
     expect(transactionHistory.length).toBeGreaterThan(1);
   });
 

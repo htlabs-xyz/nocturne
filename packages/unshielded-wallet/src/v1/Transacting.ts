@@ -9,6 +9,7 @@ import { isIntentBound, TransactionTrait } from './Transaction.js';
 import { CoinsAndBalancesCapability } from './CoinsAndBalances.js';
 import { KeysCapability } from './Keys.js';
 import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { MidnightBech32m, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 const GUARANTEED_SEGMENT = 0;
 
@@ -44,7 +45,7 @@ const mergeCounterOffer = (
     }),
   );
 
-export interface TransactingCapability<TTransaction, TState> {
+export interface TransactingCapability<_TTransaction, TState> {
   makeTransfer(
     wallet: CoreWallet,
     outputs: ReadonlyArray<TokenTransfer>,
@@ -56,12 +57,15 @@ export interface TransactingCapability<TTransaction, TState> {
     desiredInputs: Record<string, bigint>,
     outputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
+  ): Either.Either<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
 
   balanceTransaction(
     wallet: CoreWallet,
-    transaction: TTransaction,
-  ): Either.Either<TransactingResult<ledger.UnprovenTransaction, TState>, WalletError>;
+    transaction: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
+  ): Either.Either<
+    TransactingResult<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>, TState>,
+    WalletError
+  >;
 
   signTransaction(
     transaction: ledger.UnprovenTransaction,
@@ -142,7 +146,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         };
       }
 
-      const { address, publicKey } = wallet.publicKeys;
+      const { addressHex, publicKey } = wallet.publicKeys;
 
       for (const segment of [...segments, GUARANTEED_SEGMENT]) {
         const allIntentImbalances = yield* Either.try({
@@ -189,7 +193,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
               },
               createOutput: (coin) => ({
                 ...coin,
-                owner: address,
+                owner: addressHex,
               }),
               isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
             }),
@@ -286,7 +290,9 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
     const ledgerOutputs = outputs.map((output) => {
       return {
         value: output.amount,
-        owner: output.receiverAddress,
+        owner: UnshieldedAddress.codec
+          .decode(networkId, MidnightBech32m.parse(output.receiverAddress))
+          .data.toString('hex'),
         type: output.type,
       };
     });
@@ -309,86 +315,85 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
     desiredInputs: Record<ledger.RawTokenType, bigint>,
     desiredOutputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<TransactingResult<TTransaction, CoreWallet>, WalletError> {
-    return pipe(
-      Either.gen(this, function* () {
-        const networkId = this.networkId;
-        const outputsValid = desiredOutputs.every((output) => output.amount > 0n);
-        if (!outputsValid) {
-          return yield* Either.left(new TransactingError({ message: 'The amount needs to be positive' }));
-        }
+  ): Either.Either<TransactingResult<TTransaction, CoreWallet>, WalletError> {
+    return Either.gen(this, function* () {
+      const networkId = this.networkId;
+      const outputsValid = desiredOutputs.every((output) => output.amount > 0n);
+      if (!outputsValid) {
+        return yield* Either.left(new TransactingError({ message: 'The amount needs to be positive' }));
+      }
 
-        const inputsValid = Object.entries(desiredInputs).every(([, amount]) => amount > 0n);
-        if (!inputsValid) {
-          return yield* Either.left(new TransactingError({ message: 'The input amounts need to be positive' }));
-        }
+      const inputsValid = Object.entries(desiredInputs).every(([, amount]) => amount > 0n);
+      if (!inputsValid) {
+        return yield* Either.left(new TransactingError({ message: 'The input amounts need to be positive' }));
+      }
 
-        const ledgerOutputs = desiredOutputs.map((output) => ({
-          value: output.amount,
-          owner: output.receiverAddress,
-          type: output.type,
-        }));
+      const ledgerOutputs = desiredOutputs.map((output) => ({
+        value: output.amount,
+        owner: UnshieldedAddress.codec
+          .decode(networkId, MidnightBech32m.parse(output.receiverAddress))
+          .data.toString('hex'),
+        type: output.type,
+      }));
 
-        const targetImbalances = Imbalances.fromEntries(Object.entries(desiredInputs));
+      const targetImbalances = Imbalances.fromEntries(Object.entries(desiredInputs));
 
-        const latestStateEither = Effect.runSync(Effect.either(wallet.state.getLatestState()));
-        if (Either.isLeft(latestStateEither)) {
-          return yield* Either.left(
-            new TransactingError({ message: 'Failed to get latest state', cause: latestStateEither.left }),
-          );
-        }
-        const latestState = latestStateEither.right;
-        const availableCoins = HashSet.toValues(latestState.utxos);
+      const latestStateEither = Effect.runSync(Effect.either(wallet.state.getLatestState()));
+      if (Either.isLeft(latestStateEither)) {
+        return yield* Either.left(
+          new TransactingError({ message: 'Failed to get latest state', cause: latestStateEither.left }),
+        );
+      }
+      const latestState = latestStateEither.right;
+      const availableCoins = HashSet.toValues(latestState.utxos);
 
-        const { inputs, outputs: changeOutputs } = yield* Either.try({
-          try: () =>
-            getBalanceRecipe<Utxo, ledger.UtxoOutput>({
-              coins: availableCoins,
-              initialImbalances: Imbalances.empty(),
-              feeTokenType: '',
-              transactionCostModel: {
-                inputFeeOverhead: 0n,
-                outputFeeOverhead: 0n,
-              },
-              createOutput: (coin) => ({
-                ...coin,
-                owner: wallet.publicKeys.address,
-              }),
-              isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
-              targetImbalances,
+      const { inputs, outputs: changeOutputs } = yield* Either.try({
+        try: () =>
+          getBalanceRecipe<Utxo, ledger.UtxoOutput>({
+            coins: availableCoins,
+            initialImbalances: Imbalances.empty(),
+            feeTokenType: '',
+            transactionCostModel: {
+              inputFeeOverhead: 0n,
+              outputFeeOverhead: 0n,
+            },
+            createOutput: (coin) => ({
+              ...coin,
+              owner: wallet.publicKeys.addressHex,
             }),
-          catch: (error) => {
-            const message = error instanceof Error ? error.message : error?.toString() || '';
-            return new TransactingError({ message });
-          },
-        });
+            isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
+            targetImbalances,
+          }),
+        catch: (error) => {
+          const message = error instanceof Error ? error.message : error?.toString() || '';
+          return new TransactingError({ message });
+        },
+      });
 
-        const spendResultEither = Effect.runSync(Effect.either(CoreWallet.spend(wallet, inputs)));
-        if (Either.isLeft(spendResultEither)) {
-          return yield* Either.left(
-            new TransactingError({ message: 'Failed to spend coins', cause: spendResultEither.left }),
-          );
-        }
-        const updatedWallet = spendResultEither.right;
+      const spendResultEither = Effect.runSync(Effect.either(CoreWallet.spend(wallet, inputs)));
+      if (Either.isLeft(spendResultEither)) {
+        return yield* Either.left(
+          new TransactingError({ message: 'Failed to spend coins', cause: spendResultEither.left }),
+        );
+      }
+      const updatedWallet = spendResultEither.right;
 
-        const ledgerInputs = inputs.map((input) => ({
-          ...input,
-          owner: wallet.publicKeys.publicKey,
-        }));
+      const ledgerInputs = inputs.map((input) => ({
+        ...input,
+        owner: wallet.publicKeys.publicKey,
+      }));
 
-        const offer = ledger.UnshieldedOffer.new(ledgerInputs, [...changeOutputs, ...ledgerOutputs], []);
-        const intent = ledger.Intent.new(ttl);
-        intent.guaranteedUnshieldedOffer = offer;
+      const offer = ledger.UnshieldedOffer.new(ledgerInputs, [...changeOutputs, ...ledgerOutputs], []);
+      const intent = ledger.Intent.new(ttl);
+      intent.guaranteedUnshieldedOffer = offer;
 
-        const tx = ledger.Transaction.fromParts(networkId, undefined, undefined, intent) as TTransaction;
+      const tx = ledger.Transaction.fromParts(networkId, undefined, undefined, intent) as TTransaction;
 
-        return {
-          newState: updatedWallet,
-          transaction: tx,
-        };
-      }),
-      EitherOps.toEffect,
-    );
+      return {
+        newState: updatedWallet,
+        transaction: tx,
+      };
+    });
   }
 
   signTransaction(
@@ -406,7 +411,6 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         const signature = signSegment(signedData);
         transaction = yield* TransactionTrait.default.addOfferSignature(transaction, signature, segment);
       }
-
       return transaction;
     });
   }

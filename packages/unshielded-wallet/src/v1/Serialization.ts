@@ -17,6 +17,7 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
   const SnapshotSchema = Schema.Struct({
     publicKeys: Schema.Struct({
       publicKey: Schema.String,
+      addressHex: Schema.String,
       address: Schema.String,
     }),
     state: UnshieldedStateSchema,

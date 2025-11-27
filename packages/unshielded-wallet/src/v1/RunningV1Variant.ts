@@ -7,13 +7,6 @@ import {
   VersionChangeType,
 } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import {
-  BALANCE_TRANSACTION_TO_PROVE,
-  BalanceTransactionToProve,
-  ProvingRecipe,
-  TRANSACTION_TO_PROVE,
-  TransactionToProve,
-} from './ProvingRecipe.js';
 import { SerializationCapability } from './Serialization.js';
 import { WalletSyncUpdate, SyncCapability, SyncService } from './Sync.js';
 import { TransactingCapability, TokenTransfer } from './Transacting.js';
@@ -23,7 +16,7 @@ import { KeysCapability } from './Keys.js';
 import { CoinSelection } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { CoreWallet } from './CoreWallet.js';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
-import { UnshieldedTransaction, Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 
 const progress = (state: CoreWallet): StateChange.StateChange<CoreWallet>[] => {
@@ -65,7 +58,7 @@ export declare namespace RunningV1Variant {
 
 export const V1Tag: unique symbol = Symbol('V1');
 
-export type DefaultRunningV1 = RunningV1Variant<string, WalletSyncUpdate, UnshieldedTransaction>;
+export type DefaultRunningV1 = RunningV1Variant<string, WalletSyncUpdate, ledger.FinalizedTransaction>;
 
 export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
   implements Variant.RunningVariant<typeof V1Tag, CoreWallet>
@@ -147,19 +140,14 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
     );
   }
 
-  balanceTransaction(tx: TTransaction): Effect.Effect<BalanceTransactionToProve<TTransaction>, WalletError> {
+  balanceTransaction(
+    tx: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>,
+  ): Effect.Effect<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Bindingish>, WalletError> {
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.balanceTransaction(state, tx),
         EitherOps.toEffect,
-        Effect.map(({ transaction, newState }) => [
-          {
-            type: BALANCE_TRANSACTION_TO_PROVE,
-            transactionToProve: transaction,
-            transactionToBalance: tx,
-          },
-          newState,
-        ]),
+        Effect.map(({ transaction, newState }) => [transaction, newState]),
       );
     });
   }
@@ -167,18 +155,18 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
   transferTransaction(
     outputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<TransactionToProve, WalletError> {
+  ): Effect.Effect<ledger.UnprovenTransaction, WalletError> {
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.makeTransfer(state, outputs, ttl),
         EitherOps.toEffect,
-        Effect.map(({ transaction, newState }) => [
-          {
-            type: TRANSACTION_TO_PROVE,
-            transaction: transaction,
-          },
-          newState,
-        ]),
+        Effect.flatMap(({ transaction, newState }) =>
+          pipe(
+            this.#v1Context.transactingCapability.balanceTransaction(newState, transaction),
+            EitherOps.toEffect,
+            Effect.map(({ transaction, newState }) => [transaction as ledger.UnprovenTransaction, newState]),
+          ),
+        ),
       );
     });
   }
@@ -187,17 +175,11 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
     desiredInputs: Record<string, bigint>,
     desiredOutputs: ReadonlyArray<TokenTransfer>,
     ttl: Date,
-  ): Effect.Effect<ProvingRecipe<TTransaction>, WalletError> {
+  ): Effect.Effect<ledger.UnprovenTransaction, WalletError> {
     return SubscriptionRef.modifyEffect(this.#context.stateRef, (state) => {
       return pipe(
         this.#v1Context.transactingCapability.initSwap(state, desiredInputs, desiredOutputs, ttl),
-        Effect.map(({ transaction, newState }) => [
-          {
-            type: TRANSACTION_TO_PROVE,
-            transaction: transaction,
-          },
-          newState,
-        ]),
+        Effect.map(({ transaction, newState }) => [transaction, newState]),
       );
     });
   }

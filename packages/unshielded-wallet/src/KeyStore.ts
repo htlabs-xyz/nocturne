@@ -11,6 +11,7 @@ import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 
 export type PublicKeys = {
   publicKey: SignatureVerifyingKey;
+  addressHex: UserAddress;
   address: string;
 };
 
@@ -18,6 +19,7 @@ export const PublicKeys = {
   fromKeyStore: (keystore: UnshieldedKeystore): PublicKeys => {
     return {
       publicKey: keystore.getPublicKey(),
+      addressHex: keystore.getAddress(),
       address: keystore.getBech32Address().asString(),
     };
   },

@@ -14,11 +14,7 @@ export type TransactionTrait<Tx> = {
   id(tx: Tx): string;
   getOfferSignatureData: (transaction: Tx, segment: number) => Either.Either<Uint8Array, WalletError>;
   getSegments(transaction: Tx): number[];
-  addOfferSignature(
-    transaction: ledger.UnprovenTransaction,
-    signature: ledger.Signature,
-    segment: number,
-  ): Either.Either<ledger.UnprovenTransaction, WalletError>;
+  addOfferSignature(transaction: Tx, signature: ledger.Signature, segment: number): Either.Either<Tx, WalletError>;
   bindTransaction(
     transaction: ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.PreBinding>,
   ): Either.Either<ledger.Transaction<ledger.SignatureEnabled, ledger.Proofish, ledger.Binding>, WalletError>;
@@ -132,9 +128,9 @@ export const TransactionTrait = new (class {
                 cause: error,
               }),
           });
-
-          transaction.intents = transaction.intents.set(segment, updatedIntent);
         }
+
+        transaction.intents = transaction.intents.set(segment, updatedIntent);
 
         return transaction;
       });

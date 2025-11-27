@@ -15,8 +15,7 @@ import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
 import { UnshieldedTransaction, Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DefaultV1Configuration } from '../src/v1/index.js';
-import { TransactionHistoryStorage } from '../src/v1/storage/index.js';
-import { InMemoryTransactionHistoryStorage } from '../src/v1/storage/index.js';
+import { InMemoryTransactionHistoryStorage } from '../src/storage/index.js';
 
 /**
  * TODO: place in separate package with more additional mock functions
@@ -39,6 +38,13 @@ export const generateMockTransaction = (
     identifiers: createdOutputs.map((output) => output.intentHash),
     createdUtxos: createdOutputs,
     spentUtxos: spentOutputs,
+    block: {
+      timestamp: Date.now(),
+    },
+    fees: {
+      paidFees: 0n,
+      estimatedFees: 0n,
+    },
     protocolVersion: 1,
     transactionResult: {
       status: applyStage,

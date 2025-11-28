@@ -1,7 +1,6 @@
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { Effect, Either, Option, pipe, HashSet } from 'effect';
-import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
 import { CoreWallet } from './CoreWallet.js';
 import { SignError, TransactingError, WalletError } from './WalletError.js';
 import { CoinSelection, getBalanceRecipe, Imbalances } from '@midnight-ntwrk/wallet-sdk-capabilities';

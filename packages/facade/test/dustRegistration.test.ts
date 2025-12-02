@@ -24,6 +24,8 @@ import * as rx from 'rxjs';
 import { CombinedTokenTransfer, WalletFacade } from '../src/index.js';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { ArrayOps } from '@midnight-ntwrk/wallet-sdk-utilities';
+import { InMemoryTransactionHistoryStorage } from '../../unshielded-wallet/dist/tx-history-storage/InMemoryTransactionHistoryStorage.js';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 200_000 });
 
@@ -61,6 +63,8 @@ describe('Dust Registration', () => {
 
   const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, NetworkId.NetworkId.Undeployed);
   const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, NetworkId.NetworkId.Undeployed);
+
+  const unshieldedTxHistoryStorage = new InMemoryTransactionHistoryStorage();
 
   let startedEnvironment: StartedDockerComposeEnvironment;
   let configuration: DefaultV1Configuration;
@@ -116,6 +120,7 @@ describe('Dust Registration', () => {
       publicKey: PublicKey.fromKeyStore(unshieldedReceiverKeystore),
       networkId: NetworkId.NetworkId.Undeployed,
       indexerUrl: configuration.indexerClientConnection.indexerWsUrl!,
+      txHistoryStorage: unshieldedTxHistoryStorage,
     });
 
     senderFacade = new WalletFacade(shieldedSender, unshieldedSender, dustSender);
@@ -186,12 +191,13 @@ describe('Dust Registration', () => {
           ),
         ),
     );
+    const nightBalanceBeforeRegistration = receiverStateWithNight.unshielded.balances.get(ledger.nativeToken().raw);
 
-    const nightUtxos = receiverStateWithNight.unshielded.availableCoins.filter(
-      (coin) => coin.registeredForDustGeneration === false,
-    );
+    const nightUtxos = receiverStateWithNight.unshielded.availableCoins
+      .filter((coin) => coin.registeredForDustGeneration === false)
+      .filter((coin) => coin.type === ledger.nativeToken().raw);
 
-    expect(nightUtxos.length).toBeGreaterThan(0);
+    expect(ArrayOps.sumBigInt(nightUtxos.map((coin) => coin.value))).toEqual(nightBalanceBeforeRegistration);
 
     const dustRegistrationRecipe = await receiverFacade.registerNightUtxosForDustGeneration(
       nightUtxos,
@@ -200,17 +206,28 @@ describe('Dust Registration', () => {
     );
 
     const finalizedDustTx = await receiverFacade.finalizeTransaction(dustRegistrationRecipe);
+
     const dustRegistrationTxHash = await receiverFacade.submitTransaction(finalizedDustTx);
 
     expect(dustRegistrationTxHash).toBeTypeOf('string');
 
-    const receiverDustBalance = await rx.firstValueFrom(
+    const receiverStateAfterRegistration = await rx.firstValueFrom(
       receiverFacade.state().pipe(
-        rx.filter((s) => s.dust.walletBalance(new Date()) > 0n),
-        rx.map((s) => s.dust.walletBalance(new Date())),
+        rx.filter((state) => {
+          // @TODO after the unshielded runtime rewrite, we'll be able to access the tx history storage from the state
+          const txFound =
+            receiverFacade.unshielded.transactionHistory?.get(finalizedDustTx.transactionHash()) !== undefined;
+
+          return state.isSynced && state.dust.availableCoins.length > 0 && txFound;
+        }),
       ),
     );
 
-    expect(receiverDustBalance).toBeGreaterThan(0n);
+    expect(receiverStateAfterRegistration.dust.walletBalance(new Date())).toBeGreaterThan(0n);
+
+    const nightBalanceAfterRegistration = receiverStateAfterRegistration.unshielded.balances.get(
+      ledger.nativeToken().raw,
+    );
+    expect(nightBalanceAfterRegistration).toEqual(nightBalanceBeforeRegistration);
   });
 });

@@ -43,7 +43,10 @@ export class UnshieldedStateService extends Context.Tag('@midnight-ntwrk/wallet-
           // @TODO: Handle partial success
           return {
             ...state,
-            utxos: HashSet.union(state.utxos, HashSet.fromIterable(createdUtxos)),
+            utxos: HashSet.union(
+              HashSet.difference(state.utxos, HashSet.fromIterable(spentUtxos)),
+              HashSet.fromIterable(createdUtxos),
+            ),
             pendingUtxos: HashSet.difference(state.pendingUtxos, HashSet.fromIterable(spentUtxos)),
             syncProgress: {
               highestTransactionId: state.syncProgress?.highestTransactionId ?? 0,

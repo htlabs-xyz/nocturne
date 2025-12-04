@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { TransactionHistoryStorage, TransactionHistoryEntry, TransactionHash } from '../storage/index.js';
-import { UnshieldedTransaction } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedUpdate } from './Schema.js';
 
-export interface TransactionHistoryCapability<TTransaction> {
-  create(tx: TTransaction): Promise<void>;
+export interface TransactionHistoryCapability {
+  create(update: UnshieldedUpdate): Promise<void>;
   get(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
   getAll(): AsyncIterableIterator<TransactionHistoryEntry>;
   delete(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
@@ -24,14 +24,14 @@ export type DefaultTransactionHistoryConfiguration = {
   txHistoryStorage: TransactionHistoryStorage;
 };
 
-const convertTransactionToEntry = (tx: UnshieldedTransaction): TransactionHistoryEntry => {
-  const isRegularTransaction = tx.type === 'RegularTransaction';
+const convertUpdateToEntry = ({ transaction }: UnshieldedUpdate): TransactionHistoryEntry => {
+  const isRegularTransaction = transaction.type === 'RegularTransaction';
   const transactionResult =
-    isRegularTransaction && tx.transactionResult
+    isRegularTransaction && transaction.transactionResult
       ? {
-          status: tx.transactionResult.status as 'SUCCESS' | 'FAILURE' | 'PARTIAL_SUCCESS',
+          status: transaction.transactionResult.status,
           segments:
-            tx.transactionResult.segments?.map((segment) => ({
+            transaction.transactionResult.segments?.map((segment) => ({
               id: segment.id.toString(),
               success: segment.success,
             })) ?? [],
@@ -39,26 +39,25 @@ const convertTransactionToEntry = (tx: UnshieldedTransaction): TransactionHistor
       : null;
 
   return {
-    id: tx.id,
-    hash: tx.hash,
-    protocolVersion: tx.protocolVersion,
-    identifiers: isRegularTransaction ? tx.identifiers : [],
+    id: transaction.id,
+    hash: transaction.hash,
+    protocolVersion: transaction.protocolVersion,
+    identifiers: isRegularTransaction && transaction.identifiers ? transaction.identifiers : [],
     transactionResult,
-    timestamp: tx.block?.timestamp ?? null,
-    fees: isRegularTransaction ? (tx.fees?.paidFees ?? null) : null,
+    timestamp: transaction.block?.timestamp ?? null,
+    fees: isRegularTransaction ? (transaction.fees?.paidFees ?? null) : null,
   };
 };
 
-export const makeDefaultTransactionHistoryCapability = <TTransaction>(
+export const makeDefaultTransactionHistoryCapability = (
   config: DefaultTransactionHistoryConfiguration,
   _getContext: () => unknown,
-): TransactionHistoryCapability<TTransaction> => {
+): TransactionHistoryCapability => {
   const { txHistoryStorage } = config;
 
   return {
-    create: async (tx: TTransaction): Promise<void> => {
-      // Cast to UnshieldedTransaction for storage - transactions in history are from sync
-      const entry = convertTransactionToEntry(tx as unknown as UnshieldedTransaction);
+    create: async (update: UnshieldedUpdate): Promise<void> => {
+      const entry = convertUpdateToEntry(update);
       await txHistoryStorage.create(entry);
     },
     get: async (hash: TransactionHash): Promise<TransactionHistoryEntry | undefined> => {

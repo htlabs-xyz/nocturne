@@ -30,7 +30,6 @@ import {
   DefaultTransactionHistoryConfiguration,
 } from './TransactionHistory.js';
 import { Expect, Equal, ItemType } from '@midnight-ntwrk/wallet-sdk-utilities/types';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import { createKeystore, PublicKeys } from '../KeyStore.js';
 
 export type BaseV1Configuration = {
@@ -58,7 +57,7 @@ export type V1Variant<TSerialized, TSyncUpdate, TTransaction> = Variant.Variant<
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
   serialization: SerializationCapability<CoreWallet, TSerialized>;
-  transactionHistory: TransactionHistoryCapability<TTransaction>;
+  transactionHistory: TransactionHistoryCapability;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -225,7 +224,10 @@ export class V1Builder<
   }
 
   withCoinSelection<TCoinSelectionConfig, TCoinSelectionContext extends Partial<RunningV1Variant.AnyContext>>(
-    coinSelection: (config: TCoinSelectionConfig, getContext: () => TCoinSelectionContext) => CoinSelection<Utxo>,
+    coinSelection: (
+      config: TCoinSelectionConfig,
+      getContext: () => TCoinSelectionContext,
+    ) => CoinSelection<ledger.Utxo>,
   ): V1Builder<
     TConfig & TCoinSelectionConfig,
     TContext & TCoinSelectionContext,
@@ -290,7 +292,7 @@ export class V1Builder<
     transactionHistoryCapability: (
       configuration: TTransactionHistoryConfig,
       getContext: () => TTransactionHistoryContext,
-    ) => TransactionHistoryCapability<TTransaction>,
+    ) => TransactionHistoryCapability,
   ): V1Builder<
     TConfig & TTransactionHistoryConfig,
     TContext & TTransactionHistoryContext,
@@ -422,7 +424,7 @@ declare namespace V1Builder {
   };
 
   type HasCoinSelection<TConfig, TContext> = {
-    readonly coinSelection: (configuration: TConfig, getContext: () => TContext) => CoinSelection<Utxo>;
+    readonly coinSelection: (configuration: TConfig, getContext: () => TContext) => CoinSelection<ledger.Utxo>;
   };
 
   type HasSerialization<TConfig, TContext, TSerialized> = {
@@ -439,11 +441,11 @@ declare namespace V1Builder {
     ) => CoinsAndBalancesCapability<CoreWallet>;
   };
 
-  type HasTransactionHistory<TConfig, TContext, TTransaction> = {
+  type HasTransactionHistory<TConfig, TContext> = {
     readonly transactionHistoryCapability: (
       configuration: TConfig,
       getContext: () => TContext,
-    ) => TransactionHistoryCapability<TTransaction>;
+    ) => TransactionHistoryCapability;
   };
 
   type HasKeys<TConfig, TContext> = {
@@ -460,7 +462,7 @@ declare namespace V1Builder {
       HasCoinSelection<TConfig, TContext> &
       HasCoinsAndBalances<TConfig, TContext> &
       HasKeys<TConfig, TContext> &
-      HasTransactionHistory<TConfig, TContext, TTransaction>
+      HasTransactionHistory<TConfig, TContext>
   >;
   type PartialBuildState<
     TConfig = object,

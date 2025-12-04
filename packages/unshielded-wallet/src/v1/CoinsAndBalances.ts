@@ -1,8 +1,8 @@
 import { CoreWallet } from './CoreWallet.js';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
-import { pipe, Array, Effect, HashSet } from 'effect';
+import { pipe } from 'effect';
 import { RecordOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UtxoWithMeta } from './UnshieldedState.js';
 
 export type Balances = Record<ledger.RawTokenType, bigint>;
 
@@ -10,14 +10,15 @@ export type CoinsAndBalancesCapability<TState> = {
   getAvailableBalances(state: TState): Balances;
   getPendingBalances(state: TState): Balances;
   getTotalBalances(state: TState): Balances;
-  getAvailableCoins(state: TState): readonly Utxo[];
-  getPendingCoins(state: TState): readonly Utxo[];
-  getTotalCoins(state: TState): ReadonlyArray<Utxo>;
+
+  getAvailableCoins(state: TState): readonly UtxoWithMeta[];
+  getPendingCoins(state: TState): readonly UtxoWithMeta[];
+  getTotalCoins(state: TState): ReadonlyArray<UtxoWithMeta>;
 };
 
-const calculateBalances = (utxos: readonly Utxo[]): Balances =>
+const calculateBalances = (utxos: readonly UtxoWithMeta[]): Balances =>
   utxos.reduce(
-    (acc: Balances, utxo) => ({
+    (acc: Balances, { utxo }) => ({
       ...acc,
       [utxo.type]: acc[utxo.type] === undefined ? utxo.value : acc[utxo.type] + utxo.value,
     }),
@@ -47,21 +48,14 @@ export const makeDefaultCoinsAndBalancesCapability = (): CoinsAndBalancesCapabil
     );
   };
 
-  const getAvailableCoins = (state: CoreWallet): Utxo[] =>
-    pipe(
-      state.state.getLatestState(),
-      Effect.map((state) => HashSet.toValues(state.utxos)),
-      Effect.runSync,
-    );
+  const getAvailableCoins = (state: CoreWallet): UtxoWithMeta[] => [...state.state.availableUtxos];
 
-  const getPendingCoins = (state: CoreWallet): Utxo[] =>
-    pipe(
-      state.state.getLatestState(),
-      Effect.map((state) => HashSet.toValues(state.pendingUtxos)),
-      Effect.runSync,
-    );
+  const getPendingCoins = (state: CoreWallet): UtxoWithMeta[] => [...state.state.pendingUtxos];
 
-  const getTotalCoins = (state: CoreWallet): Array<Utxo> => [...getAvailableCoins(state), ...getPendingCoins(state)];
+  const getTotalCoins = (state: CoreWallet): Array<UtxoWithMeta> => [
+    ...getAvailableCoins(state),
+    ...getPendingCoins(state),
+  ];
 
   return {
     getAvailableBalances,

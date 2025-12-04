@@ -16,7 +16,6 @@ import { KeysCapability } from './Keys.js';
 import { CoinSelection } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { CoreWallet } from './CoreWallet.js';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 
 const progress = (state: CoreWallet): StateChange.StateChange<CoreWallet>[] => {
@@ -49,8 +48,8 @@ export declare namespace RunningV1Variant {
     transactingCapability: TransactingCapability<TTransaction, CoreWallet>;
     coinsAndBalancesCapability: CoinsAndBalancesCapability<CoreWallet>;
     keysCapability: KeysCapability<CoreWallet>;
-    coinSelection: CoinSelection<Utxo>;
-    transactionHistoryCapability: TransactionHistoryCapability<TTransaction>;
+    coinSelection: CoinSelection<ledger.Utxo>;
+    transactionHistoryCapability: TransactionHistoryCapability;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type AnyContext = Context<any, any, any>;

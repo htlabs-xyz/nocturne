@@ -13,3 +13,4 @@ export * as WalletError from './WalletError.js';
 export * from './CoreWallet.js';
 export * from './Transaction.js';
 export * as TransactionHistoryStorage from '../storage/index.js';
+export * as UnshieldedState from './UnshieldedState.js';

@@ -9,46 +9,44 @@ import { CoinsAndBalancesCapability } from './v1/CoinsAndBalances.js';
 import { KeysCapability } from './v1/Keys.js';
 import { TokenTransfer } from './v1/Transacting.js';
 import { WalletSyncUpdate } from './v1/Sync.js';
+import { UtxoWithMeta } from './v1/UnshieldedState.js';
 import { Variant, VariantBuilder, WalletLike } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { Runtime, WalletBuilder } from '@midnight-ntwrk/wallet-sdk-runtime';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import { PublicKeys } from './KeyStore.js';
 import { SyncProgress } from './v1/SyncProgress.js';
 import { TransactionHistoryEntry } from './storage/index.js';
 
-export type UnshieldedWalletCapabilities<TSerialized = string, TTransaction = ledger.FinalizedTransaction> = {
+export type UnshieldedWalletCapabilities<TSerialized = string> = {
   serialization: SerializationCapability<CoreWallet, TSerialized>;
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
-  transactionHistory: TransactionHistoryCapability<TTransaction>;
+  transactionHistory: TransactionHistoryCapability;
 };
 
-export class UnshieldedWalletState<TSerialized = string, TTransaction = ledger.FinalizedTransaction> {
+export class UnshieldedWalletState<TSerialized = string> {
   static readonly mapState =
-    <TSerialized = string, TTransaction = ledger.FinalizedTransaction>(
-      capabilities: UnshieldedWalletCapabilities<TSerialized, TTransaction>,
-    ) =>
-    (state: ProtocolState.ProtocolState<CoreWallet>): UnshieldedWalletState<TSerialized, TTransaction> => {
+    <TSerialized = string>(capabilities: UnshieldedWalletCapabilities<TSerialized>) =>
+    (state: ProtocolState.ProtocolState<CoreWallet>): UnshieldedWalletState<TSerialized> => {
       return new UnshieldedWalletState(state, capabilities);
     };
 
   readonly protocolVersion: ProtocolVersion.ProtocolVersion;
   readonly state: CoreWallet;
-  readonly capabilities: UnshieldedWalletCapabilities<TSerialized, TTransaction>;
+  readonly capabilities: UnshieldedWalletCapabilities<TSerialized>;
 
   get balances(): Record<ledger.RawTokenType, bigint> {
     return this.capabilities.coinsAndBalances.getAvailableBalances(this.state);
   }
 
-  get totalCoins(): readonly Utxo[] {
+  get totalCoins(): readonly UtxoWithMeta[] {
     return this.capabilities.coinsAndBalances.getTotalCoins(this.state);
   }
 
-  get availableCoins(): readonly Utxo[] {
+  get availableCoins(): readonly UtxoWithMeta[] {
     return this.capabilities.coinsAndBalances.getAvailableCoins(this.state);
   }
 
-  get pendingCoins(): readonly Utxo[] {
+  get pendingCoins(): readonly UtxoWithMeta[] {
     return this.capabilities.coinsAndBalances.getPendingCoins(this.state);
   }
 
@@ -64,10 +62,7 @@ export class UnshieldedWalletState<TSerialized = string, TTransaction = ledger.F
     return this.capabilities.transactionHistory.getAll();
   }
 
-  constructor(
-    state: ProtocolState.ProtocolState<CoreWallet>,
-    capabilities: UnshieldedWalletCapabilities<TSerialized, TTransaction>,
-  ) {
+  constructor(state: ProtocolState.ProtocolState<CoreWallet>, capabilities: UnshieldedWalletCapabilities<TSerialized>) {
     this.protocolVersion = state.version;
     this.state = state.state;
     this.capabilities = capabilities;
@@ -91,7 +86,7 @@ export interface CustomizedUnshieldedWallet<
   TSyncUpdate = WalletSyncUpdate,
   TSerialized = string,
 > extends WalletLike.WalletLike<[Variant.VersionedVariant<V1Variant<TSerialized, TSyncUpdate, TTransaction>>]> {
-  readonly state: rx.Observable<UnshieldedWalletState<TSerialized, TTransaction>>;
+  readonly state: rx.Observable<UnshieldedWalletState<TSerialized>>;
 
   start(): Promise<void>;
 
@@ -114,7 +109,7 @@ export interface CustomizedUnshieldedWallet<
 
   serializeState(): Promise<TSerialized>;
 
-  waitForSyncedState(allowedGap?: bigint): Promise<UnshieldedWalletState<TSerialized, TTransaction>>;
+  waitForSyncedState(allowedGap?: bigint): Promise<UnshieldedWalletState<TSerialized>>;
 
   getAddress(): Promise<ledger.UserAddress>;
 }
@@ -175,7 +170,7 @@ export function CustomUnshieldedWallet<
       return CustomUnshieldedWalletImplementation.startFirst(CustomUnshieldedWalletImplementation, deserialized);
     }
 
-    readonly state: rx.Observable<UnshieldedWalletState<TSerialized, TTransaction>>;
+    readonly state: rx.Observable<UnshieldedWalletState<TSerialized>>;
 
     constructor(
       runtime: Runtime.Runtime<[Variant.VersionedVariant<V1Variant<TSerialized, TSyncUpdate, TTransaction>>]>,
@@ -184,7 +179,7 @@ export function CustomUnshieldedWallet<
       super(runtime, scope);
       this.state = this.rawState.pipe(
         rx.map(
-          UnshieldedWalletState.mapState<TSerialized, TTransaction>(
+          UnshieldedWalletState.mapState<TSerialized>(
             CustomUnshieldedWalletImplementation.allVariantsRecord()[V1Tag].variant,
           ),
         ),
@@ -235,7 +230,7 @@ export function CustomUnshieldedWallet<
         .pipe(Effect.runPromise);
     }
 
-    waitForSyncedState(allowedGap: bigint = 0n): Promise<UnshieldedWalletState<TSerialized, TTransaction>> {
+    waitForSyncedState(allowedGap: bigint = 0n): Promise<UnshieldedWalletState<TSerialized>> {
       return rx.firstValueFrom(
         this.state.pipe(rx.filter((state) => state.state.progress.isCompleteWithin(allowedGap))),
       );

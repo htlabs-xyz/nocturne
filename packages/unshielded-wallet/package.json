@@ -23,6 +23,7 @@
     }
   },
   "dependencies": {
+<<<<<<< HEAD
     "@midnight-ntwrk/ledger-v6": "6.1.0-alpha.6",
     "@midnight-ntwrk/wallet-sdk-abstractions": "1.0.0-beta.9",
     "@midnight-ntwrk/wallet-sdk-address-format": "3.0.0-beta.9",
@@ -30,6 +31,14 @@
     "@midnight-ntwrk/wallet-sdk-hd": "3.0.0-beta.7",
     "@midnight-ntwrk/wallet-sdk-indexer-client": "1.0.0-beta.12",
     "@midnight-ntwrk/wallet-sdk-unshielded-state": "1.0.0-beta.11",
+=======
+    "@midnight-ntwrk/ledger-v6": "6.1.0-alpha.5",
+    "@midnight-ntwrk/wallet-sdk-abstractions": "1.0.0-beta.8",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.0.0-beta.7",
+    "@midnight-ntwrk/wallet-sdk-capabilities": "3.0.0-beta.7",
+    "@midnight-ntwrk/wallet-sdk-hd": "3.0.0-beta.6",
+    "@midnight-ntwrk/wallet-sdk-indexer-client": "1.0.0-beta.11",
+>>>>>>> 485df33 (chore: move unshielded state to the unshielded wallet)
     "@midnight-ntwrk/wallet-sdk-utilities": "1.0.0-beta.7",
     "effect": "^3.17.3",
     "rxjs": "^7.5"

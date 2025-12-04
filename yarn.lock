@@ -2694,7 +2694,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+<<<<<<< HEAD
 "@midnight-ntwrk/wallet-sdk-unshielded-state@npm:1.0.0-beta.11, @midnight-ntwrk/wallet-sdk-unshielded-state@workspace:packages/unshielded-state":
+=======
+"@midnight-ntwrk/wallet-sdk-unshielded-state@workspace:packages/unshielded-state":
+>>>>>>> 485df33 (chore: move unshielded state to the unshielded wallet)
   version: 0.0.0-use.local
   resolution: "@midnight-ntwrk/wallet-sdk-unshielded-state@workspace:packages/unshielded-state"
   dependencies:
@@ -2712,6 +2716,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@midnight-ntwrk/wallet-sdk-unshielded-wallet@workspace:packages/unshielded-wallet"
   dependencies:
+<<<<<<< HEAD
     "@midnight-ntwrk/ledger-v6": "npm:6.1.0-alpha.6"
     "@midnight-ntwrk/wallet-sdk-abstractions": "npm:1.0.0-beta.9"
     "@midnight-ntwrk/wallet-sdk-address-format": "npm:3.0.0-beta.9"
@@ -2719,6 +2724,14 @@ __metadata:
     "@midnight-ntwrk/wallet-sdk-hd": "npm:3.0.0-beta.7"
     "@midnight-ntwrk/wallet-sdk-indexer-client": "npm:1.0.0-beta.12"
     "@midnight-ntwrk/wallet-sdk-unshielded-state": "npm:1.0.0-beta.11"
+=======
+    "@midnight-ntwrk/ledger-v6": "npm:6.1.0-alpha.5"
+    "@midnight-ntwrk/wallet-sdk-abstractions": "npm:1.0.0-beta.8"
+    "@midnight-ntwrk/wallet-sdk-address-format": "npm:3.0.0-beta.7"
+    "@midnight-ntwrk/wallet-sdk-capabilities": "npm:3.0.0-beta.7"
+    "@midnight-ntwrk/wallet-sdk-hd": "npm:3.0.0-beta.6"
+    "@midnight-ntwrk/wallet-sdk-indexer-client": "npm:1.0.0-beta.11"
+>>>>>>> 485df33 (chore: move unshielded state to the unshielded wallet)
     "@midnight-ntwrk/wallet-sdk-utilities": "npm:1.0.0-beta.7"
     effect: "npm:^3.17.3"
     eslint: "npm:^9.37.0"

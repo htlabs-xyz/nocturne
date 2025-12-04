@@ -198,15 +198,21 @@ describe('Dust Registration', () => {
           rx.filter(
             (s) =>
               s.unshielded.availableCoins.length > 0 &&
-              s.unshielded.availableCoins.some((coin) => coin.registeredForDustGeneration === false),
+              s.unshielded.availableCoins.some((coin) => coin.meta.registeredForDustGeneration === false),
           ),
         ),
     );
     const nightBalanceBeforeRegistration = receiverStateWithNight.unshielded.balances.get(ledger.nativeToken().raw);
 
+<<<<<<< HEAD
     const nightUtxos = receiverStateWithNight.unshielded.availableCoins
       .filter((coin) => coin.registeredForDustGeneration === false)
       .filter((coin) => coin.type === ledger.nativeToken().raw);
+=======
+    const nightUtxos = receiverStateWithNight.unshielded.availableCoins.filter(
+      (coin) => coin.meta.registeredForDustGeneration === false,
+    );
+>>>>>>> 485df33 (chore: move unshielded state to the unshielded wallet)
 
     expect(ArrayOps.sumBigInt(nightUtxos.map((coin) => coin.value))).toEqual(nightBalanceBeforeRegistration);
 

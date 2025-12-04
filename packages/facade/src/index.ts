@@ -13,7 +13,6 @@
 import { combineLatest, map, Observable } from 'rxjs';
 import { ShieldedWalletState, type ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import { type UnshieldedWallet, UnshieldedWalletState } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
-import { type Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import { AnyTransaction, DustWallet, DustWalletState } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { ProvingRecipe } from '@midnight-ntwrk/wallet-sdk-shielded/v1';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
@@ -37,6 +36,13 @@ export type CombinedSwapInputs = {
 export type CombinedSwapOutputs = CombinedTokenTransfer;
 
 export type TransactionIdentifier = string;
+
+export type UtxoWithMeta = {
+  utxo: ledger.Utxo;
+  meta: {
+    ctime: Date;
+  };
+};
 
 export class FacadeState {
   public readonly shielded: ShieldedWalletState;
@@ -203,7 +209,7 @@ export class WalletFacade {
   }
 
   async registerNightUtxosForDustGeneration(
-    nightUtxos: readonly Utxo[],
+    nightUtxos: readonly UtxoWithMeta[],
     nightVerifyingKey: ledger.SignatureVerifyingKey,
     signDustRegistration: (payload: Uint8Array) => Promise<ledger.Signature> | ledger.Signature,
     dustReceiverAddress?: string,
@@ -220,7 +226,7 @@ export class WalletFacade {
     const transaction = await this.dust.createDustGenerationTransaction(
       nextBlock,
       ttl,
-      nightUtxos.map((utxo) => ({ ...utxo, ctime: new Date(utxo.ctime) })),
+      nightUtxos.map(({ utxo, meta }) => ({ ...utxo, ctime: meta.ctime })),
       nightVerifyingKey,
       receiverAddress,
     );
@@ -296,7 +302,7 @@ export class WalletFacade {
   }
 
   async deregisterFromDustGeneration(
-    nightUtxos: Utxo[],
+    nightUtxos: UtxoWithMeta[],
     nightVerifyingKey: ledger.SignatureVerifyingKey,
     signDustRegistration: (payload: Uint8Array) => Promise<ledger.Signature> | ledger.Signature,
   ): Promise<ProvingRecipe.TransactionToProve> {
@@ -306,7 +312,7 @@ export class WalletFacade {
     const transaction = await this.dust.createDustGenerationTransaction(
       nextBlock,
       ttl,
-      nightUtxos.map((utxo) => ({ ...utxo, ctime: new Date(utxo.ctime) })),
+      nightUtxos.map(({ utxo, meta }) => ({ ...utxo, ctime: meta.ctime })),
       nightVerifyingKey,
       undefined,
     );

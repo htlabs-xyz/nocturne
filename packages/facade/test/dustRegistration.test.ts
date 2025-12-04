@@ -193,13 +193,13 @@ describe('Dust Registration', () => {
           rx.filter(
             (s) =>
               s.unshielded.availableCoins.length > 0 &&
-              s.unshielded.availableCoins.some((coin) => coin.registeredForDustGeneration === false),
+              s.unshielded.availableCoins.some((coin) => coin.meta.registeredForDustGeneration === false),
           ),
         ),
     );
 
     const nightUtxos = receiverStateWithNight.unshielded.availableCoins.filter(
-      (coin) => coin.registeredForDustGeneration === false,
+      (coin) => coin.meta.registeredForDustGeneration === false,
     );
 
     expect(nightUtxos.length).toBeGreaterThan(0);

@@ -1,19 +1,12 @@
 import { ProtocolVersion } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { Effect } from 'effect';
 import { createSyncProgress, SyncProgress, SyncProgressData } from './SyncProgress.js';
 import { PublicKeys } from '../KeyStore.js';
-import {
-  UnshieldedStateAPI,
-  UnshieldedTransaction,
-  Utxo,
-  UnshieldedStateService,
-  UnshieldedState,
-  UtxoNotFoundError,
-} from '@midnight-ntwrk/wallet-sdk-unshielded-state';
-import { ParseError } from 'effect/ParseResult';
+import { UnshieldedState, UnshieldedUpdate } from './UnshieldedState.js';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
+import { pipe, Array as Arr } from 'effect';
 
 export type CoreWallet = Readonly<{
-  state: UnshieldedStateAPI;
+  state: UnshieldedState;
   publicKeys: PublicKeys;
   protocolVersion: ProtocolVersion.ProtocolVersion;
   progress: SyncProgress;
@@ -22,37 +15,29 @@ export type CoreWallet = Readonly<{
 
 export const CoreWallet = {
   init(publicKeys: PublicKeys, networkId: string): CoreWallet {
-    return Effect.gen(function* () {
-      const unshieldedStateAPI = yield* UnshieldedStateService;
-
-      return {
-        state: unshieldedStateAPI,
-        publicKeys,
-        protocolVersion: ProtocolVersion.MinSupportedVersion,
-        progress: createSyncProgress(),
-        networkId,
-      };
-    }).pipe(Effect.provide(UnshieldedStateService.Live()), Effect.runSync);
+    return {
+      state: UnshieldedState.empty(),
+      publicKeys,
+      protocolVersion: ProtocolVersion.MinSupportedVersion,
+      progress: createSyncProgress(),
+      networkId,
+    };
   },
 
   restore(
-    unshieldedState: UnshieldedState,
+    state: UnshieldedState,
     publicKeys: PublicKeys,
     syncProgress: Omit<SyncProgressData, 'isConnected'>,
     protocolVersion: ProtocolVersion.ProtocolVersion,
     networkId: string,
   ): CoreWallet {
-    return Effect.gen(function* () {
-      const unshieldedStateAPI = yield* UnshieldedStateService;
-
-      return {
-        state: unshieldedStateAPI,
-        publicKeys,
-        protocolVersion,
-        progress: createSyncProgress(syncProgress),
-        networkId,
-      };
-    }).pipe(Effect.provide(UnshieldedStateService.LiveWithState(unshieldedState)), Effect.runSync);
+    return {
+      state,
+      publicKeys,
+      protocolVersion,
+      progress: createSyncProgress(syncProgress),
+      networkId,
+    };
   },
 
   updateProgress(
@@ -67,29 +52,36 @@ export const CoreWallet = {
     return { ...wallet, progress };
   },
 
-  applyTx(coreWallet: CoreWallet, tx: UnshieldedTransaction): CoreWallet {
-    return Effect.gen(function* () {
-      yield* coreWallet.state.applyTx(tx);
-
-      return coreWallet;
-    }).pipe(Effect.runSync);
+  applyUpdate(coreWallet: CoreWallet, update: UnshieldedUpdate): CoreWallet {
+    return { ...coreWallet, state: UnshieldedState.applyUpdate(coreWallet.state, update) };
   },
 
-  rollbackTx(coreWallet: CoreWallet, tx: UnshieldedTransaction): CoreWallet {
-    return Effect.gen(function* () {
-      yield* coreWallet.state.rollbackTx(tx);
-
-      return coreWallet;
-    }).pipe(Effect.runSync);
+  applyFailedUpdate(coreWallet: CoreWallet, update: UnshieldedUpdate): CoreWallet {
+    return { ...coreWallet, state: UnshieldedState.applyFailedUpdate(coreWallet.state, update) };
   },
 
-  spend(coreWallet: CoreWallet, utxos: Utxo[]): Effect.Effect<CoreWallet, ParseError | UtxoNotFoundError> {
-    return Effect.gen(function* () {
-      for (const utxo of utxos) {
-        yield* coreWallet.state.spend(utxo);
-      }
+  rollbackUtxo(coreWallet: CoreWallet, utxo: ledger.Utxo): CoreWallet {
+    return { ...coreWallet, state: UnshieldedState.rollbackSpendByUtxo(coreWallet.state, utxo) };
+  },
 
-      return coreWallet;
-    });
+  spend(coreWallet: CoreWallet, utxo: ledger.Utxo): CoreWallet {
+    const newState = UnshieldedState.spendByUtxo(coreWallet.state, utxo);
+    return { ...coreWallet, state: newState };
+  },
+
+  spendUtxos(wallet: CoreWallet, utxos: ReadonlyArray<ledger.Utxo>): [ReadonlyArray<ledger.Utxo>, CoreWallet] {
+    const [spentUtxos, state] = pipe(
+      utxos,
+      Arr.reduce(
+        [[], wallet.state] as [ReadonlyArray<ledger.Utxo>, UnshieldedState],
+        ([accUtxos, state], utxoToSpend) => {
+          const nextState = UnshieldedState.spendByUtxo(state, utxoToSpend);
+
+          return [accUtxos.concat([utxoToSpend]), nextState] as [ReadonlyArray<ledger.Utxo>, UnshieldedState];
+        },
+      ),
+    );
+    const updated: CoreWallet = { ...wallet, state };
+    return [spentUtxos, updated];
   },
 };

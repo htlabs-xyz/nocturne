@@ -232,7 +232,7 @@ describe('Wallet Facade Transfer', () => {
     const isValid = await rx.firstValueFrom(
       receiverFacade
         .state()
-        .pipe(rx.filter((s) => s.unshielded.availableCoins.some((c) => c.value === tokenValue(1n)))),
+        .pipe(rx.filter((s) => s.unshielded.availableCoins.some((c) => c.utxo.value === tokenValue(1n)))),
     );
 
     expect(isValid).toBeTruthy();
@@ -331,7 +331,7 @@ describe('Wallet Facade Transfer', () => {
     const isValid = await rx.firstValueFrom(
       receiverFacade
         .state()
-        .pipe(rx.filter((s) => s.unshielded.availableCoins.some((c) => c.value === tokenValue(1n)))),
+        .pipe(rx.filter((s) => s.unshielded.availableCoins.some((c) => c.utxo.value === tokenValue(1n)))),
     );
 
     expect(isValid).toBeTruthy();

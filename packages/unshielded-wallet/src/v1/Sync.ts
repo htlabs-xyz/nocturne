@@ -7,7 +7,8 @@ import { SyncWalletError, WalletError } from './WalletError.js';
 import { WsURL } from '@midnight-ntwrk/wallet-sdk-utilities/networking';
 import { TransactionHistoryCapability } from './TransactionHistory.js';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import { UnshieldedTransaction, UnshieldedTransactionSchema } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedUpdate, UtxoWithMeta } from './UnshieldedState.js';
+import { ProgressSchema, TransactionSchema } from './Schema.js';
 
 export interface SyncService<TState, TUpdate> {
   updates: (state: TState) => Stream.Stream<TUpdate, WalletError, Scope.Scope>;
@@ -22,29 +23,43 @@ export type IndexerClientConnection = {
   indexerWsUrl?: string;
 };
 
+export const WalletSyncUpdateSchema = Schema.Union(TransactionSchema, ProgressSchema);
+
+export type WalletSyncUpdate = Schema.Schema.Type<typeof WalletSyncUpdateSchema>;
+
 export type DefaultSyncConfiguration = {
   indexerClientConnection: IndexerClientConnection;
 };
 
 export type DefaultSyncContext = {
-  transactionHistoryCapability: TransactionHistoryCapability<UnshieldedTransaction>;
+  transactionHistoryCapability: TransactionHistoryCapability;
 };
 
-const TransactionSchema = Schema.Struct({
-  type: Schema.Literal('UnshieldedTransaction'),
-  transaction: UnshieldedTransactionSchema,
-});
+const mapSyncUpdate = (update: WalletSyncUpdate): UnshieldedUpdate => {
+  if (update.type === 'UnshieldedTransactionsProgress') {
+    throw new Error('Progress updates should not be mapped to UnshieldedUpdate');
+  }
 
-const ProgressSchema = Schema.Struct({
-  type: Schema.Literal('UnshieldedTransactionsProgress'),
-  highestTransactionId: Schema.Number,
-});
+  const mapUtxo = (utxo: (typeof update.createdUtxos)[number]): UtxoWithMeta => ({
+    utxo: {
+      value: utxo.value,
+      owner: utxo.owner,
+      type: utxo.tokenType,
+      intentHash: utxo.intentHash,
+      outputNo: utxo.outputIndex,
+    },
+    meta: {
+      ctime: utxo.ctime ? new Date(utxo.ctime * 1000) : new Date(),
+      registeredForDustGeneration: utxo.registeredForDustGeneration,
+    },
+  });
 
-export const WalletSyncUpdateSchema = Schema.Union(TransactionSchema, ProgressSchema);
-
-export type WalletSyncUpdate = Schema.Schema.Type<typeof WalletSyncUpdateSchema>;
-
-const WalletSyncUpdateDecoder = Schema.decodeUnknownEither(WalletSyncUpdateSchema);
+  return {
+    createdUtxos: update.createdUtxos.map(mapUtxo),
+    spentUtxos: update.spentUtxos.map(mapUtxo),
+    status: update.transaction.transactionResult?.status === 'SUCCESS' ? 'SUCCESS' : 'FAILURE',
+  };
+};
 
 export const makeDefaultSyncService = (config: DefaultSyncConfiguration): SyncService<CoreWallet, WalletSyncUpdate> => {
   return {
@@ -83,64 +98,9 @@ export const makeDefaultSyncService = (config: DefaultSyncConfiguration): SyncSe
         Stream.mapError((error) => new SyncWalletError(error)),
         Stream.mapEffect((subscription) => {
           const { unshieldedTransactions } = subscription;
-          const { type } = unshieldedTransactions;
-
-          if (type === 'UnshieldedTransactionsProgress') {
-            return pipe(
-              WalletSyncUpdateDecoder({
-                type,
-                highestTransactionId: unshieldedTransactions.highestTransactionId,
-              }),
-              Either.mapLeft((err) => new SyncWalletError(err)),
-              EitherOps.toEffect,
-            );
-          }
-
-          const { transaction, createdUtxos, spentUtxos } = unshieldedTransactions;
-          const isRegularTransaction = transaction.type === 'RegularTransaction';
-          const transactionResult = isRegularTransaction
-            ? {
-                status: transaction.transactionResult.status,
-                segments:
-                  transaction.transactionResult.segments?.map((segment) => ({
-                    id: segment.id.toString(),
-                    success: segment.success,
-                  })) ?? null,
-              }
-            : null;
 
           return pipe(
-            WalletSyncUpdateDecoder({
-              type,
-              transaction: {
-                type: transaction.type,
-                id: transaction.id,
-                hash: transaction.hash,
-                identifiers: isRegularTransaction ? transaction.identifiers : [],
-                protocolVersion: transaction.protocolVersion,
-                transactionResult,
-                block: transaction.block,
-                fees: isRegularTransaction ? transaction.fees : undefined,
-                createdUtxos: createdUtxos.map((utxo) => ({
-                  value: utxo.value,
-                  owner: utxo.owner,
-                  type: utxo.tokenType,
-                  intentHash: utxo.intentHash,
-                  outputNo: utxo.outputIndex,
-                  registeredForDustGeneration: utxo.registeredForDustGeneration,
-                  ctime: utxo.ctime ? utxo.ctime * 1000 : undefined,
-                })),
-                spentUtxos: spentUtxos.map((utxo) => ({
-                  value: utxo.value,
-                  owner: utxo.owner,
-                  type: utxo.tokenType,
-                  intentHash: utxo.intentHash,
-                  outputNo: utxo.outputIndex,
-                  registeredForDustGeneration: utxo.registeredForDustGeneration,
-                  ctime: utxo.ctime ? utxo.ctime * 1000 : undefined,
-                })),
-              },
-            }),
+            Schema.decodeUnknownEither(WalletSyncUpdateSchema)(unshieldedTransactions),
             Either.mapLeft((err) => new SyncWalletError(err)),
             EitherOps.toEffect,
           );
@@ -161,16 +121,23 @@ export const makeDefaultSyncCapability = (
           highestTransactionId: BigInt(update.highestTransactionId),
           isConnected: true,
         });
+      } else {
+        const mappedUpdate = mapSyncUpdate(update);
+
+        const newStateAfterApplyingUpdate =
+          mappedUpdate.status === 'FAILURE'
+            ? CoreWallet.applyFailedUpdate(state, mappedUpdate)
+            : CoreWallet.applyUpdate(state, mappedUpdate);
+
+        const newState = CoreWallet.updateProgress(newStateAfterApplyingUpdate, {
+          appliedId: BigInt(update.transaction.id),
+        });
+
+        const { transactionHistoryCapability } = getContext();
+        void transactionHistoryCapability.create(update);
+
+        return newState;
       }
-
-      const newState = CoreWallet.updateProgress(CoreWallet.applyTx(state, update.transaction), {
-        appliedId: BigInt(update.transaction.id),
-      });
-
-      const { transactionHistoryCapability } = getContext();
-      void transactionHistoryCapability.create(update.transaction);
-
-      return newState;
     },
   };
 };

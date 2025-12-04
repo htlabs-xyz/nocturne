@@ -1,13 +1,12 @@
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { Effect, Either, Option, pipe, HashSet } from 'effect';
+import { Either, Option, pipe } from 'effect';
 import { CoreWallet } from './CoreWallet.js';
 import { SignError, TransactingError, WalletError } from './WalletError.js';
 import { CoinSelection, getBalanceRecipe, Imbalances } from '@midnight-ntwrk/wallet-sdk-capabilities';
 import { isIntentBound, TransactionTrait } from './Transaction.js';
 import { CoinsAndBalancesCapability } from './CoinsAndBalances.js';
 import { KeysCapability } from './Keys.js';
-import { Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
 import { MidnightBech32m, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 const GUARANTEED_SEGMENT = 0;
@@ -77,7 +76,7 @@ export type DefaultTransactingConfiguration = {
 };
 
 export type DefaultTransactingContext = {
-  coinSelection: CoinSelection<Utxo>;
+  coinSelection: CoinSelection<ledger.Utxo>;
   coinsAndBalancesCapability: CoinsAndBalancesCapability<CoreWallet>;
   keysCapability: KeysCapability<CoreWallet>;
 };
@@ -112,14 +111,14 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
   implements TransactingCapability<ledger.UnprovenTransaction, CoreWallet>
 {
   public readonly networkId: NetworkId.NetworkId;
-  public readonly getCoinSelection: () => CoinSelection<Utxo>;
+  public readonly getCoinSelection: () => CoinSelection<ledger.Utxo>;
   public readonly txTrait: TransactionTrait<TTransaction>;
   readonly getCoins: () => CoinsAndBalancesCapability<CoreWallet>;
   readonly getKeys: () => KeysCapability<CoreWallet>;
 
   constructor(
     networkId: NetworkId.NetworkId,
-    getCoinSelection: () => CoinSelection<Utxo>,
+    getCoinSelection: () => CoinSelection<ledger.Utxo>,
     getCoins: () => CoinsAndBalancesCapability<CoreWallet>,
     getKeys: () => KeysCapability<CoreWallet>,
     txTrait: TransactionTrait<TTransaction>,
@@ -135,7 +134,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
     wallet: CoreWallet,
     transaction: TTransaction,
   ): Either.Either<TransactingResult<TTransaction, CoreWallet>, WalletError> {
-    return Either.gen(function* () {
+    return Either.gen(this, function* () {
       const segments = TransactionTrait.default.getSegments(transaction);
 
       if (!transaction.intents || !transaction.intents.size || !segments.length) {
@@ -164,16 +163,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         // // intent is balanced
         if (!imbalances.length) continue;
 
-        const latestStateEither = Effect.runSync(Effect.either(wallet.state.getLatestState()));
-
-        if (Either.isLeft(latestStateEither)) {
-          return yield* Either.left(
-            new TransactingError({ message: 'Failed to get latest state', cause: latestStateEither.left }),
-          );
-        }
-
-        const latestState = latestStateEither.right;
-        const availableCoins = HashSet.toValues(latestState.utxos);
+        const availableCoins = this.getCoins().getAvailableCoins(wallet);
 
         if (!availableCoins.length) {
           return yield* Either.left(new TransactingError({ message: 'No available coins to spend' }));
@@ -182,8 +172,8 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         // select inputs, receive the change outputs
         const { inputs, outputs: changeOutputs } = yield* Either.try({
           try: () =>
-            getBalanceRecipe<Utxo, ledger.UtxoOutput>({
-              coins: availableCoins,
+            getBalanceRecipe<ledger.Utxo, ledger.UtxoOutput>({
+              coins: availableCoins.map(({ utxo }) => utxo),
               initialImbalances: Imbalances.fromEntries(imbalances),
               feeTokenType: '',
               transactionCostModel: {
@@ -203,15 +193,12 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         });
 
         // mark the coins as spent
-        const spendResult = Effect.runSync(Effect.either(CoreWallet.spend(wallet, inputs)));
+        const [spentInputs] = yield* Either.try({
+          try: () => CoreWallet.spendUtxos(wallet, inputs),
+          catch: (error) => new TransactingError({ message: 'Failed to spend coins', cause: error }),
+        });
 
-        if (Either.isLeft(spendResult)) {
-          return yield* Either.left(
-            new TransactingError({ message: 'Failed to spend coins', cause: spendResult.left }),
-          );
-        }
-
-        const ledgerInputs = inputs.map((input) => ({
+        const ledgerInputs = spentInputs.map((input) => ({
           ...input,
           intentHash: input.intentHash,
           owner: publicKey,
@@ -337,19 +324,12 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
 
       const targetImbalances = Imbalances.fromEntries(Object.entries(desiredInputs));
 
-      const latestStateEither = Effect.runSync(Effect.either(wallet.state.getLatestState()));
-      if (Either.isLeft(latestStateEither)) {
-        return yield* Either.left(
-          new TransactingError({ message: 'Failed to get latest state', cause: latestStateEither.left }),
-        );
-      }
-      const latestState = latestStateEither.right;
-      const availableCoins = HashSet.toValues(latestState.utxos);
+      const availableCoins = this.getCoins().getAvailableCoins(wallet);
 
       const { inputs, outputs: changeOutputs } = yield* Either.try({
         try: () =>
-          getBalanceRecipe<Utxo, ledger.UtxoOutput>({
-            coins: availableCoins,
+          getBalanceRecipe<ledger.Utxo, ledger.UtxoOutput>({
+            coins: availableCoins.map(({ utxo }) => utxo),
             initialImbalances: Imbalances.empty(),
             feeTokenType: '',
             transactionCostModel: {
@@ -369,15 +349,12 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         },
       });
 
-      const spendResultEither = Effect.runSync(Effect.either(CoreWallet.spend(wallet, inputs)));
-      if (Either.isLeft(spendResultEither)) {
-        return yield* Either.left(
-          new TransactingError({ message: 'Failed to spend coins', cause: spendResultEither.left }),
-        );
-      }
-      const updatedWallet = spendResultEither.right;
+      const [spentInputs, updatedWallet] = yield* Either.try({
+        try: () => CoreWallet.spendUtxos(wallet, inputs),
+        catch: (error) => new TransactingError({ message: 'Failed to spend coins', cause: error }),
+      });
 
-      const ledgerInputs = inputs.map((input) => ({
+      const ledgerInputs = spentInputs.map((input) => ({
         ...input,
         owner: wallet.publicKeys.publicKey,
       }));

@@ -1,8 +1,8 @@
-import { Effect, Either, pipe, Schema } from 'effect';
+import { Either, pipe, Schema } from 'effect';
 import { WalletError } from './WalletError.js';
 import { CoreWallet } from './CoreWallet.js';
 import { NetworkId, ProtocolVersion } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { UnshieldedStateSchema } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedState } from './UnshieldedState.js';
 
 export type SerializationCapability<TWallet, TSerialized> = {
   serialize(wallet: TWallet): TSerialized;
@@ -14,13 +14,30 @@ export type DefaultSerializationConfiguration = {
 };
 
 export const makeDefaultV1SerializationCapability = (): SerializationCapability<CoreWallet, string> => {
+  const UtxoWithMetaSchema = Schema.Struct({
+    utxo: Schema.Struct({
+      value: Schema.BigInt,
+      owner: Schema.String,
+      type: Schema.String,
+      intentHash: Schema.String,
+      outputNo: Schema.Number,
+    }),
+    meta: Schema.Struct({
+      ctime: Schema.Date,
+      registeredForDustGeneration: Schema.Boolean,
+    }),
+  });
+
   const SnapshotSchema = Schema.Struct({
     publicKeys: Schema.Struct({
       publicKey: Schema.String,
       addressHex: Schema.String,
       address: Schema.String,
     }),
-    state: UnshieldedStateSchema,
+    state: Schema.Struct({
+      utxos: Schema.Array(UtxoWithMetaSchema),
+      pendingUtxos: Schema.Array(UtxoWithMetaSchema),
+    }),
     protocolVersion: Schema.BigInt,
     appliedId: Schema.optional(Schema.BigInt),
     networkId: Schema.String,
@@ -31,7 +48,10 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
     serialize: (wallet) => {
       const buildSnapshot = (w: CoreWallet): Snapshot => ({
         publicKeys: w.publicKeys,
-        state: Effect.runSync(w.state.getLatestState()),
+        state: {
+          utxos: [...w.state.availableUtxos],
+          pendingUtxos: [...w.state.pendingUtxos],
+        },
         protocolVersion: w.protocolVersion,
         networkId: w.networkId,
         appliedId: w.progress?.appliedId,
@@ -46,7 +66,7 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
         Either.mapLeft((err) => WalletError.other(err)),
         Either.map((snapshot) => {
           return CoreWallet.restore(
-            snapshot.state,
+            UnshieldedState.restore(snapshot.state.utxos, snapshot.state.pendingUtxos),
             snapshot.publicKeys,
             {
               highestTransactionId: snapshot.appliedId ?? 0n,

@@ -8,9 +8,10 @@ import {
 } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { EitherOps } from '@midnight-ntwrk/wallet-sdk-utilities';
 import { SerializationCapability } from './Serialization.js';
-import { WalletSyncUpdate, SyncCapability, SyncService } from './Sync.js';
+import { SyncCapability, SyncService } from './Sync.js';
+import { WalletSyncUpdate } from './SyncSchema.js';
 import { TransactingCapability, TokenTransfer } from './Transacting.js';
-import { OtherWalletError, WalletError } from './WalletError.js';
+import { WalletError } from './WalletError.js';
 import { CoinsAndBalancesCapability } from './CoinsAndBalances.js';
 import { KeysCapability } from './Keys.js';
 import { CoinSelection } from '@midnight-ntwrk/wallet-sdk-capabilities';
@@ -49,7 +50,7 @@ export declare namespace RunningV1Variant {
     coinsAndBalancesCapability: CoinsAndBalancesCapability<CoreWallet>;
     keysCapability: KeysCapability<CoreWallet>;
     coinSelection: CoinSelection<ledger.Utxo>;
-    transactionHistoryCapability: TransactionHistoryCapability;
+    transactionHistoryCapability: TransactionHistoryCapability<WalletSyncUpdate>;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type AnyContext = Context<any, any, any>;
@@ -113,14 +114,7 @@ export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
       Stream.flatMap((state) => this.#v1Context.syncService.updates(state)),
       Stream.mapEffect((update) => {
         return SubscriptionRef.updateEffect(this.#context.stateRef, (state) =>
-          Effect.try({
-            try: () => this.#v1Context.syncCapability.applyUpdate(state, update),
-            catch: (err) =>
-              new OtherWalletError({
-                message: 'Error while applying sync update',
-                cause: err,
-              }),
-          }),
+          pipe(this.#v1Context.syncCapability.applyUpdate(state, update), EitherOps.toEffect),
         );
       }),
       Stream.tapError((error) => Console.error(error)),

@@ -12,7 +12,7 @@
 // limitations under the License.
 import { sampleIntentHash } from '@midnight-ntwrk/ledger-v6';
 import { HDWallet, Roles } from '@midnight-ntwrk/wallet-sdk-hd';
-import { UnshieldedTransaction, Utxo } from '@midnight-ntwrk/wallet-sdk-unshielded-state';
+import { UnshieldedUpdate, UtxoWithMeta } from '../src/v1/SyncSchema.js';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DefaultV1Configuration } from '../src/v1/index.js';
 import { InMemoryTransactionHistoryStorage } from '../src/storage/index.js';
@@ -23,44 +23,51 @@ import { InMemoryTransactionHistoryStorage } from '../src/storage/index.js';
 export const generateMockTransaction = (
   owner: string,
   type: string,
-  applyStage: 'SucceedEntirely' | 'FailEntirely',
+  applyStage: 'SUCCESS' | 'FAILURE',
   createdOutputsAmount: number,
   spentOutputsAmount: number,
-): UnshieldedTransaction => {
-  const createdOutputs = Array.from({ length: createdOutputsAmount }, () => generateMockUtxo(owner, type));
-
-  const spentOutputs = Array.from({ length: spentOutputsAmount }, () => generateMockUtxo(owner, type));
+): UnshieldedUpdate => {
+  const createdUtxos = Array.from({ length: createdOutputsAmount }, () => generateMockUtxoWithMeta(owner, type));
+  const spentUtxos = Array.from({ length: spentOutputsAmount }, () => generateMockUtxoWithMeta(owner, type));
 
   return {
-    id: Math.floor(Math.random() * 1000),
-    hash: crypto.randomUUID(),
-    type: 'RegularTransaction',
-    identifiers: createdOutputs.map((output) => output.intentHash),
-    createdUtxos: createdOutputs,
-    spentUtxos: spentOutputs,
-    block: {
-      timestamp: Date.now(),
+    type: 'UnshieldedTransaction',
+    transaction: {
+      id: Math.floor(Math.random() * 1000),
+      hash: crypto.randomUUID(),
+      type: 'RegularTransaction',
+      protocolVersion: 1,
+      identifiers: createdUtxos.map((u) => u.utxo.intentHash),
+      block: {
+        timestamp: new Date(),
+      },
+      fees: {
+        paidFees: 0n,
+        estimatedFees: 0n,
+      },
+      transactionResult: {
+        status: applyStage,
+        segments: [{ id: 1, success: applyStage === 'SUCCESS' }],
+      },
     },
-    fees: {
-      paidFees: 0n,
-      estimatedFees: 0n,
-    },
-    protocolVersion: 1,
-    transactionResult: {
-      status: applyStage,
-      segments: [{ id: '1', success: true }],
-    },
+    createdUtxos,
+    spentUtxos,
+    status: applyStage,
   };
 };
 
-export const generateMockUtxo = (owner: string, type: string): Utxo => ({
-  value: BigInt(Math.ceil(Math.random() * 100)),
-  owner,
-  type: type,
-  intentHash: sampleIntentHash(),
-  outputNo: Math.floor(Math.random() * 100),
-  ctime: Date.now(),
-  registeredForDustGeneration: true,
+export const generateMockUtxoWithMeta = (owner: string, type: string): UtxoWithMeta => ({
+  utxo: {
+    value: BigInt(Math.ceil(Math.random() * 100)),
+    owner,
+    type,
+    intentHash: sampleIntentHash(),
+    outputNo: Math.floor(Math.random() * 100),
+  },
+  meta: {
+    ctime: new Date(),
+    registeredForDustGeneration: true,
+  },
 });
 
 export const seedHex = (length: number = 64, seed: number = 42): string =>

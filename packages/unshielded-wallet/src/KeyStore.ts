@@ -9,14 +9,14 @@ import {
 } from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 
-export type PublicKeys = {
+export type PublicKey = {
   publicKey: SignatureVerifyingKey;
   addressHex: UserAddress;
   address: string;
 };
 
-export const PublicKeys = {
-  fromKeyStore: (keystore: UnshieldedKeystore): PublicKeys => {
+export const PublicKey = {
+  fromKeyStore: (keystore: UnshieldedKeystore): PublicKey => {
     return {
       publicKey: keystore.getPublicKey(),
       addressHex: keystore.getAddress(),

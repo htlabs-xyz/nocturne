@@ -23,19 +23,19 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
       outputNo: Schema.Number,
     }),
     meta: Schema.Struct({
-      ctime: Schema.Date,
+      ctime: Schema.NullOr(Schema.Date),
       registeredForDustGeneration: Schema.Boolean,
     }),
   });
 
   const SnapshotSchema = Schema.Struct({
-    publicKeys: Schema.Struct({
+    publicKey: Schema.Struct({
       publicKey: Schema.String,
       addressHex: Schema.String,
       address: Schema.String,
     }),
     state: Schema.Struct({
-      utxos: Schema.Array(UtxoWithMetaSchema),
+      availableUtxos: Schema.Array(UtxoWithMetaSchema),
       pendingUtxos: Schema.Array(UtxoWithMetaSchema),
     }),
     protocolVersion: Schema.BigInt,
@@ -47,11 +47,8 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
   return {
     serialize: (wallet) => {
       const buildSnapshot = (w: CoreWallet): Snapshot => ({
-        publicKeys: w.publicKeys,
-        state: {
-          utxos: [...w.state.availableUtxos],
-          pendingUtxos: [...w.state.pendingUtxos],
-        },
+        publicKey: w.publicKey,
+        state: UnshieldedState.toArrays(w.state),
         protocolVersion: w.protocolVersion,
         networkId: w.networkId,
         appliedId: w.progress?.appliedId,
@@ -66,8 +63,8 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
         Either.mapLeft((err) => WalletError.other(err)),
         Either.map((snapshot) => {
           return CoreWallet.restore(
-            UnshieldedState.restore(snapshot.state.utxos, snapshot.state.pendingUtxos),
-            snapshot.publicKeys,
+            UnshieldedState.restore(snapshot.state.availableUtxos, snapshot.state.pendingUtxos),
+            snapshot.publicKey,
             {
               highestTransactionId: snapshot.appliedId ?? 0n,
               appliedId: snapshot.appliedId ?? 0n,

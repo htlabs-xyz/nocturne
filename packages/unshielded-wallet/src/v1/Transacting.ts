@@ -144,7 +144,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
         };
       }
 
-      const { addressHex, publicKey } = wallet.publicKeys;
+      const { addressHex, publicKey } = wallet.publicKey;
 
       for (const segment of [...segments, GUARANTEED_SEGMENT]) {
         const allIntentImbalances = yield* Either.try({
@@ -338,7 +338,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
             },
             createOutput: (coin) => ({
               ...coin,
-              owner: wallet.publicKeys.addressHex,
+              owner: wallet.publicKey.addressHex,
             }),
             isCoinEqual: (a, b) => a.intentHash === b.intentHash && a.outputNo === b.outputNo,
             targetImbalances,
@@ -356,7 +356,7 @@ export class TransactingCapabilityImplementation<TTransaction extends ledger.Unp
 
       const ledgerInputs = spentInputs.map((input) => ({
         ...input,
-        owner: wallet.publicKeys.publicKey,
+        owner: wallet.publicKey.publicKey,
       }));
 
       const offer = ledger.UnshieldedOffer.new(ledgerInputs, [...changeOutputs, ...ledgerOutputs], []);

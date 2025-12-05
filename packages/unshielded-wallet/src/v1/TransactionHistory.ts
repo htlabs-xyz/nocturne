@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import { TransactionHistoryStorage, TransactionHistoryEntry, TransactionHash } from '../storage/index.js';
-import { UnshieldedUpdate } from './Schema.js';
+import { UnshieldedUpdate } from './SyncSchema.js';
 
-export interface TransactionHistoryCapability {
-  create(update: UnshieldedUpdate): Promise<void>;
+export interface TransactionHistoryCapability<SyncUpdate> {
+  create(update: SyncUpdate): Promise<void>;
   get(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
   getAll(): AsyncIterableIterator<TransactionHistoryEntry>;
   delete(hash: TransactionHash): Promise<TransactionHistoryEntry | undefined>;
@@ -24,35 +24,22 @@ export type DefaultTransactionHistoryConfiguration = {
   txHistoryStorage: TransactionHistoryStorage;
 };
 
-const convertUpdateToEntry = ({ transaction }: UnshieldedUpdate): TransactionHistoryEntry => {
-  const isRegularTransaction = transaction.type === 'RegularTransaction';
-  const transactionResult =
-    isRegularTransaction && transaction.transactionResult
-      ? {
-          status: transaction.transactionResult.status,
-          segments:
-            transaction.transactionResult.segments?.map((segment) => ({
-              id: segment.id.toString(),
-              success: segment.success,
-            })) ?? [],
-        }
-      : null;
-
+const convertUpdateToEntry = ({ transaction, status }: UnshieldedUpdate): TransactionHistoryEntry => {
   return {
     id: transaction.id,
     hash: transaction.hash,
     protocolVersion: transaction.protocolVersion,
-    identifiers: isRegularTransaction && transaction.identifiers ? transaction.identifiers : [],
-    transactionResult,
+    identifiers: transaction.identifiers ? transaction.identifiers : [],
+    status,
     timestamp: transaction.block?.timestamp ?? null,
-    fees: isRegularTransaction ? (transaction.fees?.paidFees ?? null) : null,
+    fees: transaction.fees?.paidFees ?? null,
   };
 };
 
 export const makeDefaultTransactionHistoryCapability = (
   config: DefaultTransactionHistoryConfiguration,
   _getContext: () => unknown,
-): TransactionHistoryCapability => {
+): TransactionHistoryCapability<UnshieldedUpdate> => {
   const { txHistoryStorage } = config;
 
   return {

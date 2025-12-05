@@ -10,8 +10,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export * from './WalletBuilder.js';
-export { State as UnshieldedWalletState } from './State.js';
-export { PublicKey, createKeystore, UnshieldedKeystore, Keystore } from './KeyStore.js';
+import { CoreWallet } from './CoreWallet.js';
+import { PublicKey } from '../KeyStore.js';
 
-export * as v1 from './v1/index.js';
+export interface KeysCapability<TState> {
+  getPublicKey(state: TState): PublicKey;
+  getAddress(state: TState): string;
+}
+
+export const makeDefaultKeysCapability = (
+  _configuration: object,
+  _getContext: () => object,
+): KeysCapability<CoreWallet> => ({
+  getPublicKey(state: CoreWallet): PublicKey {
+    return state.publicKey;
+  },
+
+  getAddress(state: CoreWallet): string {
+    return state.address;
+  },
+});

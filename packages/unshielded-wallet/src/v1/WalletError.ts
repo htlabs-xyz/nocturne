@@ -1,6 +1,5 @@
 import { Data } from 'effect';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
-import { LedgerOps } from '@midnight-ntwrk/wallet-sdk-utilities';
 
 export const WalletError = {
   other(err: unknown): WalletError {
@@ -25,7 +24,6 @@ export type WalletError =
   | AddressError
   | SyncWalletError
   | TransactingError
-  | LedgerOps.LedgerError
   | SignError
   | ApplyTransactionError
   | RollbackUtxoError

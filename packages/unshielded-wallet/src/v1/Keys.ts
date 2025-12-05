@@ -9,10 +9,10 @@ export type KeysCapability<TState> = {
 export const makeDefaultKeysCapability = (): KeysCapability<CoreWallet> => {
   return {
     getPublicKey: (state: CoreWallet): SignatureVerifyingKey => {
-      return state.publicKeys.publicKey;
+      return state.publicKey.publicKey;
     },
     getAddress: (state: CoreWallet): string => {
-      return state.publicKeys.address;
+      return state.publicKey.address;
     },
   };
 };

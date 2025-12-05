@@ -1,12 +1,14 @@
 import * as ledger from '@midnight-ntwrk/ledger-v6';
-import { Data, HashSet, Option, pipe } from 'effect';
+import { Data, Either, HashMap } from 'effect';
+import { ApplyTransactionError, UtxoNotFoundError } from './WalletError.js';
 
 export interface UtxoMeta {
-  readonly ctime: Date;
+  readonly ctime: Date | null;
   readonly registeredForDustGeneration: boolean;
 }
 
-// Use Data.Class or Data.TaggedClass for proper structural equality
+export type UtxoHash = string;
+
 export class UtxoWithMeta extends Data.Class<{
   readonly utxo: ledger.Utxo;
   readonly meta: UtxoMeta;
@@ -20,90 +22,116 @@ export interface UnshieldedUpdate {
   readonly status: UpdateStatus;
 }
 
-export class UtxoNotFoundError extends Data.TaggedError('UtxoNotFoundError')<{
-  readonly utxo: UtxoWithMeta | ledger.Utxo;
-}> {}
-
-export class ApplyTransactionError extends Data.TaggedError('ApplyTransactionError')<{
-  readonly update: UnshieldedUpdate;
-  readonly reason: string;
-}> {}
-
 export interface UnshieldedState {
-  readonly availableUtxos: HashSet.HashSet<UtxoWithMeta>;
-  readonly pendingUtxos: HashSet.HashSet<UtxoWithMeta>;
+  readonly availableUtxos: HashMap.HashMap<UtxoHash, UtxoWithMeta>;
+  readonly pendingUtxos: HashMap.HashMap<UtxoHash, UtxoWithMeta>;
 }
+
+const UtxoHash = (utxo: ledger.Utxo): UtxoHash => `${utxo.intentHash}#${utxo.outputNo}`;
 
 export const UnshieldedState = {
   empty: (): UnshieldedState => ({
-    availableUtxos: HashSet.empty(),
-    pendingUtxos: HashSet.empty(),
+    availableUtxos: HashMap.empty(),
+    pendingUtxos: HashMap.empty(),
   }),
 
-  restore: (available: readonly UtxoWithMeta[], pending: readonly UtxoWithMeta[]): UnshieldedState => ({
-    availableUtxos: HashSet.fromIterable(available),
-    pendingUtxos: HashSet.fromIterable(pending),
+  restore: (availableUtxos: readonly UtxoWithMeta[], pendingUtxos: readonly UtxoWithMeta[]): UnshieldedState => ({
+    availableUtxos: HashMap.fromIterable(availableUtxos.map((utxo) => [UtxoHash(utxo.utxo), utxo])),
+    pendingUtxos: HashMap.fromIterable(pendingUtxos.map((utxo) => [UtxoHash(utxo.utxo), utxo])),
   }),
 
-  spend: (state: UnshieldedState, utxo: UtxoWithMeta): UnshieldedState => {
-    if (!HashSet.has(state.availableUtxos, utxo)) {
-      throw new UtxoNotFoundError({ utxo });
-    }
-    return {
-      availableUtxos: HashSet.remove(state.availableUtxos, utxo),
-      pendingUtxos: HashSet.add(state.pendingUtxos, utxo),
-    };
-  },
+  spend: (state: UnshieldedState, utxo: UtxoWithMeta): Either.Either<UnshieldedState, UtxoNotFoundError> =>
+    Either.gen(function* () {
+      const hash = UtxoHash(utxo.utxo);
+      if (!HashMap.has(state.availableUtxos, hash)) {
+        return yield* Either.left(new UtxoNotFoundError({ utxo: utxo.utxo }));
+      }
+      return {
+        availableUtxos: HashMap.remove(state.availableUtxos, hash),
+        pendingUtxos: HashMap.set(state.pendingUtxos, hash, utxo),
+      };
+    }),
 
-  rollbackSpend: (state: UnshieldedState, utxo: UtxoWithMeta): UnshieldedState => ({
-    availableUtxos: HashSet.add(state.availableUtxos, utxo),
-    pendingUtxos: HashSet.remove(state.pendingUtxos, utxo),
-  }),
+  rollbackSpend: (state: UnshieldedState, utxo: UtxoWithMeta): Either.Either<UnshieldedState, UtxoNotFoundError> =>
+    Either.gen(function* () {
+      const hash = UtxoHash(utxo.utxo);
+      if (!HashMap.has(state.pendingUtxos, hash)) {
+        return yield* Either.left(new UtxoNotFoundError({ utxo: utxo.utxo }));
+      }
+      return {
+        availableUtxos: HashMap.set(state.availableUtxos, hash, utxo),
+        pendingUtxos: HashMap.remove(state.pendingUtxos, hash),
+      };
+    }),
 
-  spendByUtxo: (state: UnshieldedState, utxo: ledger.Utxo): UnshieldedState =>
-    pipe(
-      Option.fromNullable(
-        HashSet.toValues(state.availableUtxos).find(
-          (u) => u.utxo.intentHash === utxo.intentHash && u.utxo.outputNo === utxo.outputNo,
+  spendByUtxo: (state: UnshieldedState, utxo: ledger.Utxo): Either.Either<UnshieldedState, UtxoNotFoundError> =>
+    Either.gen(function* () {
+      const hash = UtxoHash(utxo);
+      const found = yield* Either.fromOption(
+        HashMap.get(state.availableUtxos, hash),
+        () => new UtxoNotFoundError({ utxo }),
+      );
+      return yield* UnshieldedState.spend(state, found);
+    }),
+
+  rollbackSpendByUtxo: (state: UnshieldedState, utxo: ledger.Utxo): Either.Either<UnshieldedState, UtxoNotFoundError> =>
+    Either.gen(function* () {
+      const hash = UtxoHash(utxo);
+      const found = yield* Either.fromOption(
+        HashMap.get(state.pendingUtxos, hash),
+        () => new UtxoNotFoundError({ utxo }),
+      );
+      return yield* UnshieldedState.rollbackSpend(state, found);
+    }),
+
+  applyUpdate: (
+    state: UnshieldedState,
+    update: UnshieldedUpdate,
+  ): Either.Either<UnshieldedState, ApplyTransactionError> =>
+    Either.gen(function* () {
+      if (update.status !== 'SUCCESS') {
+        return yield* Either.left(new ApplyTransactionError({ message: `Invalid status: ${update.status}` }));
+      }
+
+      return {
+        availableUtxos: HashMap.union(
+          state.availableUtxos,
+          HashMap.fromIterable(update.createdUtxos.map((utxo) => [UtxoHash(utxo.utxo), utxo])),
         ),
-      ),
-      Option.getOrThrowWith(() => new UtxoNotFoundError({ utxo })),
-      (found) => UnshieldedState.spend(state, found),
-    ),
-
-  rollbackSpendByUtxo: (state: UnshieldedState, utxo: ledger.Utxo): UnshieldedState =>
-    pipe(
-      Option.fromNullable(
-        HashSet.toValues(state.pendingUtxos).find(
-          (u) => u.utxo.intentHash === utxo.intentHash && u.utxo.outputNo === utxo.outputNo,
+        pendingUtxos: HashMap.removeMany(
+          state.pendingUtxos,
+          update.spentUtxos.map((utxo) => UtxoHash(utxo.utxo)),
         ),
-      ),
-      Option.getOrThrowWith(() => new UtxoNotFoundError({ utxo })),
-      (found) => UnshieldedState.rollbackSpend(state, found),
-    ),
+      };
+    }),
 
-  applyUpdate: (state: UnshieldedState, update: UnshieldedUpdate): UnshieldedState => {
-    if (update.status !== 'SUCCESS') {
-      throw new ApplyTransactionError({ update, reason: `Invalid status: ${update.status}` });
-    }
-    return {
-      availableUtxos: HashSet.union(state.availableUtxos, HashSet.fromIterable(update.createdUtxos)),
-      pendingUtxos: HashSet.difference(state.pendingUtxos, HashSet.fromIterable(update.spentUtxos)),
-    };
-  },
+  applyFailedUpdate: (
+    state: UnshieldedState,
+    update: UnshieldedUpdate,
+  ): Either.Either<UnshieldedState, ApplyTransactionError> =>
+    Either.gen(function* () {
+      if (update.status !== 'FAILURE') {
+        return yield* Either.left(new ApplyTransactionError({ message: `Invalid status: ${update.status}` }));
+      }
+      return {
+        availableUtxos: HashMap.union(
+          state.availableUtxos,
+          HashMap.fromIterable(update.spentUtxos.map((utxo) => [UtxoHash(utxo.utxo), utxo])),
+        ),
+        pendingUtxos: HashMap.removeMany(
+          state.pendingUtxos,
+          update.spentUtxos.map((utxo) => UtxoHash(utxo.utxo)),
+        ),
+      };
+    }),
 
-  applyFailedUpdate: (state: UnshieldedState, update: UnshieldedUpdate): UnshieldedState => {
-    if (update.status !== 'FAILURE') {
-      throw new ApplyTransactionError({ update, reason: `Invalid status: ${update.status}` });
-    }
-    return {
-      availableUtxos: HashSet.union(state.availableUtxos, HashSet.fromIterable(update.spentUtxos)),
-      pendingUtxos: HashSet.difference(state.pendingUtxos, HashSet.fromIterable(update.spentUtxos)),
-    };
-  },
-
-  toArrays: (state: UnshieldedState) => ({
-    availableUtxos: HashSet.toValues(state.availableUtxos),
-    pendingUtxos: HashSet.toValues(state.pendingUtxos),
+  toArrays: (
+    state: UnshieldedState,
+  ): {
+    readonly availableUtxos: readonly UtxoWithMeta[];
+    readonly pendingUtxos: readonly UtxoWithMeta[];
+  } => ({
+    availableUtxos: HashMap.toValues(state.availableUtxos),
+    pendingUtxos: HashMap.toValues(state.pendingUtxos),
   }),
 } as const;

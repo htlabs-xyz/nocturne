@@ -21,19 +21,9 @@ export const TransactionHistoryEntrySchema = Schema.Struct({
   hash: TransactionHashSchema,
   protocolVersion: Schema.Number,
   identifiers: Schema.Array(Schema.String),
-  timestamp: Schema.Number,
+  timestamp: Schema.Date,
   fees: Schema.NullOr(Schema.BigInt),
-  transactionResult: Schema.NullOr(
-    Schema.Struct({
-      status: Schema.Literal('SUCCESS', 'FAILURE', 'PARTIAL_SUCCESS'),
-      segments: Schema.Array(
-        Schema.Struct({
-          id: Schema.String,
-          success: Schema.Boolean,
-        }),
-      ),
-    }),
-  ),
+  status: Schema.Literal('SUCCESS', 'FAILURE'),
 });
 
 export type TransactionHistoryEntry = Schema.Schema.Type<typeof TransactionHistoryEntrySchema>;

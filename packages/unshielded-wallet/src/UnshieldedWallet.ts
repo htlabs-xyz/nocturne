@@ -8,19 +8,20 @@ import { TransactionHistoryCapability } from './v1/TransactionHistory.js';
 import { CoinsAndBalancesCapability } from './v1/CoinsAndBalances.js';
 import { KeysCapability } from './v1/Keys.js';
 import { TokenTransfer } from './v1/Transacting.js';
-import { WalletSyncUpdate } from './v1/Sync.js';
+import { WalletSyncUpdate } from './v1/SyncSchema.js';
 import { UtxoWithMeta } from './v1/UnshieldedState.js';
 import { Variant, VariantBuilder, WalletLike } from '@midnight-ntwrk/wallet-sdk-runtime/abstractions';
 import { Runtime, WalletBuilder } from '@midnight-ntwrk/wallet-sdk-runtime';
-import { PublicKeys } from './KeyStore.js';
+import { PublicKey } from './KeyStore.js';
 import { SyncProgress } from './v1/SyncProgress.js';
 import { TransactionHistoryEntry } from './storage/index.js';
+import { UnshieldedUpdate } from './v1/SyncSchema.js';
 
 export type UnshieldedWalletCapabilities<TSerialized = string> = {
   serialization: SerializationCapability<CoreWallet, TSerialized>;
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
-  transactionHistory: TransactionHistoryCapability;
+  transactionHistory: TransactionHistoryCapability<UnshieldedUpdate>;
 };
 
 export class UnshieldedWalletState<TSerialized = string> {
@@ -121,7 +122,7 @@ export interface CustomizedUnshieldedWalletClass<
   TConfig extends BaseV1Configuration = DefaultV1Configuration,
 > extends WalletLike.BaseWalletClass<[Variant.VersionedVariant<V1Variant<TSerialized, TSyncUpdate, TTransaction>>]> {
   configuration: TConfig;
-  startWithPublicKeys(publicKeys: PublicKeys): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
+  startWithPublicKey(publicKey: PublicKey): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
   restore(serializedState: TSerialized): CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>;
 }
 
@@ -156,7 +157,7 @@ export function CustomUnshieldedWallet<
     extends BaseWallet
     implements CustomizedUnshieldedWallet<TTransaction, TSyncUpdate, TSerialized>
   {
-    static startWithPublicKeys(publicKeys: PublicKeys): CustomUnshieldedWalletImplementation {
+    static startWithPublicKey(publicKeys: PublicKey): CustomUnshieldedWalletImplementation {
       return CustomUnshieldedWalletImplementation.startFirst(
         CustomUnshieldedWalletImplementation,
         CoreWallet.init(publicKeys, configuration.networkId),

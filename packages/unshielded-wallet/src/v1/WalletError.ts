@@ -26,7 +26,10 @@ export type WalletError =
   | SyncWalletError
   | TransactingError
   | LedgerOps.LedgerError
-  | SignError;
+  | SignError
+  | ApplyTransactionError
+  | RollbackUtxoError
+  | SpendUtxoError;
 
 export class OtherWalletError extends Data.TaggedError('Wallet.Other')<{
   message: string;
@@ -58,4 +61,25 @@ export class TransactingError extends Data.TaggedError('Wallet.Transacting')<{
 export class SignError extends Data.TaggedError('Wallet.Sign')<{
   message: string;
   cause?: unknown;
+}> {}
+
+export class ApplyTransactionError extends Data.TaggedError('Wallet.ApplyTransaction')<{
+  message: string;
+  cause?: unknown;
+}> {}
+
+export class RollbackUtxoError extends Data.TaggedError('Wallet.RollbackUtxo')<{
+  message: string;
+  utxo: ledger.Utxo;
+  cause?: unknown;
+}> {}
+
+export class SpendUtxoError extends Data.TaggedError('Wallet.SpendUtxo')<{
+  message: string;
+  utxo: ledger.Utxo;
+  cause?: unknown;
+}> {}
+
+export class UtxoNotFoundError extends Data.TaggedError('UtxoNotFoundError')<{
+  readonly utxo: ledger.Utxo;
 }> {}

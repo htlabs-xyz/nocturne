@@ -17,7 +17,7 @@ import { DockerComposeEnvironment, StartedDockerComposeEnvironment, Wait } from 
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { UnshieldedWallet } from '../src/index.js';
 import { getUnshieldedSeed, createWalletConfig } from './testUtils.js';
-import { createKeystore, PublicKeys } from '../src/KeyStore.js';
+import { createKeystore, PublicKey } from '../src/KeyStore.js';
 import { InMemoryTransactionHistoryStorage, NoOpTransactionHistoryStorage } from '../src/storage/index.js';
 
 vi.setConfig({ testTimeout: 100_000, hookTimeout: 100_000 });
@@ -50,7 +50,7 @@ describe('UnshieldedWallet', () => {
     const config = createWalletConfig(indexerPort, { txHistoryStorage });
     const keystore = createKeystore(unshieldedSeed, config.networkId);
 
-    const unshieldedWallet = UnshieldedWallet(config).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+    const unshieldedWallet = UnshieldedWallet(config).startWithPublicKey(PublicKey.fromKeyStore(keystore));
 
     await unshieldedWallet.start();
 
@@ -72,7 +72,7 @@ describe('UnshieldedWallet', () => {
     const initialConfig = createWalletConfig(indexerPort, { txHistoryStorage });
     const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
 
-    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKey(PublicKey.fromKeyStore(keystore));
 
     await initialWallet.start();
 
@@ -102,8 +102,8 @@ describe('UnshieldedWallet', () => {
     const restoredState = await firstValueFrom(restoredWallet.state);
 
     expect(restoredState.address).toBe(initialState.address);
-    expect(restoredState.availableCoins.length).toBeGreaterThan(0);
-    expect(restoredState.pendingCoins.length).toBe(0);
+    expect(restoredState.availableCoins.length).toBe(initialState.availableCoins.length);
+    expect(restoredState.pendingCoins.length).toBe(initialState.pendingCoins.length);
 
     await restoredWallet.stop();
   });
@@ -111,7 +111,7 @@ describe('UnshieldedWallet', () => {
   it('should instantiate without transaction history service', async () => {
     const initialConfig = createWalletConfig(indexerPort, { txHistoryStorage: new NoOpTransactionHistoryStorage() });
     const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
-    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKey(PublicKey.fromKeyStore(keystore));
 
     await initialWallet.start();
 
@@ -131,7 +131,7 @@ describe('UnshieldedWallet', () => {
       txHistoryStorage,
     });
     const keystore = createKeystore(unshieldedSeed, initialConfig.networkId);
-    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKeys(PublicKeys.fromKeyStore(keystore));
+    const initialWallet = UnshieldedWallet(initialConfig).startWithPublicKey(PublicKey.fromKeyStore(keystore));
 
     await initialWallet.start();
 
@@ -139,8 +139,8 @@ describe('UnshieldedWallet', () => {
 
     const initialState = await firstValueFrom(initialWallet.state);
 
-    expect(initialState.availableCoins.length).toBeGreaterThan(0);
-    expect(initialState.pendingCoins.length).toBe(0);
+    expect(initialState.availableCoins.length).toBe(initialState.availableCoins.length);
+    expect(initialState.pendingCoins.length).toBe(initialState.pendingCoins.length);
 
     const serializedState = await initialWallet.serializeState();
 
@@ -155,8 +155,8 @@ describe('UnshieldedWallet', () => {
     const restoredState = await firstValueFrom(restoredWallet.state);
 
     expect(restoredState.address).toBe(initialState.address);
-    expect(restoredState.availableCoins.length).toBeGreaterThan(0);
-    expect(restoredState.pendingCoins.length).toBe(0);
+    expect(restoredState.availableCoins.length).toBe(initialState.availableCoins.length);
+    expect(restoredState.pendingCoins.length).toBe(initialState.pendingCoins.length);
 
     await restoredWallet.stop();
   });

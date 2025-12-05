@@ -9,10 +9,10 @@ import {
   DefaultSyncConfiguration,
   SyncCapability,
   SyncService,
-  WalletSyncUpdate,
   makeDefaultSyncService,
   makeDefaultSyncCapability,
 } from './Sync.js';
+import { WalletSyncUpdate, UnshieldedUpdate } from './SyncSchema.js';
 import {
   DefaultTransactingConfiguration,
   DefaultTransactingContext,
@@ -30,7 +30,7 @@ import {
   DefaultTransactionHistoryConfiguration,
 } from './TransactionHistory.js';
 import { Expect, Equal, ItemType } from '@midnight-ntwrk/wallet-sdk-utilities/types';
-import { createKeystore, PublicKeys } from '../KeyStore.js';
+import { createKeystore, PublicKey } from '../KeyStore.js';
 
 export type BaseV1Configuration = {
   networkId: NetworkId.NetworkId;
@@ -57,7 +57,7 @@ export type V1Variant<TSerialized, TSyncUpdate, TTransaction> = Variant.Variant<
   coinsAndBalances: CoinsAndBalancesCapability<CoreWallet>;
   keys: KeysCapability<CoreWallet>;
   serialization: SerializationCapability<CoreWallet, TSerialized>;
-  transactionHistory: TransactionHistoryCapability;
+  transactionHistory: TransactionHistoryCapability<UnshieldedUpdate>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -292,7 +292,7 @@ export class V1Builder<
     transactionHistoryCapability: (
       configuration: TTransactionHistoryConfig,
       getContext: () => TTransactionHistoryContext,
-    ) => TransactionHistoryCapability,
+    ) => TransactionHistoryCapability<UnshieldedUpdate>,
   ): V1Builder<
     TConfig & TTransactionHistoryConfig,
     TContext & TTransactionHistoryContext,
@@ -355,7 +355,7 @@ export class V1Builder<
       migrateState(_previousState) {
         const seed = WalletSeed.fromString('0000000000000000000000000000000000000000000000000000000000000001');
 
-        return Effect.succeed(CoreWallet.init(PublicKeys.fromKeyStore(createKeystore(seed, networkId)), networkId));
+        return Effect.succeed(CoreWallet.init(PublicKey.fromKeyStore(createKeystore(seed, networkId)), networkId));
       },
 
       deserializeState: (serialized: TSerialized): Either.Either<CoreWallet, WalletError> => {
@@ -445,7 +445,7 @@ declare namespace V1Builder {
     readonly transactionHistoryCapability: (
       configuration: TConfig,
       getContext: () => TContext,
-    ) => TransactionHistoryCapability;
+    ) => TransactionHistoryCapability<UnshieldedUpdate>;
   };
 
   type HasKeys<TConfig, TContext> = {

@@ -2,7 +2,7 @@ import { CoreWallet } from './CoreWallet.js';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { pipe } from 'effect';
 import { RecordOps } from '@midnight-ntwrk/wallet-sdk-utilities';
-import { UtxoWithMeta } from './UnshieldedState.js';
+import { UnshieldedState, UtxoWithMeta } from './UnshieldedState.js';
 
 export type Balances = Record<ledger.RawTokenType, bigint>;
 
@@ -48,11 +48,13 @@ export const makeDefaultCoinsAndBalancesCapability = (): CoinsAndBalancesCapabil
     );
   };
 
-  const getAvailableCoins = (state: CoreWallet): UtxoWithMeta[] => [...state.state.availableUtxos];
+  const getAvailableCoins = (state: CoreWallet): readonly UtxoWithMeta[] =>
+    UnshieldedState.toArrays(state.state).availableUtxos;
 
-  const getPendingCoins = (state: CoreWallet): UtxoWithMeta[] => [...state.state.pendingUtxos];
+  const getPendingCoins = (state: CoreWallet): readonly UtxoWithMeta[] =>
+    UnshieldedState.toArrays(state.state).pendingUtxos;
 
-  const getTotalCoins = (state: CoreWallet): Array<UtxoWithMeta> => [
+  const getTotalCoins = (state: CoreWallet): readonly UtxoWithMeta[] => [
     ...getAvailableCoins(state),
     ...getPendingCoins(state),
   ];

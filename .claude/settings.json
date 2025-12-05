@@ -2,7 +2,7 @@
   "includeCoAuthoredBy": false,
   "statusLine": {
     "type": "command",
-    "command": "node .claude/statusline.cjs",
+    "command": "node \"%CLAUDE_PROJECT_DIR%\"/.claude/statusline.cjs",
     "padding": 0
   },
   "hooks": {
@@ -11,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/dev-rules-reminder.cjs"
+            "command": "node \"%CLAUDE_PROJECT_DIR%\"/.claude/hooks/dev-rules-reminder.cjs"
           }
         ]
       }
@@ -22,7 +22,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scout-block.cjs"
+            "command": "node \"%CLAUDE_PROJECT_DIR%\"/.claude/hooks/scout-block.cjs"
           }
         ]
       }

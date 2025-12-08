@@ -21,7 +21,7 @@ import { getShieldedSeed, getUnshieldedSeed, getDustSeed, waitForFullySynced } f
 import { buildTestEnvironmentVariables, getComposeDirectory } from '@midnight-ntwrk/wallet-sdk-utilities/testing';
 import {
   createKeystore,
-  PublicKeys,
+  PublicKey,
   InMemoryTransactionHistoryStorage,
   UnshieldedWallet,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
@@ -112,7 +112,7 @@ describe('Dust Deregistration', () => {
     const unshieldedWallet = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedWalletKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedWalletKeystore));
 
     walletFacade = new WalletFacade(shieldedWallet, unshieldedWallet, dustWallet);
 

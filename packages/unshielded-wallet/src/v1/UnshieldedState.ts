@@ -15,7 +15,7 @@ import { Data, Either, HashMap } from 'effect';
 import { ApplyTransactionError, UtxoNotFoundError } from './WalletError.js';
 
 export interface UtxoMeta {
-  readonly ctime: Date | null;
+  readonly ctime: Date;
   readonly registeredForDustGeneration: boolean;
 }
 

@@ -21,13 +21,13 @@ import { getShieldedSeed, getUnshieldedSeed, getDustSeed, tokenValue, waitForFul
 import { buildTestEnvironmentVariables, getComposeDirectory } from '@midnight-ntwrk/wallet-sdk-utilities/testing';
 import {
   InMemoryTransactionHistoryStorage,
-  PublicKeys,
+  PublicKey,
   UnshieldedWallet,
   createKeystore,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import * as rx from 'rxjs';
 import { CombinedTokenTransfer, WalletFacade } from '../src/index.js';
-import { ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 
@@ -123,12 +123,12 @@ describe('Wallet Facade Transfer', () => {
     const unshieldedSender = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedSenderKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedSenderKeystore));
 
     const unshieldedReceiver = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedReceiverKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedReceiverKeystore));
 
     senderFacade = new WalletFacade(shieldedSender, unshieldedSender, dustSender);
     receiverFacade = new WalletFacade(shieldedReceiver, unshieldedReceiver, dustReceiver);
@@ -201,7 +201,9 @@ describe('Wallet Facade Transfer', () => {
         outputs: [
           {
             amount: tokenValue(1n),
-            receiverAddress: unshieldedReceiverState.address,
+            receiverAddress: UnshieldedAddress.codec
+              .encode(configuration.networkId, unshieldedReceiverState.address)
+              .asString(),
             type: ledger.unshieldedToken().raw,
           },
         ],

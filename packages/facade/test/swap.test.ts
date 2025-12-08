@@ -21,7 +21,7 @@ import { getShieldedSeed, getUnshieldedSeed, getDustSeed, tokenValue, waitForFul
 import { buildTestEnvironmentVariables, getComposeDirectory } from '@midnight-ntwrk/wallet-sdk-utilities/testing';
 import {
   InMemoryTransactionHistoryStorage,
-  PublicKeys,
+  PublicKey,
   UnshieldedWallet,
   createKeystore,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
@@ -29,7 +29,7 @@ import * as rx from 'rxjs';
 import { CombinedSwapInputs, CombinedSwapOutputs, WalletFacade } from '../src/index.js';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
-import { ShieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 120_000 });
 
@@ -112,12 +112,12 @@ describe('Swaps', () => {
     const unshieldedWalletA = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedWalletAKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedWalletAKeystore));
 
     const unshieldedWalletB = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedWalletBKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedWalletBKeystore));
 
     const Dust = DustWallet({
       ...configuration,
@@ -265,7 +265,9 @@ describe('Swaps', () => {
           {
             type: unshieldedTokenType,
             amount: swapForAmount,
-            receiverAddress: walletAUnshieldedStateBefore.address,
+            receiverAddress: UnshieldedAddress.codec
+              .encode(configuration.networkId, walletAUnshieldedStateBefore.address)
+              .asString(),
           },
         ],
       },

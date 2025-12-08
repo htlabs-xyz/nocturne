@@ -23,12 +23,13 @@ import {
   createKeystore,
   UnshieldedWallet,
   InMemoryTransactionHistoryStorage,
-  PublicKeys,
+  PublicKey,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import * as rx from 'rxjs';
 import { CombinedTokenTransfer, WalletFacade } from '../src/index.js';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 200_000 });
 
@@ -122,12 +123,12 @@ describe('Dust Registration', () => {
     const unshieldedSender = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedSenderKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedSenderKeystore));
 
     const unshieldedReceiver = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedReceiverKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedReceiverKeystore));
 
     senderFacade = new WalletFacade(shieldedSender, unshieldedSender, dustSender);
     receiverFacade = new WalletFacade(shieldedReceiver, unshieldedReceiver, dustReceiver);
@@ -159,7 +160,9 @@ describe('Dust Registration', () => {
         outputs: [
           {
             amount: tokenValue(150000n),
-            receiverAddress: unshieldedReceiverState.address,
+            receiverAddress: UnshieldedAddress.codec
+              .encode(configuration.networkId, unshieldedReceiverState.address)
+              .asString(),
             type: ledger.unshieldedToken().raw,
           },
         ],

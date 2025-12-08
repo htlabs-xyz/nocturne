@@ -26,7 +26,7 @@ export class UtxoWithMeta extends Data.Class<{
   readonly meta: UtxoMeta;
 }> {}
 
-export type UpdateStatus = 'SUCCESS' | 'FAILURE';
+export type UpdateStatus = 'SUCCESS' | 'FAILURE' | 'PARTIAL_SUCCESS';
 
 export interface UnshieldedUpdate {
   readonly createdUtxos: readonly UtxoWithMeta[];
@@ -101,7 +101,7 @@ export const UnshieldedState = {
     update: UnshieldedUpdate,
   ): Either.Either<UnshieldedState, ApplyTransactionError> =>
     Either.gen(function* () {
-      if (update.status !== 'SUCCESS') {
+      if (!['SUCCESS', 'PARTIAL_SUCCESS'].includes(update.status)) {
         return yield* Either.left(new ApplyTransactionError({ message: `Invalid status: ${update.status}` }));
       }
 
@@ -125,6 +125,7 @@ export const UnshieldedState = {
       if (update.status !== 'FAILURE') {
         return yield* Either.left(new ApplyTransactionError({ message: `Invalid status: ${update.status}` }));
       }
+
       return {
         availableUtxos: HashMap.union(
           state.availableUtxos,

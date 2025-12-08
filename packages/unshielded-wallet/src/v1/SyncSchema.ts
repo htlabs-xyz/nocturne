@@ -136,17 +136,16 @@ export const UnshieldedUpdateSchema = Schema.transform(
       transaction: UnshieldedTransactionSchema,
       createdUtxos: Schema.Array(Schema.typeSchema(UtxoWithMetaSchema)),
       spentUtxos: Schema.Array(Schema.typeSchema(UtxoWithMetaSchema)),
-      status: Schema.Literal('SUCCESS', 'FAILURE'),
+      status: Schema.Literal('SUCCESS', 'FAILURE', 'PARTIAL_SUCCESS'),
     }),
   ),
   {
     strict: true,
     decode: (wire) => {
-      const status: 'SUCCESS' | 'FAILURE' =
-        wire.transaction.transactionResult?.status === 'SUCCESS' ? 'SUCCESS' : 'FAILURE';
+      const isSystemTransaction = wire.transaction.type === 'SystemTransaction';
       return {
         ...wire,
-        status,
+        status: isSystemTransaction ? 'SUCCESS' : wire.transaction.transactionResult!.status,
       };
     },
     encode: ({ status: _status, ...rest }) => rest,

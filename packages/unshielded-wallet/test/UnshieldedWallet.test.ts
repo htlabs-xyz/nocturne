@@ -19,6 +19,7 @@ import { UnshieldedWallet } from '../src/index.js';
 import { getUnshieldedSeed, createWalletConfig } from './testUtils.js';
 import { createKeystore, PublicKey } from '../src/KeyStore.js';
 import { InMemoryTransactionHistoryStorage, NoOpTransactionHistoryStorage } from '../src/storage/index.js';
+import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 vi.setConfig({ testTimeout: 100_000, hookTimeout: 100_000 });
 
@@ -58,7 +59,9 @@ describe('UnshieldedWallet', () => {
 
     const state = await firstValueFrom(unshieldedWallet.state);
 
-    expect(state.address).toBe('mn_addr_undeployed1h3ssm5ru2t6eqy4g3she78zlxn96e36ms6pq996aduvmateh9p9sk96u7s');
+    expect(UnshieldedAddress.codec.encode(config.networkId, state.address).asString()).toBe(
+      'mn_addr_undeployed1h3ssm5ru2t6eqy4g3she78zlxn96e36ms6pq996aduvmateh9p9sk96u7s',
+    );
     expect(state.availableCoins.length).toBeGreaterThan(0);
     expect(state.pendingCoins).toHaveLength(0);
 
@@ -101,7 +104,9 @@ describe('UnshieldedWallet', () => {
 
     const restoredState = await firstValueFrom(restoredWallet.state);
 
-    expect(restoredState.address).toBe(initialState.address);
+    expect(UnshieldedAddress.codec.encode(initialConfig.networkId, restoredState.address).asString()).toBe(
+      UnshieldedAddress.codec.encode(initialConfig.networkId, initialState.address).asString(),
+    );
     expect(restoredState.availableCoins.length).toBe(initialState.availableCoins.length);
     expect(restoredState.pendingCoins.length).toBe(initialState.pendingCoins.length);
 
@@ -154,7 +159,9 @@ describe('UnshieldedWallet', () => {
 
     const restoredState = await firstValueFrom(restoredWallet.state);
 
-    expect(restoredState.address).toBe(initialState.address);
+    expect(UnshieldedAddress.codec.encode(restoreConfig.networkId, restoredState.address).asString()).toBe(
+      UnshieldedAddress.codec.encode(restoreConfig.networkId, initialState.address).asString(),
+    );
     expect(restoredState.availableCoins.length).toBe(initialState.availableCoins.length);
     expect(restoredState.pendingCoins.length).toBe(initialState.pendingCoins.length);
 

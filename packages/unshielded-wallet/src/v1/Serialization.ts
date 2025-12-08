@@ -35,7 +35,7 @@ export const makeDefaultV1SerializationCapability = (): SerializationCapability<
       outputNo: Schema.Number,
     }),
     meta: Schema.Struct({
-      ctime: Schema.NullOr(Schema.Date),
+      ctime: Schema.Date,
       registeredForDustGeneration: Schema.Boolean,
     }),
   });

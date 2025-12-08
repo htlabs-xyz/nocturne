@@ -25,7 +25,7 @@ export const makeDefaultKeysCapability = (): KeysCapability<CoreWallet> => {
       return state.publicKey.publicKey;
     },
     getAddress: (state: CoreWallet): UnshieldedAddress => {
-      return new UnshieldedAddress(Buffer.from(state.publicKey.address, 'hex'));
+      return new UnshieldedAddress(Buffer.from(state.publicKey.addressHex, 'hex'));
     },
   };
 };

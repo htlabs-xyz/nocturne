@@ -23,14 +23,18 @@ import {
   createKeystore,
   UnshieldedWallet,
   InMemoryTransactionHistoryStorage,
-  PublicKeys,
+  PublicKey,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import * as rx from 'rxjs';
 import { CombinedTokenTransfer, WalletFacade } from '../src/index.js';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+<<<<<<< HEAD
 import { ArrayOps } from '@midnight-ntwrk/wallet-sdk-utilities';
 import { InMemoryTransactionHistoryStorage } from '../../unshielded-wallet/dist/tx-history-storage/InMemoryTransactionHistoryStorage.js';
+=======
+import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+>>>>>>> cfc1d5d (fix: fixes address bug and updates tests to use new apis)
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 200_000 });
 
@@ -118,7 +122,7 @@ describe('Dust Registration', () => {
     const unshieldedSender = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-    }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedSenderKeystore));
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedSenderKeystore));
 
 <<<<<<< HEAD
     const unshieldedReceiver = await WalletBuilder.build({
@@ -131,8 +135,12 @@ describe('Dust Registration', () => {
     const unshieldedReceiver = UnshieldedWallet({
       ...configuration,
       txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+<<<<<<< HEAD
     }).startWithPublicKeys(PublicKeys.fromKeyStore(unshieldedReceiverKeystore));
 >>>>>>> 18ee201 (feat: update unshielded wallet apis, facade and facade tests)
+=======
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedReceiverKeystore));
+>>>>>>> cfc1d5d (fix: fixes address bug and updates tests to use new apis)
 
     senderFacade = new WalletFacade(shieldedSender, unshieldedSender, dustSender);
     receiverFacade = new WalletFacade(shieldedReceiver, unshieldedReceiver, dustReceiver);
@@ -164,7 +172,9 @@ describe('Dust Registration', () => {
         outputs: [
           {
             amount: tokenValue(150000n),
-            receiverAddress: unshieldedReceiverState.address,
+            receiverAddress: UnshieldedAddress.codec
+              .encode(configuration.networkId, unshieldedReceiverState.address)
+              .asString(),
             type: ledger.unshieldedToken().raw,
           },
         ],

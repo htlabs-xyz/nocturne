@@ -37,7 +37,7 @@ const WireUtxoSchema = Schema.Struct({
   tokenType: Schema.String,
   intentHash: Schema.String,
   outputIndex: Schema.Number,
-  ctime: Schema.NullOr(Schema.Number),
+  ctime: Schema.Number,
   registeredForDustGeneration: Schema.Boolean,
 });
 
@@ -53,7 +53,7 @@ const UtxoWithMetaSchema = Schema.transform(
         outputNo: Schema.Number,
       }),
       meta: Schema.Struct({
-        ctime: Schema.NullOr(Schema.DateFromSelf),
+        ctime: Schema.DateFromSelf,
         registeredForDustGeneration: Schema.Boolean,
       }),
     }),
@@ -69,7 +69,7 @@ const UtxoWithMetaSchema = Schema.transform(
         outputNo: wire.outputIndex,
       },
       meta: {
-        ctime: wire.ctime !== null ? new Date(wire.ctime * 1000) : null,
+        ctime: new Date(wire.ctime * 1000),
         registeredForDustGeneration: wire.registeredForDustGeneration,
       },
     }),
@@ -79,7 +79,7 @@ const UtxoWithMetaSchema = Schema.transform(
       tokenType: domain.utxo.type,
       intentHash: domain.utxo.intentHash,
       outputIndex: domain.utxo.outputNo,
-      ctime: domain.meta.ctime !== null ? Math.floor(domain.meta.ctime.getTime() / 1000) : null,
+      ctime: Math.floor(domain.meta.ctime.getTime() / 1000),
       registeredForDustGeneration: domain.meta.registeredForDustGeneration,
     }),
   },

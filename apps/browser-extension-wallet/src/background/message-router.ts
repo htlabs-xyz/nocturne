@@ -1,5 +1,6 @@
 import { WalletManager } from './wallet';
 import { StorageManager } from './storage';
+import { DAppHandler } from './dapp-handler';
 import type {
   Message,
   Response,
@@ -9,14 +10,17 @@ import type {
   GetSeedPhrasePayload,
 } from '@/shared/types/messages';
 import { createResponse } from '@/shared/types/messages';
+import type { DAppRequestPayload } from '@/shared/types/dapp';
 
 export class MessageRouter {
   private wallet: WalletManager;
   private storage: StorageManager;
+  private dappHandler: DAppHandler;
 
   constructor(wallet: WalletManager) {
     this.wallet = wallet;
     this.storage = new StorageManager();
+    this.dappHandler = new DAppHandler(wallet);
   }
 
   async handleMessage(message: Message, sender: chrome.runtime.MessageSender): Promise<Response> {
@@ -107,6 +111,47 @@ export class MessageRouter {
             return createResponse(id, false, undefined, 'Wallet is locked');
           }
           return createResponse(id, false, undefined, 'Not implemented yet');
+        }
+
+        case 'DAPP_REQUEST': {
+          const { method, params, origin } = payload as DAppRequestPayload;
+          const result = await this.dappHandler.handleRequest(method, params, origin);
+          return createResponse(id, true, result);
+        }
+
+        case 'APPROVE_CONNECTION': {
+          const { requestId, origin } = payload as { requestId: string; origin: string };
+          await this.dappHandler.approveConnection(requestId, origin);
+          return createResponse(id, true);
+        }
+
+        case 'REJECT_CONNECTION': {
+          const { requestId } = payload as { requestId: string };
+          await this.dappHandler.rejectConnection(requestId);
+          return createResponse(id, true);
+        }
+
+        case 'APPROVE_TRANSACTION': {
+          const { requestId } = payload as { requestId: string };
+          await this.dappHandler.approveTransaction(requestId);
+          return createResponse(id, true);
+        }
+
+        case 'REJECT_TRANSACTION': {
+          const { requestId } = payload as { requestId: string };
+          await this.dappHandler.rejectTransaction(requestId);
+          return createResponse(id, true);
+        }
+
+        case 'GET_PENDING_REQUEST': {
+          const { requestId } = payload as { requestId: string };
+          const request = this.dappHandler.getPendingRequest(requestId);
+          return createResponse(id, true, request ? {
+            requestId: request.requestId,
+            origin: request.origin,
+            method: request.method,
+            params: request.params,
+          } : null);
         }
 
         default:

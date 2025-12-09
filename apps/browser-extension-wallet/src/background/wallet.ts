@@ -34,6 +34,8 @@ export class WalletManager {
     address: null,
     balance: null,
     isSynced: false,
+    coinPublicKey: undefined,
+    encryptionPublicKey: undefined,
   });
   private currentSeed: string | null = null;
 
@@ -64,7 +66,7 @@ export class WalletManager {
     this.currentSeed = seed;
     await this.updateState();
 
-    const address = await this.deriveAddress(seed);
+    const { address } = await this.deriveKeys(seed);
     return { seed, address };
   }
 
@@ -82,7 +84,8 @@ export class WalletManager {
     this.currentSeed = normalizedSeed;
     await this.updateState();
 
-    return this.deriveAddress(normalizedSeed);
+    const { address } = await this.deriveKeys(normalizedSeed);
+    return address;
   }
 
   async unlock(password: string): Promise<boolean> {
@@ -111,6 +114,8 @@ export class WalletManager {
       address: null,
       balance: null,
       isSynced: false,
+      coinPublicKey: undefined,
+      encryptionPublicKey: undefined,
     });
   }
 
@@ -146,7 +151,7 @@ export class WalletManager {
       return;
     }
 
-    const address = await this.deriveAddress(this.currentSeed);
+    const { address, coinPublicKey, encryptionPublicKey } = await this.deriveKeys(this.currentSeed);
 
     this.stateSubject.next({
       isUnlocked: true,
@@ -157,6 +162,8 @@ export class WalletManager {
         dust: '0',
       },
       isSynced: false,
+      coinPublicKey,
+      encryptionPublicKey,
     });
 
     await this.startFacadeSync();
@@ -202,7 +209,11 @@ export class WalletManager {
     }
   }
 
-  private async deriveAddress(seed: string): Promise<string> {
+  private async deriveKeys(seed: string): Promise<{
+    address: string;
+    coinPublicKey: string;
+    encryptionPublicKey: string;
+  }> {
     const words = seed.split(' ');
     if (words.length !== 24) {
       throw new Error('Invalid seed phrase length');
@@ -224,11 +235,18 @@ export class WalletManager {
     const walletSeed = zswapKey.key;
     const secretKeys = SecretKeys.fromSeed(walletSeed);
 
+    const coinPublicKey = secretKeys.coinPublicKey;
+    const encryptionPublicKey = secretKeys.encryptionPublicKey;
+
     const address = new ShieldedAddress(
-      new ShieldedCoinPublicKey(Buffer.from(secretKeys.coinPublicKey, 'hex')),
-      new ShieldedEncryptionPublicKey(Buffer.from(secretKeys.encryptionPublicKey, 'hex')),
+      new ShieldedCoinPublicKey(Buffer.from(coinPublicKey, 'hex')),
+      new ShieldedEncryptionPublicKey(Buffer.from(encryptionPublicKey, 'hex')),
     );
 
-    return ShieldedAddress.codec.encode('test', address).asString();
+    return {
+      address: ShieldedAddress.codec.encode('test', address).asString(),
+      coinPublicKey,
+      encryptionPublicKey,
+    };
   }
 }

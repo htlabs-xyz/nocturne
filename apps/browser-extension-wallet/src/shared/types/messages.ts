@@ -12,6 +12,12 @@ export type MessageType =
   | 'CONNECT_DAPP'
   | 'DISCONNECT_DAPP'
   | 'GET_CONNECTED_SITES'
+  | 'DAPP_REQUEST'
+  | 'APPROVE_CONNECTION'
+  | 'REJECT_CONNECTION'
+  | 'APPROVE_TRANSACTION'
+  | 'REJECT_TRANSACTION'
+  | 'GET_PENDING_REQUEST'
   | 'PING';
 
 export interface Message<T = unknown> {
@@ -68,6 +74,8 @@ export interface WalletState {
   address: string | null;
   balance: WalletBalance | null;
   isSynced: boolean;
+  coinPublicKey?: string;
+  encryptionPublicKey?: string;
 }
 
 export interface ConnectDappResponse {

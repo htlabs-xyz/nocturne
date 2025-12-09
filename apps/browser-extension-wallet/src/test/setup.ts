@@ -74,6 +74,17 @@ const chromeAlarms = {
   },
 };
 
+const chromeWindows = {
+  create: vi.fn((_options, callback?: (window?: chrome.windows.Window) => void) => {
+    if (callback) {
+      callback({ id: 1 } as chrome.windows.Window);
+    }
+  }),
+  onRemoved: {
+    addListener: vi.fn(),
+  },
+};
+
 global.chrome = {
   storage: {
     local: chromeStorageLocal,
@@ -83,6 +94,7 @@ global.chrome = {
   },
   runtime: chromeRuntime,
   alarms: chromeAlarms,
+  windows: chromeWindows,
 } as unknown as typeof chrome;
 
 let mockKeyCounter = 0;

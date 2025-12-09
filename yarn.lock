@@ -2557,19 +2557,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midnight-ntwrk/wallet-sdk-unshielded-state@npm:1.0.0-beta.11, @midnight-ntwrk/wallet-sdk-unshielded-state@workspace:packages/unshielded-state":
-  version: 0.0.0-use.local
-  resolution: "@midnight-ntwrk/wallet-sdk-unshielded-state@workspace:packages/unshielded-state"
+"@midnight-ntwrk/wallet-sdk-unshielded-state@npm:1.0.0-beta.11":
+  version: 1.0.0-beta.11
+  resolution: "@midnight-ntwrk/wallet-sdk-unshielded-state@npm:1.0.0-beta.11::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40midnight-ntwrk%2Fwallet-sdk-unshielded-state%2F1.0.0-beta.11%2Fa0f509d8388642aa28ad00e075f81f9dcf46697d"
   dependencies:
-    "@midnight-ntwrk/ledger-v6": "npm:6.1.0-alpha.6"
     effect: "npm:^3.17.3"
-    eslint: "npm:^9.37.0"
-    publint: "npm:~0.3.14"
-    rimraf: "npm:^6.0.1"
-    typescript: "npm:^5.9.3"
-    vitest: "npm:^3.2.4"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/8693cb744e19130d6eb83e7978c66f2803310053be3873f38e49037f35650374e0a2b67d96671ec973d758ffc071672ff23e2e807fa98d85f9051f1973bc6392
+  languageName: node
+  linkType: hard
 
 "@midnight-ntwrk/wallet-sdk-unshielded-wallet@npm:1.0.0-beta.13, @midnight-ntwrk/wallet-sdk-unshielded-wallet@workspace:*, @midnight-ntwrk/wallet-sdk-unshielded-wallet@workspace:^, @midnight-ntwrk/wallet-sdk-unshielded-wallet@workspace:packages/unshielded-wallet":
   version: 0.0.0-use.local

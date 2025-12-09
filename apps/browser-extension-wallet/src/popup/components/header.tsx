@@ -19,9 +19,9 @@ export function Header({
     <header className="flex items-center justify-between px-4 py-3 bg-midnight-800 border-b border-midnight-600">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-purple to-indigo-600 flex items-center justify-center">
-          <span className="text-sm font-bold text-white">M</span>
+          <span className="text-sm font-bold text-white">N</span>
         </div>
-        <span className="font-semibold text-white">Midnight</span>
+        <span className="font-semibold text-white">Nocturne</span>
       </div>
 
       <div className="flex items-center gap-3">

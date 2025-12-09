@@ -83,6 +83,6 @@ export const mockNetworks = [
 ];
 
 export const mockConnectedSites = [
-  { url: 'https://midnight.app', name: 'Midnight App', connectedAt: '2024-01-15' },
+  { url: 'https://nocturne.cash', name: 'Nocturne App', connectedAt: '2024-01-15' },
   { url: 'https://example-dapp.com', name: 'Example DApp', connectedAt: '2024-01-10' },
 ];

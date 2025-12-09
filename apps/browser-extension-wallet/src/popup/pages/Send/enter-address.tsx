@@ -20,7 +20,7 @@ export function EnterAddress() {
 
   const handleContinue = () => {
     if (!validateAddress(address)) {
-      setError('Invalid Midnight address');
+      setError('Invalid Nocturne address');
       return;
     }
     setSendAddress(address);
@@ -52,7 +52,7 @@ export function EnterAddress() {
 
       <main className="flex-1 p-4">
         <p className="text-text-secondary text-sm mb-4">
-          Enter the recipient&apos;s Midnight address
+          Enter the recipient&apos;s Nocturne address
         </p>
 
         <Input

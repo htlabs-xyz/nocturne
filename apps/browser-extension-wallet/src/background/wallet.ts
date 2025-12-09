@@ -1,0 +1,146 @@
+import { BehaviorSubject, Observable } from 'rxjs';
+import { generateMnemonicWords, validateMnemonic, joinMnemonicWords } from '@midnight-ntwrk/wallet-sdk-hd';
+import { StorageManager } from './storage';
+import type { WalletState } from '@/shared/types/messages';
+
+export const NETWORK_CONFIG = {
+  networkId: 'testnet-02',
+  indexerHttp: 'https://indexer.testnet-02.midnight.network/api/v1/graphql',
+  indexerWs: 'wss://indexer.testnet-02.midnight.network/api/v1/graphql/ws',
+  proofServer: 'https://lace-dev.proof-pub.stg.midnight.tools',
+  nodeUrl: 'https://rpc.testnet-02.midnight.network',
+};
+
+export class WalletManager {
+  private storage = new StorageManager();
+  private stateSubject = new BehaviorSubject<WalletState>({
+    isUnlocked: false,
+    address: null,
+    balance: null,
+    isSynced: false,
+  });
+  private currentSeed: string | null = null;
+
+  get state$(): Observable<WalletState> {
+    return this.stateSubject.asObservable();
+  }
+
+  get isUnlocked(): boolean {
+    return this.currentSeed !== null;
+  }
+
+  async initialize(): Promise<void> {
+    const sessionSeed = await this.storage.getSessionSeed();
+    if (sessionSeed) {
+      this.currentSeed = sessionSeed;
+      await this.updateState();
+    }
+  }
+
+  async createWallet(password: string): Promise<{ seed: string; address: string }> {
+    const words = generateMnemonicWords(256);
+    const seed = joinMnemonicWords(words);
+
+    const encrypted = await this.storage.encryptSeed(seed, password);
+    await this.storage.saveEncryptedWallet(encrypted);
+    await this.storage.saveSessionSeed(seed);
+
+    this.currentSeed = seed;
+    await this.updateState();
+
+    const address = await this.deriveAddress(seed);
+    return { seed, address };
+  }
+
+  async importWallet(seed: string, password: string): Promise<string> {
+    const normalizedSeed = seed.trim().toLowerCase();
+
+    if (!validateMnemonic(normalizedSeed)) {
+      throw new Error('Invalid seed phrase');
+    }
+
+    const encrypted = await this.storage.encryptSeed(normalizedSeed, password);
+    await this.storage.saveEncryptedWallet(encrypted);
+    await this.storage.saveSessionSeed(normalizedSeed);
+
+    this.currentSeed = normalizedSeed;
+    await this.updateState();
+
+    return this.deriveAddress(normalizedSeed);
+  }
+
+  async unlock(password: string): Promise<boolean> {
+    const encrypted = await this.storage.getEncryptedWallet();
+    if (!encrypted) {
+      throw new Error('No wallet found');
+    }
+
+    try {
+      const seed = await this.storage.decryptSeed(encrypted, password);
+      await this.storage.saveSessionSeed(seed);
+      this.currentSeed = seed;
+      await this.updateState();
+      return true;
+    } catch {
+      throw new Error('Invalid password');
+    }
+  }
+
+  async lock(): Promise<void> {
+    this.currentSeed = null;
+    await this.storage.clearSession();
+    this.stateSubject.next({
+      isUnlocked: false,
+      address: null,
+      balance: null,
+      isSynced: false,
+    });
+  }
+
+  async hasWallet(): Promise<boolean> {
+    return this.storage.hasWallet();
+  }
+
+  async getState(): Promise<WalletState> {
+    return this.stateSubject.getValue();
+  }
+
+  private async updateState(): Promise<void> {
+    if (!this.currentSeed) {
+      return;
+    }
+
+    const address = await this.deriveAddress(this.currentSeed);
+
+    this.stateSubject.next({
+      isUnlocked: true,
+      address,
+      balance: {
+        shielded: BigInt(0),
+        unshielded: BigInt(0),
+        dust: BigInt(0),
+      },
+      isSynced: false,
+    });
+  }
+
+  private async deriveAddress(seed: string): Promise<string> {
+    const words = seed.split(' ');
+    if (words.length !== 24) {
+      throw new Error('Invalid seed phrase length');
+    }
+
+    const mockAddress = `mn_shield_${this.hashSeed(seed).substring(0, 16)}`;
+    return mockAddress;
+  }
+
+  private hashSeed(seed: string): string {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16).padStart(16, '0');
+  }
+}

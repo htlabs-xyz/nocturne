@@ -3,7 +3,7 @@
   "name": "Midnight Wallet",
   "version": "0.1.0",
   "description": "Secure wallet for Midnight Network",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "alarms"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",

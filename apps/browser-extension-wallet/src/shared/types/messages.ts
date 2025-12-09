@@ -48,14 +48,16 @@ export interface WalletImportResponse {
   address: string;
 }
 
+export interface WalletBalance {
+  shielded: string;
+  unshielded: string;
+  dust: string;
+}
+
 export interface WalletState {
   isUnlocked: boolean;
   address: string | null;
-  balance: {
-    shielded: bigint;
-    unshielded: bigint;
-    dust: bigint;
-  } | null;
+  balance: WalletBalance | null;
   isSynced: boolean;
 }
 

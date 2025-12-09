@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useUIStore } from './stores/ui-store';
 import { useWalletStore } from './stores/wallet-store';
 import { Welcome, CreateWallet, ImportWallet, SeedPhrase, SetPassword, Unlock } from './pages/Onboarding';
@@ -12,27 +12,37 @@ import { Spinner } from './components';
 export function App() {
   const route = useUIStore((s) => s.route);
   const setRoute = useUIStore((s) => s.setRoute);
-  const { initialize, hasWallet, isUnlocked, isLoading } = useWalletStore();
+  const { initialize, isLoading, error } = useWalletStore();
+  const [initComplete, setInitComplete] = useState(false);
+  const initRef = useRef(false);
 
   useEffect(() => {
-    initialize().then(() => {
-      const state = useWalletStore.getState();
-      if (state.hasWallet) {
-        if (state.isUnlocked) {
-          setRoute('dashboard');
-        } else {
-          setRoute('unlock');
-        }
-      } else {
-        setRoute('welcome');
-      }
-    });
-  }, []);
+    if (initRef.current) return;
+    initRef.current = true;
 
-  if (isLoading && route === 'welcome') {
+    initialize()
+      .then(() => {
+        const state = useWalletStore.getState();
+        if (state.hasWallet) {
+          setRoute(state.isUnlocked ? 'dashboard' : 'unlock');
+        } else {
+          setRoute('welcome');
+        }
+      })
+      .catch((err) => {
+        console.error('Init error:', err);
+        setRoute('welcome');
+      })
+      .finally(() => {
+        setInitComplete(true);
+      });
+  }, [initialize, setRoute]);
+
+  if (!initComplete || (isLoading && route === 'welcome')) {
     return (
-      <div className="w-[360px] h-[600px] bg-midnight-900 text-white flex items-center justify-center">
+      <div className="w-[360px] h-[600px] bg-midnight-900 text-white flex flex-col items-center justify-center gap-4">
         <Spinner size="lg" />
+        {error && <p className="text-red-400 text-sm px-4 text-center">{error}</p>}
       </div>
     );
   }

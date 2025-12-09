@@ -121,9 +121,9 @@ export class WalletManager {
       isUnlocked: true,
       address,
       balance: {
-        shielded: BigInt(0),
-        unshielded: BigInt(0),
-        dust: BigInt(0),
+        shielded: '0',
+        unshielded: '0',
+        dust: '0',
       },
       isSynced: false,
     });

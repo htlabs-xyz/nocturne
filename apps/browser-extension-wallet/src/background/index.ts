@@ -5,30 +5,47 @@ import type { Message } from '@/shared/types/messages';
 const wallet = new WalletManager();
 const router = new MessageRouter(wallet);
 
+let isInitialized = false;
+
+async function ensureInitialized(): Promise<void> {
+  if (!isInitialized) {
+    console.log('[Background] Initializing wallet...');
+    await wallet.initialize();
+    isInitialized = true;
+    console.log('[Background] Wallet initialized');
+  }
+}
+
 chrome.runtime.onInstalled.addListener(async () => {
   if (process.env.NODE_ENV !== 'production') {
     console.log('Nocturne.cash installed');
   }
-  await wallet.initialize();
+  await ensureInitialized();
 });
 
 chrome.runtime.onStartup.addListener(async () => {
   if (process.env.NODE_ENV !== 'production') {
     console.log('Nocturne.cash started');
   }
-  await wallet.initialize();
+  await ensureInitialized();
 });
 
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+  console.log('[Background] Received message:', message.type);
+
   if (!message || typeof message.type !== 'string' || !message.id) {
     sendResponse({ success: false, error: 'Invalid message format', id: '' });
     return false;
   }
 
-  router
-    .handleMessage(message, sender)
-    .then(sendResponse)
+  ensureInitialized()
+    .then(() => router.handleMessage(message, sender))
+    .then((response) => {
+      console.log('[Background] Sending response for:', message.type);
+      sendResponse(response);
+    })
     .catch((error) => {
+      console.error('[Background] Error handling message:', error);
       sendResponse({
         success: false,
         error: error instanceof Error ? error.message : 'Internal error',

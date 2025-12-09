@@ -18,12 +18,23 @@ interface WalletStoreState {
   clearError: () => void;
 }
 
+const MESSAGE_TIMEOUT = 30000;
+
 async function sendMessage<T>(type: string, payload?: unknown): Promise<T> {
   const message = createMessage(type as any, payload);
   return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(new Error(`Message timeout: ${type}`));
+    }, MESSAGE_TIMEOUT);
+
     chrome.runtime.sendMessage(message, (response) => {
+      clearTimeout(timeoutId);
       if (chrome.runtime.lastError) {
         reject(new Error(chrome.runtime.lastError.message));
+        return;
+      }
+      if (!response) {
+        reject(new Error('No response from background'));
         return;
       }
       if (!response.success) {
@@ -45,7 +56,9 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
   initialize: async () => {
     set({ isLoading: true, error: null });
     try {
+      console.log('[WalletStore] Initializing...');
       const state = await sendMessage<WalletState & { hasWallet: boolean }>('GET_STATE');
+      console.log('[WalletStore] Got state:', state);
       set({
         hasWallet: state.hasWallet,
         isUnlocked: state.isUnlocked,
@@ -53,6 +66,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
         isLoading: false,
       });
     } catch (error) {
+      console.error('[WalletStore] Init error:', error);
       set({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Failed to initialize',
@@ -88,7 +102,9 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
   importWallet: async (seed: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
+      console.log('[WalletStore] Importing wallet...');
       const result = await sendMessage<{ address: string }>('WALLET_IMPORT', { seed, password });
+      console.log('[WalletStore] Import success:', result);
       set({
         hasWallet: true,
         isUnlocked: true,
@@ -97,6 +113,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
       });
       return result.address;
     } catch (error) {
+      console.error('[WalletStore] Import error:', error);
       set({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Failed to import wallet',

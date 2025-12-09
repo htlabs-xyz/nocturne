@@ -1,14 +1,41 @@
 import { Header, BottomNav } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
 import { useWalletStore } from '../../stores/wallet-store';
-import { mockTokens } from '../../stores/mock-data';
 import { BalanceCard } from './balance-card';
 import { TokenList } from './token-list';
 import { ActionButton } from './action-button';
+import type { Token } from '../../stores/mock-data';
+
+function formatBalance(value: string): string {
+  const num = BigInt(value || '0');
+  const divisor = BigInt(1_000_000);
+  const intPart = num / divisor;
+  const decPart = num % divisor;
+  if (decPart === 0n) return intPart.toString();
+  const decStr = decPart.toString().padStart(6, '0').replace(/0+$/, '');
+  return `${intPart}.${decStr}`;
+}
 
 export function Dashboard() {
   const { setRoute, activeTab, setActiveTab, setSelectedToken } = useUIStore();
   const { balance } = useWalletStore();
+
+  const tokens: Token[] = [
+    {
+      symbol: 'NIGHT',
+      name: 'Night Token',
+      balance: formatBalance(balance?.unshielded || '0'),
+      usd: '$0.00',
+      icon: '🌙',
+    },
+    {
+      symbol: 'tDUST',
+      name: 'Dust',
+      balance: formatBalance(balance?.dust || '0'),
+      usd: '$0.00',
+      icon: '✨',
+    },
+  ];
 
   const handleTokenClick = (token: { symbol: string }) => {
     setSelectedToken(token.symbol);
@@ -25,12 +52,12 @@ export function Dashboard() {
       <main className="flex-1 overflow-y-auto p-4 space-y-4">
         <BalanceCard
           totalUsd="$0.00"
-          shielded={{ hidden: false, amount: balance?.shielded || '0' }}
+          shielded={{ hidden: false, amount: formatBalance(balance?.shielded || '0') }}
           unshielded={{
             token: 'NIGHT',
-            amount: balance?.unshielded || '0',
+            amount: formatBalance(balance?.unshielded || '0'),
           }}
-          dust={{ amount: balance?.dust || '0' }}
+          dust={{ amount: formatBalance(balance?.dust || '0') }}
         />
 
         <div className="flex gap-2">
@@ -63,7 +90,7 @@ export function Dashboard() {
           />
         </div>
 
-        <TokenList tokens={mockTokens} onTokenClick={handleTokenClick} />
+        <TokenList tokens={tokens} onTokenClick={handleTokenClick} />
       </main>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

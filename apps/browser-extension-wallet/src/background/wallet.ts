@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import {
   generateMnemonicWords,
   validateMnemonic,
@@ -14,6 +14,7 @@ import {
 import { SecretKeys } from '@midnight-ntwrk/zswap';
 import { mnemonicToSeed } from '@scure/bip39';
 import { StorageManager } from './storage';
+import { FacadeService } from './facade-service';
 import type { WalletState } from '@/shared/types/messages';
 
 export const NETWORK_CONFIG = {
@@ -26,6 +27,8 @@ export const NETWORK_CONFIG = {
 
 export class WalletManager {
   private storage = new StorageManager();
+  private facadeService = new FacadeService();
+  private balanceSubscription: Subscription | null = null;
   private stateSubject = new BehaviorSubject<WalletState>({
     isUnlocked: false,
     address: null,
@@ -101,6 +104,7 @@ export class WalletManager {
 
   async lock(): Promise<void> {
     this.currentSeed = null;
+    await this.stopFacadeSync();
     await this.storage.clearSession();
     this.stateSubject.next({
       isUnlocked: false,
@@ -154,6 +158,48 @@ export class WalletManager {
       },
       isSynced: false,
     });
+
+    await this.startFacadeSync();
+  }
+
+  private async startFacadeSync(): Promise<void> {
+    if (!this.currentSeed) {
+      return;
+    }
+
+    if (this.balanceSubscription) {
+      this.balanceSubscription.unsubscribe();
+      this.balanceSubscription = null;
+    }
+
+    try {
+      const bip39Seed = await mnemonicToSeed(this.currentSeed);
+      await this.facadeService.start(bip39Seed);
+
+      this.balanceSubscription = this.facadeService.balance$.subscribe((balanceState) => {
+        const currentState = this.stateSubject.getValue();
+        this.stateSubject.next({
+          ...currentState,
+          balance: balanceState.balance,
+          isSynced: balanceState.isSynced,
+        });
+      });
+    } catch (error) {
+      console.error('[WalletManager] Failed to start facade sync:', error);
+    }
+  }
+
+  private async stopFacadeSync(): Promise<void> {
+    if (this.balanceSubscription) {
+      this.balanceSubscription.unsubscribe();
+      this.balanceSubscription = null;
+    }
+
+    try {
+      await this.facadeService.stop();
+    } catch (error) {
+      console.error('[WalletManager] Failed to stop facade:', error);
+    }
   }
 
   private async deriveAddress(seed: string): Promise<string> {

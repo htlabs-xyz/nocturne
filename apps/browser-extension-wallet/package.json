@@ -12,9 +12,13 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@midnight-ntwrk/ledger-v6": "6.1.0-alpha.6",
     "@midnight-ntwrk/wallet-sdk-address-format": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-dust-wallet": "workspace:*",
     "@midnight-ntwrk/wallet-sdk-facade": "workspace:*",
     "@midnight-ntwrk/wallet-sdk-hd": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-shielded": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-unshielded-wallet": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rxjs": "^7.8.1",
@@ -30,6 +34,7 @@
     "autoprefixer": "^10.4.21",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^13.0.0",
+    "crypto-browserify": "^3.12.1",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
     "jsdom": "^25.0.1",
@@ -38,11 +43,13 @@
     "postcss-loader": "^8.1.1",
     "process": "^0.11.10",
     "rimraf": "^6.0.1",
+    "stream-browserify": "^3.0.0",
     "tailwindcss": "^3.4.17",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4",
+    "vm-browserify": "^1.1.2",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
   }

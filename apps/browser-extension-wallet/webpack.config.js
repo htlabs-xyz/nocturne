@@ -33,23 +33,33 @@ export default (_env, argv) => ({
         test: /\.wasm$/,
         type: 'webassembly/async',
       },
+      {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.wasm'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      crypto: false,
     },
     fallback: {
       assert: 'assert/',
       buffer: 'buffer/',
-      process: 'process/browser',
+      process: 'process/browser.js',
+      stream: 'stream-browserify',
+      vm: 'vm-browserify',
     },
+    fullySpecified: false,
   },
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
-      process: 'process/browser',
+      process: 'process/browser.js',
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),

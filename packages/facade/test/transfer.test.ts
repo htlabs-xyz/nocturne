@@ -53,14 +53,17 @@ const environment = new DockerComposeEnvironment(getComposeDirectory(), 'docker-
   .withStartupTimeout(100_000);
 
 describe('Wallet Facade Transfer', () => {
-  const shieldedSenderSeed = getShieldedSeed('0000000000000000000000000000000000000000000000000000000000000002');
-  const shieldedReceiverSeed = getShieldedSeed('0000000000000000000000000000000000000000000000000000000000001111');
+  const SENDER_SEED = '0000000000000000000000000000000000000000000000000000000000000001';
+  const RECEIVER_SEED = '0000000000000000000000000000000000000000000000000000000000001111';
 
-  const unshieldedSenderSeed = getUnshieldedSeed('0000000000000000000000000000000000000000000000000000000000000002');
-  const unshieldedReceiverSeed = getUnshieldedSeed('0000000000000000000000000000000000000000000000000000000000001111');
+  const shieldedSenderSeed = getShieldedSeed(SENDER_SEED);
+  const shieldedReceiverSeed = getShieldedSeed(RECEIVER_SEED);
 
-  const dustSenderSeed = getDustSeed('0000000000000000000000000000000000000000000000000000000000000002');
-  const dustReceiverSeed = getDustSeed('0000000000000000000000000000000000000000000000000000000000001111');
+  const unshieldedSenderSeed = getUnshieldedSeed(SENDER_SEED);
+  const unshieldedReceiverSeed = getUnshieldedSeed(RECEIVER_SEED);
+
+  const dustSenderSeed = getDustSeed(SENDER_SEED);
+  const dustReceiverSeed = getDustSeed(RECEIVER_SEED);
 
   const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, NetworkId.NetworkId.Undeployed);
   const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, NetworkId.NetworkId.Undeployed);

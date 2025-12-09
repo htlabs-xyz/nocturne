@@ -52,11 +52,11 @@ const environment = new DockerComposeEnvironment(getComposeDirectory(), 'docker-
   .withStartupTimeout(100_000);
 
 describe('Dust Deregistration', () => {
-  const shieldedWalletSeed = getShieldedSeed('0000000000000000000000000000000000000000000000000000000000000002');
+  const SEED = '0000000000000000000000000000000000000000000000000000000000000003';
 
-  const unshieldedWalletSeed = getUnshieldedSeed('0000000000000000000000000000000000000000000000000000000000000002');
-
-  const dustWalletSeed = getDustSeed('0000000000000000000000000000000000000000000000000000000000000002');
+  const shieldedWalletSeed = getShieldedSeed(SEED);
+  const unshieldedWalletSeed = getUnshieldedSeed(SEED);
+  const dustWalletSeed = getDustSeed(SEED);
 
   const unshieldedWalletKeystore = createKeystore(unshieldedWalletSeed, NetworkId.NetworkId.Undeployed);
 

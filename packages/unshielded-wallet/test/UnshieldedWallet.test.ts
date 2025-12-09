@@ -39,7 +39,7 @@ const environment = new DockerComposeEnvironment(getComposeDirectory(), 'docker-
 describe('UnshieldedWallet', () => {
   let indexerPort: number;
   let startedEnvironment: StartedDockerComposeEnvironment;
-  const unshieldedSeed = getUnshieldedSeed('0000000000000000000000000000000000000000000000000000000000000001');
+  const unshieldedSeed = getUnshieldedSeed('0000000000000000000000000000000000000000000000000000000000000002');
 
   beforeAll(async () => {
     startedEnvironment = await environment.up();
@@ -55,12 +55,12 @@ describe('UnshieldedWallet', () => {
 
     await unshieldedWallet.start();
 
-    await unshieldedWallet.waitForSyncedState();
+    await unshieldedWallet.waitForSyncedState(0n);
 
     const state = await firstValueFrom(unshieldedWallet.state);
 
     expect(UnshieldedAddress.codec.encode(config.networkId, state.address).asString()).toBe(
-      'mn_addr_undeployed1h3ssm5ru2t6eqy4g3she78zlxn96e36ms6pq996aduvmateh9p9sk96u7s',
+      'mn_addr_undeployed1gkasr3z3vwyscy2jpp53nzr37v7n4r3lsfgj6v5g584dakjzt0xqun4d4r',
     );
     expect(state.availableCoins.length).toBeGreaterThan(0);
     expect(state.pendingCoins).toHaveLength(0);

@@ -48,13 +48,10 @@ const environment = new DockerComposeEnvironment(getComposeDirectory(), 'docker-
     Wait.forLogMessage('Actix runtime found; starting in Actix runtime'),
   )
   .withWaitStrategy(`node_${environmentId}`, Wait.forListeningPorts())
-  .withWaitStrategy(`indexer_${environmentId}`, Wait.forListeningPorts())
+  .withWaitStrategy(`indexer_${environmentId}`, Wait.forLogMessage(/block indexed".*height":1,.*/gm))
   .withEnvironment(environmentVars)
   .withStartupTimeout(100_000);
 
-/**
- * We need the dust wallet to transact
- */
 describe('Wallet Facade Transfer', () => {
   const SENDER_SEED = '0000000000000000000000000000000000000000000000000000000000000001';
   const RECEIVER_SEED = '0000000000000000000000000000000000000000000000000000000000001111';

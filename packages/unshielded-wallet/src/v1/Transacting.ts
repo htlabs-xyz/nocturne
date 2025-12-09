@@ -106,9 +106,9 @@ export const makeDefaultTransactingCapability = (
   );
 };
 
-export class TransactingCapabilityImplementation<TTransaction extends ledger.UnprovenTransaction>
-  implements TransactingCapability<ledger.UnprovenTransaction, CoreWallet>
-{
+export class TransactingCapabilityImplementation<
+  TTransaction extends ledger.UnprovenTransaction,
+> implements TransactingCapability<ledger.UnprovenTransaction, CoreWallet> {
   public readonly networkId: NetworkId.NetworkId;
   public readonly getCoinSelection: () => CoinSelection<ledger.Utxo>;
   public readonly txTrait: TransactionTrait<TTransaction>;

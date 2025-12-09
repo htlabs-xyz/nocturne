@@ -72,9 +72,10 @@ export const V1Tag: unique symbol = Symbol('V1');
 
 export type DefaultRunningV1 = RunningV1Variant<string, WalletSyncUpdate, ledger.FinalizedTransaction>;
 
-export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction>
-  implements Variant.RunningVariant<typeof V1Tag, CoreWallet>
-{
+export class RunningV1Variant<TSerialized, TSyncUpdate, TTransaction> implements Variant.RunningVariant<
+  typeof V1Tag,
+  CoreWallet
+> {
   readonly __polyTag__: typeof V1Tag = V1Tag;
   readonly #scope: Scope.Scope;
   readonly #context: Variant.VariantContext<CoreWallet>;

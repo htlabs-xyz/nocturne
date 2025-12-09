@@ -12,6 +12,7 @@ export default (_env, argv) => ({
     popup: './src/popup/index.tsx',
     background: './src/background/index.ts',
     content: './src/content/index.ts',
+    inpage: './src/content/inpage.ts',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

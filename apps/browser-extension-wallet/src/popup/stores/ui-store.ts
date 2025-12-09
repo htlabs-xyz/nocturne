@@ -16,7 +16,10 @@ export type Route =
   | 'activity'
   | 'settings'
   | 'connected-sites'
-  | 'security';
+  | 'security'
+  | 'connect'
+  | 'approve'
+  | 'dapp-unlock';
 
 export type Tab = 'wallet' | 'activity' | 'settings';
 

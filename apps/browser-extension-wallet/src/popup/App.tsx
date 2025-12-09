@@ -7,6 +7,7 @@ import { SelectToken, EnterAmount, EnterAddress, ConfirmSend } from './pages/Sen
 import { Receive } from './pages/Receive';
 import { Activity } from './pages/Activity';
 import { Settings, ConnectedSites, Security } from './pages/Settings';
+import { ConnectRequest, DAppUnlock, TransactionApproval } from './pages/DApp';
 import { Spinner } from './components';
 
 export function App() {
@@ -19,6 +20,23 @@ export function App() {
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
+
+    const hash = window.location.hash;
+    if (hash.includes('/dapp-unlock')) {
+      setRoute('dapp-unlock');
+      setInitComplete(true);
+      return;
+    }
+    if (hash.includes('/connect')) {
+      setRoute('connect');
+      setInitComplete(true);
+      return;
+    }
+    if (hash.includes('/approve')) {
+      setRoute('approve');
+      setInitComplete(true);
+      return;
+    }
 
     initialize()
       .then(() => {
@@ -81,6 +99,12 @@ export function App() {
         return <ConnectedSites />;
       case 'security':
         return <Security />;
+      case 'connect':
+        return <ConnectRequest />;
+      case 'approve':
+        return <TransactionApproval />;
+      case 'dapp-unlock':
+        return <DAppUnlock />;
       default:
         return <Welcome />;
     }

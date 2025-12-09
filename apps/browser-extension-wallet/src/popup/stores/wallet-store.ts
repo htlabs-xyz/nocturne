@@ -15,6 +15,7 @@ interface WalletStoreState {
   importWallet: (seed: string, password: string) => Promise<string>;
   unlock: (password: string) => Promise<void>;
   lock: () => Promise<void>;
+  getSeedPhrase: (password: string) => Promise<string>;
   clearError: () => void;
 }
 
@@ -156,6 +157,11 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
         error: error instanceof Error ? error.message : 'Failed to lock',
       });
     }
+  },
+
+  getSeedPhrase: async (password: string) => {
+    const result = await sendMessage<{ seed: string }>('GET_SEED_PHRASE', { password });
+    return result.seed;
   },
 
   clearError: () => set({ error: null }),

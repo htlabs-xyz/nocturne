@@ -129,6 +129,38 @@ describe('MessageRouter', () => {
     });
   });
 
+  describe('GET_SEED_PHRASE', () => {
+    const password = 'testpassword';
+
+    beforeEach(async () => {
+      const createMsg = createMessage('WALLET_CREATE', { password });
+      await router.handleMessage(createMsg, mockSender);
+    });
+
+    it('should return seed phrase with correct password', async () => {
+      const message = createMessage('GET_SEED_PHRASE', { password });
+
+      const response = await router.handleMessage(message, mockSender);
+
+      expect(response.success).toBe(true);
+      expect(response.data).toHaveProperty('seed');
+      const seed = (response.data as { seed: string }).seed;
+      expect(seed.split(' ').length).toBe(24);
+    });
+
+    it('should fail when no wallet exists', async () => {
+      clearMockStorage();
+      const newWallet = new WalletManager();
+      const newRouter = new MessageRouter(newWallet);
+      const message = createMessage('GET_SEED_PHRASE', { password: 'anypassword' });
+
+      const response = await newRouter.handleMessage(message, mockSender);
+
+      expect(response.success).toBe(false);
+      expect(response.error).toBe('No wallet found');
+    });
+  });
+
   describe('connected sites', () => {
     it('should connect and disconnect dapps', async () => {
       const connectMsg = createMessage('CONNECT_DAPP');

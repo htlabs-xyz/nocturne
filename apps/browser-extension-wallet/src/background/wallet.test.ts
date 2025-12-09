@@ -121,6 +121,22 @@ describe('WalletManager', () => {
     });
   });
 
+  describe('getSeedPhrase', () => {
+    it('should return seed phrase with correct password', async () => {
+      const password = 'testpassword';
+      const { seed: originalSeed } = await wallet.createWallet(password);
+      await wallet.lock();
+
+      const retrievedSeed = await wallet.getSeedPhrase(password);
+
+      expect(retrievedSeed).toBe(originalSeed);
+    });
+
+    it('should throw error when no wallet exists', async () => {
+      await expect(wallet.getSeedPhrase('anypassword')).rejects.toThrow('No wallet found');
+    });
+  });
+
   describe('state observable', () => {
     it('should emit state changes', async () => {
       const states: unknown[] = [];

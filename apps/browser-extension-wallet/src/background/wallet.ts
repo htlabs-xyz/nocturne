@@ -106,6 +106,20 @@ export class WalletManager {
     return joinMnemonicWords(words);
   }
 
+  async getSeedPhrase(password: string): Promise<string> {
+    const encrypted = await this.storage.getEncryptedWallet();
+    if (!encrypted) {
+      throw new Error('No wallet found');
+    }
+
+    try {
+      const seed = await this.storage.decryptSeed(encrypted, password);
+      return seed;
+    } catch {
+      throw new Error('Invalid password');
+    }
+  }
+
   async getState(): Promise<WalletState> {
     return this.stateSubject.getValue();
   }

@@ -6,6 +6,7 @@ import type {
   WalletCreatePayload,
   WalletImportPayload,
   WalletUnlockPayload,
+  GetSeedPhrasePayload,
 } from '@/shared/types/messages';
 import { createResponse } from '@/shared/types/messages';
 
@@ -63,6 +64,12 @@ export class MessageRouter {
         case 'GET_BALANCE': {
           const state = await this.wallet.getState();
           return createResponse(id, true, state.balance);
+        }
+
+        case 'GET_SEED_PHRASE': {
+          const { password } = payload as GetSeedPhrasePayload;
+          const seed = await this.wallet.getSeedPhrase(password);
+          return createResponse(id, true, { seed });
         }
 
         case 'CONNECT_DAPP': {

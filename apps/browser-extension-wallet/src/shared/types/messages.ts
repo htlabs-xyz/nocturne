@@ -6,6 +6,7 @@ export type MessageType =
   | 'GENERATE_SEED'
   | 'GET_STATE'
   | 'GET_BALANCE'
+  | 'GET_SEED_PHRASE'
   | 'SEND_TRANSACTION'
   | 'SIGN_TRANSACTION'
   | 'CONNECT_DAPP'
@@ -37,6 +38,14 @@ export interface WalletImportPayload {
 
 export interface WalletUnlockPayload {
   password: string;
+}
+
+export interface GetSeedPhrasePayload {
+  password: string;
+}
+
+export interface GetSeedPhraseResponse {
+  seed: string;
 }
 
 export interface WalletCreateResponse {

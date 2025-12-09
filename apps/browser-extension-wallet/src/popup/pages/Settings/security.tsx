@@ -1,26 +1,40 @@
 import { useState } from 'react';
-import { Button, Card, Modal, Input } from '../../components';
+import { Button, Card, Modal, Input, Spinner } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
-
-const MOCK_SEED_PHRASE = [
-  'abandon', 'ability', 'able', 'about', 'above', 'absent',
-  'absorb', 'abstract', 'absurd', 'abuse', 'access', 'accident',
-  'account', 'accuse', 'achieve', 'acid', 'acoustic', 'acquire',
-  'across', 'act', 'action', 'actor', 'actress', 'actual',
-];
+import { useWalletStore } from '../../stores/wallet-store';
 
 export function Security() {
   const { goBack } = useUIStore();
+  const { getSeedPhrase } = useWalletStore();
   const [showSeedModal, setShowSeedModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [password, setPassword] = useState('');
-  const [verified, setVerified] = useState(false);
+  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleVerify = () => {
-    if (password === 'password') {
-      setVerified(true);
+  const handleVerify = async () => {
+    if (!password.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const seed = await getSeedPhrase(password);
+      setSeedPhrase(seed.split(' '));
       setPassword('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to verify password');
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowSeedModal(false);
+    setSeedPhrase([]);
+    setPassword('');
+    setError(null);
   };
 
   return (
@@ -90,14 +104,10 @@ export function Security() {
 
       <Modal
         isOpen={showSeedModal}
-        onClose={() => {
-          setShowSeedModal(false);
-          setVerified(false);
-          setPassword('');
-        }}
+        onClose={handleCloseModal}
         title="View Seed Phrase"
       >
-        {!verified ? (
+        {seedPhrase.length === 0 ? (
           <div className="space-y-4">
             <p className="text-text-secondary text-sm">
               Enter your password to reveal your seed phrase
@@ -107,15 +117,18 @@ export function Security() {
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
+              error={error || undefined}
+              disabled={isLoading}
             />
-            <Button fullWidth onClick={handleVerify}>
-              Verify
+            <Button fullWidth onClick={handleVerify} disabled={isLoading || !password.trim()}>
+              {isLoading ? <Spinner size="sm" /> : 'Verify'}
             </Button>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-1.5">
-              {MOCK_SEED_PHRASE.map((word, i) => (
+              {seedPhrase.map((word, i) => (
                 <div key={i} className="bg-midnight-700 rounded-lg px-1.5 py-1 text-center">
                   <span className="text-text-muted text-[10px] mr-0.5">{i + 1}.</span>
                   <span className="text-white text-[10px]">{word}</span>

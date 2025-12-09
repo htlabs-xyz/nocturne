@@ -9,8 +9,8 @@ export function ImportWallet() {
 
   const handleImport = () => {
     const words = seedPhrase.trim().split(/\s+/);
-    if (words.length !== 12 && words.length !== 24) {
-      setError('Seed phrase must be 12 or 24 words');
+    if (words.length !== 24) {
+      setError('Seed phrase must be 24 words');
       return;
     }
     setRoute('set-password');
@@ -30,7 +30,7 @@ export function ImportWallet() {
       <div className="flex-1 flex flex-col">
         <h1 className="text-xl font-bold text-white mb-2">Import Wallet</h1>
         <p className="text-text-secondary text-sm mb-6">
-          Enter your 12 or 24 word seed phrase to restore your wallet
+          Enter your 24 word seed phrase to restore your wallet
         </p>
 
         <div className="mb-4">

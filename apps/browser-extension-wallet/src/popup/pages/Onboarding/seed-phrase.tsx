@@ -5,6 +5,8 @@ import { useUIStore } from '../../stores/ui-store';
 const MOCK_SEED_PHRASE = [
   'abandon', 'ability', 'able', 'about', 'above', 'absent',
   'absorb', 'abstract', 'absurd', 'abuse', 'access', 'accident',
+  'account', 'accuse', 'achieve', 'acid', 'acoustic', 'acquire',
+  'across', 'act', 'action', 'actor', 'actress', 'actual',
 ];
 
 const CLIPBOARD_CLEAR_TIMEOUT = 30000;
@@ -61,18 +63,18 @@ export function SeedPhrase() {
       <div className="flex-1 flex flex-col">
         <h1 className="text-xl font-bold text-white mb-2">Your Seed Phrase</h1>
         <p className="text-text-secondary text-sm mb-4">
-          Write down these 12 words in order and store them safely
+          Write down these 24 words in order and store them safely
         </p>
 
         <div className="relative mb-4">
-          <div className={`grid grid-cols-3 gap-2 ${!revealed ? 'blur-md select-none' : ''}`}>
+          <div className={`grid grid-cols-4 gap-1.5 ${!revealed ? 'blur-md select-none' : ''}`}>
             {MOCK_SEED_PHRASE.map((word, i) => (
               <div
                 key={i}
-                className="bg-midnight-700 rounded-lg px-3 py-2 text-center"
+                className="bg-midnight-700 rounded-lg px-2 py-1.5 text-center"
               >
-                <span className="text-text-muted text-xs mr-1">{i + 1}.</span>
-                <span className="text-white text-sm">{word}</span>
+                <span className="text-text-muted text-[10px] mr-0.5">{i + 1}.</span>
+                <span className="text-white text-xs">{word}</span>
               </div>
             ))}
           </div>

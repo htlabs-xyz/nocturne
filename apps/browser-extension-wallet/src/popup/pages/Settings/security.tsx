@@ -5,6 +5,8 @@ import { useUIStore } from '../../stores/ui-store';
 const MOCK_SEED_PHRASE = [
   'abandon', 'ability', 'able', 'about', 'above', 'absent',
   'absorb', 'abstract', 'absurd', 'abuse', 'access', 'accident',
+  'account', 'accuse', 'achieve', 'acid', 'acoustic', 'acquire',
+  'across', 'act', 'action', 'actor', 'actress', 'actual',
 ];
 
 export function Security() {
@@ -112,11 +114,11 @@ export function Security() {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-4 gap-1.5">
               {MOCK_SEED_PHRASE.map((word, i) => (
-                <div key={i} className="bg-midnight-700 rounded-lg px-2 py-1.5 text-center">
-                  <span className="text-text-muted text-xs mr-1">{i + 1}.</span>
-                  <span className="text-white text-xs">{word}</span>
+                <div key={i} className="bg-midnight-700 rounded-lg px-1.5 py-1 text-center">
+                  <span className="text-text-muted text-[10px] mr-0.5">{i + 1}.</span>
+                  <span className="text-white text-[10px]">{word}</span>
                 </div>
               ))}
             </div>

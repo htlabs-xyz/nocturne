@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
   if (process.env.NODE_ENV !== 'production') {
-    console.log('Midnight Wallet installed');
+    console.log('Nocturne.cash installed');
   }
 });
 

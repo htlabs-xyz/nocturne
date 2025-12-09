@@ -65,7 +65,7 @@ describe('UnshieldedWallet', () => {
     expect(state.availableCoins.length).toBeGreaterThan(0);
     expect(state.pendingCoins).toHaveLength(0);
 
-    const transactionHistory = await Array.fromAsync(state.transactionHistory);
+    const transactionHistory = await Array.fromAsync(state.transactionHistory.getAll());
 
     expect(transactionHistory.length).toBeGreaterThan(1);
   });

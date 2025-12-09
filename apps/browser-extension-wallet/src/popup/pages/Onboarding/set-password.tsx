@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button, Input } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
+import { useWalletStore } from '../../stores/wallet-store';
+import type { Route } from '../../stores/ui-store';
 
 const COMMON_PASSWORDS = [
   'password', '12345678', '123456789', '1234567890', 'qwerty123',
@@ -54,16 +56,27 @@ function getPasswordStrength(password: string): PasswordStrength {
 }
 
 export function SetPassword() {
-  const { setRoute, setOnboarded } = useUIStore();
+  const { setRoute, setOnboarded, pendingSeedPhrase, setPendingSeedPhrase, previousRoute } = useUIStore();
+  const { createWallet, importWallet, isLoading } = useWalletStore();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const isImportFlow = previousRoute === 'import-wallet';
+
   const validation = useMemo(() => validatePassword(password), [password]);
   const strength = useMemo(() => getPasswordStrength(password), [password]);
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    return () => {
+      if (pendingSeedPhrase) {
+        setPendingSeedPhrase(null);
+      }
+    };
+  }, []);
+
+  const handleSubmit = async () => {
     if (!validation.valid) {
       setError('Password does not meet requirements');
       return;
@@ -72,8 +85,23 @@ export function SetPassword() {
       setError('Passwords do not match');
       return;
     }
-    setOnboarded(true);
-    setRoute('dashboard');
+    try {
+      if (pendingSeedPhrase) {
+        await importWallet(pendingSeedPhrase, password);
+      } else {
+        await createWallet(password);
+      }
+      setPendingSeedPhrase(null);
+      setOnboarded(true);
+      setRoute('dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create wallet');
+    }
+  };
+
+  const handleBack = () => {
+    setPendingSeedPhrase(null);
+    setRoute(isImportFlow ? 'import-wallet' : 'seed-phrase');
   };
 
   const toggleVisibility = (
@@ -98,7 +126,7 @@ export function SetPassword() {
   return (
     <div className="flex flex-col h-full bg-midnight-900 p-6">
       <button
-        onClick={() => setRoute('seed-phrase')}
+        onClick={handleBack}
         className="self-start p-2 -ml-2 text-text-secondary hover:text-white transition-colors"
       >
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -174,9 +202,9 @@ export function SetPassword() {
       <Button
         fullWidth
         onClick={handleSubmit}
-        disabled={!password || !confirmPassword}
+        disabled={!password || !confirmPassword || isLoading}
       >
-        Create Wallet
+        {isLoading ? (isImportFlow ? 'Importing...' : 'Creating...') : (isImportFlow ? 'Import Wallet' : 'Create Wallet')}
       </Button>
     </div>
   );

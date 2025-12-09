@@ -26,6 +26,11 @@ export class MessageRouter {
         case 'PING':
           return createResponse(id, true, { pong: true });
 
+        case 'GENERATE_SEED': {
+          const seed = this.wallet.generateSeed();
+          return createResponse(id, true, { seed });
+        }
+
         case 'WALLET_CREATE': {
           const { password } = payload as WalletCreatePayload;
           const result = await this.wallet.createWallet(password);

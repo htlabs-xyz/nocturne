@@ -6,6 +6,7 @@ export type Route =
   | 'import-wallet'
   | 'seed-phrase'
   | 'set-password'
+  | 'unlock'
   | 'dashboard'
   | 'send'
   | 'send-amount'
@@ -28,6 +29,7 @@ interface UIState {
   sendAmount: string;
   sendAddress: string;
   isLoading: boolean;
+  pendingSeedPhrase: string | null;
 
   setRoute: (route: Route) => void;
   goBack: () => void;
@@ -38,6 +40,7 @@ interface UIState {
   setSendAddress: (address: string) => void;
   setLoading: (loading: boolean) => void;
   resetSendFlow: () => void;
+  setPendingSeedPhrase: (seed: string | null) => void;
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
@@ -76,4 +79,7 @@ export const useUIStore = create<UIState>((set, get) => ({
 
   resetSendFlow: () =>
     set({ selectedToken: null, sendAmount: '', sendAddress: '' }),
+
+  pendingSeedPhrase: null,
+  setPendingSeedPhrase: (seed) => set({ pendingSeedPhrase: seed }),
 }));

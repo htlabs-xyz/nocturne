@@ -101,6 +101,11 @@ export class WalletManager {
     return this.storage.hasWallet();
   }
 
+  generateSeed(): string {
+    const words = generateMnemonicWords(256);
+    return joinMnemonicWords(words);
+  }
+
   async getState(): Promise<WalletState> {
     return this.stateSubject.getValue();
   }

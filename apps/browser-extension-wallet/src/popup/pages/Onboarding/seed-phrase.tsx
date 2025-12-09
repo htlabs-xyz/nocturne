@@ -1,18 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Modal } from '../../components';
+import { Button, Modal, Spinner } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
-
-const MOCK_SEED_PHRASE = [
-  'abandon', 'ability', 'able', 'about', 'above', 'absent',
-  'absorb', 'abstract', 'absurd', 'abuse', 'access', 'accident',
-  'account', 'accuse', 'achieve', 'acid', 'acoustic', 'acquire',
-  'across', 'act', 'action', 'actor', 'actress', 'actual',
-];
+import { useWalletStore } from '../../stores/wallet-store';
 
 const CLIPBOARD_CLEAR_TIMEOUT = 30000;
 
 export function SeedPhrase() {
-  const setRoute = useUIStore((s) => s.setRoute);
+  const { setRoute, setPendingSeedPhrase } = useUIStore();
+  const { generateSeed } = useWalletStore();
+  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
+  const [isGenerating, setIsGenerating] = useState(true);
   const [revealed, setRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showCopyWarning, setShowCopyWarning] = useState(false);
@@ -25,6 +22,20 @@ export function SeedPhrase() {
   }, []);
 
   useEffect(() => {
+    const generate = async () => {
+      try {
+        const seed = await generateSeed();
+        setSeedPhrase(seed.split(' '));
+      } catch {
+        setSeedPhrase([]);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+    generate();
+  }, [generateSeed]);
+
+  useEffect(() => {
     return () => {
       if (clearTimer) clearTimeout(clearTimer);
       clearClipboard();
@@ -33,7 +44,7 @@ export function SeedPhrase() {
 
   const handleCopyConfirm = async () => {
     setShowCopyWarning(false);
-    await navigator.clipboard.writeText(MOCK_SEED_PHRASE.join(' '));
+    await navigator.clipboard.writeText(seedPhrase.join(' '));
     setCopied(true);
 
     const timer = window.setTimeout(() => {
@@ -48,6 +59,20 @@ export function SeedPhrase() {
   const handleCopyClick = () => {
     setShowCopyWarning(true);
   };
+
+  const handleContinue = () => {
+    setPendingSeedPhrase(seedPhrase.join(' '));
+    setRoute('set-password');
+  };
+
+  if (isGenerating) {
+    return (
+      <div className="flex flex-col h-full bg-midnight-900 p-6 items-center justify-center">
+        <Spinner size="lg" />
+        <p className="text-text-secondary mt-4">Generating secure seed phrase...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full bg-midnight-900 p-6">
@@ -68,7 +93,7 @@ export function SeedPhrase() {
 
         <div className="relative mb-4">
           <div className={`grid grid-cols-4 gap-1.5 ${!revealed ? 'blur-md select-none' : ''}`}>
-            {MOCK_SEED_PHRASE.map((word, i) => (
+            {seedPhrase.map((word, i) => (
               <div
                 key={i}
                 className="bg-midnight-700 rounded-lg px-2 py-1.5 text-center"
@@ -159,7 +184,7 @@ export function SeedPhrase() {
         </div>
       </div>
 
-      <Button fullWidth onClick={() => setRoute('set-password')} disabled={!revealed}>
+      <Button fullWidth onClick={handleContinue} disabled={!revealed}>
         I&apos;ve Saved My Seed Phrase
       </Button>
     </div>

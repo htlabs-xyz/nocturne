@@ -3,6 +3,7 @@ export type MessageType =
   | 'WALLET_LOCK'
   | 'WALLET_CREATE'
   | 'WALLET_IMPORT'
+  | 'GENERATE_SEED'
   | 'GET_STATE'
   | 'GET_BALANCE'
   | 'SEND_TRANSACTION'

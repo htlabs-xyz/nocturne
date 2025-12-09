@@ -3,7 +3,7 @@ import { Button, Input } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
 
 export function ImportWallet() {
-  const setRoute = useUIStore((s) => s.setRoute);
+  const { setRoute, setPendingSeedPhrase } = useUIStore();
   const [seedPhrase, setSeedPhrase] = useState('');
   const [error, setError] = useState('');
 
@@ -13,6 +13,7 @@ export function ImportWallet() {
       setError('Seed phrase must be 24 words');
       return;
     }
+    setPendingSeedPhrase(seedPhrase.trim());
     setRoute('set-password');
   };
 

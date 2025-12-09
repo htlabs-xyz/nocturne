@@ -25,7 +25,59 @@ components:
 The diagram belows shows their relationships and, when selecting a component, provides more context to it. Its original
 is created in IcePanel and can be found at https://s.icepanel.io/qSrUvJk8tEUSRP/iPN0
 
-![](./wallet-component-diagram.svg)
+```mermaid
+graph BT
+    %% Main Container: Browser Extension Wallet
+    subgraph BrowserExtensionWallet["Browser extension wallet <br> (App)"]
+        direction BT
+
+        WalletFrontend["Wallet frontend <br> (Component)"]
+        WalletFacade["Wallet SDK - Facade <br> (Component)"]
+
+        subgraph SDKs
+            direction BT
+            WalletShielded["Wallet SDK - Shielded <br> (Component)"]
+            WalletUnshielded["Wallet SDK - Unshielded <br> (Component)"]
+            WalletDust["Wallet SDK - Dust <br> (Component)"]
+        end
+
+        %% Internal Wallet Connections
+        WalletFrontend <-->|"Exchanges state <br> and requests with"| WalletFacade
+        WalletFacade -->|"Manages shielded <br> tokens with"| WalletShielded
+
+        %% --- THIS WAS THE ERROR LINE ---
+        %% Fixed by adding quotes around the text
+        WalletFacade -->|"Manages unshielded tokens <br> (and Night) with"| WalletUnshielded
+
+        WalletFacade -->|"Manages Dust with"| WalletDust
+        WalletDust -->|"Learns Night UTXOs <br> from"| WalletUnshielded
+    end
+
+    %% External System: Indexer
+    subgraph IndexerSystem["Indexer <br> (System in: other context)"]
+        IndexerAPI["Indexer API <br> (API server / App) <br> Collects data for efficient querying..."]
+    end
+
+    %% External System: Proof Server
+    subgraph ProofServerSystem["Proof server <br> (System in: other context)"]
+        ProofAPI["API server <br> (Component / App in: other context) <br> Computes ZK proofs"]
+    end
+
+    %% Cross-System Connections
+    WalletShielded -->|"Learns its state with <br> help of"| IndexerAPI
+    WalletUnshielded -->|"Learns its state <br> from"| IndexerAPI
+    WalletDust -->|"Learns its state with <br> help of"| IndexerAPI
+
+    WalletShielded -->|"proves token <br> movements with"| ProofAPI
+    WalletDust -->|"Proves Dust <br> payments with"| ProofAPI
+
+    %% Styling
+    classDef component fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
+    classDef system fill:#fff,stroke:#999,stroke-width:1px,stroke-dasharray: 5 5,color:black;
+
+    class WalletFrontend,WalletFacade,WalletShielded,WalletUnshielded,WalletDust,IndexerAPI,ProofAPI component;
+    class BrowserExtensionWallet,IndexerSystem,ProofServerSystem system;
+```
 
 ## Single wallet structure
 

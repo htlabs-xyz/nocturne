@@ -22,12 +22,14 @@ Microservices, event-driven architecture, and scalability patterns (2025).
 ```
 
 **Pros:**
+
 - Simple to develop and deploy
 - Easy local testing
 - Single codebase
 - Strong consistency (ACID transactions)
 
 **Cons:**
+
 - Tight coupling
 - Scaling limitations
 - Deployment risk (all-or-nothing)
@@ -49,12 +51,14 @@ Microservices, event-driven architecture, and scalability patterns (2025).
 ```
 
 **Pros:**
+
 - Independent deployment
 - Technology flexibility
 - Fault isolation
 - Easier scaling (scale services independently)
 
 **Cons:**
+
 - Complex deployment
 - Distributed system challenges (network latency, partial failures)
 - Data consistency (eventual consistency)
@@ -75,11 +79,13 @@ Order Service → Order DB (PostgreSQL)
 ```
 
 **Benefits:**
+
 - Service independence
 - Technology choice per service
 - Fault isolation
 
 **Challenges:**
+
 - No joins across services
 - Distributed transactions
 - Data duplication
@@ -102,6 +108,7 @@ Client
 ```
 
 **Responsibilities:**
+
 - Request routing
 - Authentication/authorization
 - Rate limiting
@@ -109,6 +116,7 @@ Client
 - Caching
 
 **Implementation (Kong):**
+
 ```yaml
 services:
   - name: user-service
@@ -184,6 +192,7 @@ const result = await breaker.fire(requestParams);
 ```
 
 **States:**
+
 - **Closed:** Normal operation, requests go through
 - **Open:** Too many failures, requests fail immediately
 - **Half-Open:** Testing if service recovered
@@ -191,6 +200,7 @@ const result = await breaker.fire(requestParams);
 ### Saga Pattern (Distributed Transactions)
 
 **Choreography-Based Saga:**
+
 ```
 Order Service: Create Order → Publish "OrderCreated"
                                     ↓
@@ -204,6 +214,7 @@ If any step fails → Compensating transactions (rollback)
 ```
 
 **Orchestration-Based Saga:**
+
 ```
 Saga Orchestrator
     ↓ Create Order
@@ -249,6 +260,7 @@ const balance = events
 ```
 
 **Benefits:**
+
 - Complete audit trail
 - Temporal queries (state at any point in time)
 - Event replay for debugging
@@ -257,6 +269,7 @@ const balance = events
 ### Message Broker Patterns
 
 **Kafka (Event Streaming):**
+
 ```typescript
 import { Kafka } from 'kafkajs';
 
@@ -296,6 +309,7 @@ await consumer.run({
 ```
 
 **RabbitMQ (Task Queues):**
+
 ```typescript
 import amqp from 'amqplib';
 
@@ -304,11 +318,16 @@ const channel = await connection.createChannel();
 
 // Producer
 await channel.assertQueue('email-queue', { durable: true });
-channel.sendToQueue('email-queue', Buffer.from(JSON.stringify({
-  to: user.email,
-  subject: 'Welcome!',
-  body: 'Thank you for signing up',
-})));
+channel.sendToQueue(
+  'email-queue',
+  Buffer.from(
+    JSON.stringify({
+      to: user.email,
+      subject: 'Welcome!',
+      body: 'Thank you for signing up',
+    }),
+  ),
+);
 
 // Consumer
 await channel.consume('email-queue', async (msg) => {
@@ -335,15 +354,20 @@ UpdateOrder                      GetUserOrders
 ```
 
 **Benefits:**
+
 - Optimized read models
 - Scalable (scale reads independently)
 - Flexible (different DB for reads/writes)
 
 **Implementation:**
+
 ```typescript
 // Command (Write)
 class CreateOrderCommand {
-  constructor(public userId: string, public items: OrderItem[]) {}
+  constructor(
+    public userId: string,
+    public items: OrderItem[],
+  ) {}
 }
 
 class CreateOrderHandler {
@@ -386,6 +410,7 @@ Load Balancer
 ### Database Sharding
 
 **Range-Based Sharding:**
+
 ```
 Users 1-1M     → Shard 1
 Users 1M-2M    → Shard 2
@@ -393,6 +418,7 @@ Users 2M-3M    → Shard 3
 ```
 
 **Hash-Based Sharding:**
+
 ```typescript
 function getShardId(userId: string): number {
   const hash = crypto.createHash('md5').update(userId).digest('hex');
@@ -417,13 +443,13 @@ Client
 
 ## Architecture Decision Matrix
 
-| Pattern | When to Use | Complexity | Benefits |
-|---------|-------------|------------|----------|
-| **Monolith** | Small team, MVP, unclear boundaries | Low | Simple, fast development |
-| **Microservices** | Large team, clear domains, need scaling | High | Independent deployment, fault isolation |
-| **Event-Driven** | Async workflows, audit trail needed | Moderate | Decoupling, scalability |
-| **CQRS** | Different read/write patterns | High | Optimized queries, scalability |
-| **Serverless** | Spiky traffic, event-driven | Low | Auto-scaling, pay-per-use |
+| Pattern           | When to Use                             | Complexity | Benefits                                |
+| ----------------- | --------------------------------------- | ---------- | --------------------------------------- |
+| **Monolith**      | Small team, MVP, unclear boundaries     | Low        | Simple, fast development                |
+| **Microservices** | Large team, clear domains, need scaling | High       | Independent deployment, fault isolation |
+| **Event-Driven**  | Async workflows, audit trail needed     | Moderate   | Decoupling, scalability                 |
+| **CQRS**          | Different read/write patterns           | High       | Optimized queries, scalability          |
+| **Serverless**    | Spiky traffic, event-driven             | Low        | Auto-scaling, pay-per-use               |
 
 ## Anti-Patterns to Avoid
 

@@ -21,6 +21,7 @@ Support for SAML 2.0 and OAuth 2.0:
 ```
 
 **Supported providers:**
+
 - Okta
 - Azure AD
 - Google Workspace
@@ -109,13 +110,14 @@ Comprehensive activity logs:
 ```
 
 **Log format:**
+
 ```json
 {
   "timestamp": "2025-11-06T10:30:00Z",
   "user": "user@company.com",
   "action": "tool_call",
   "tool": "bash",
-  "args": {"command": "git status"},
+  "args": { "command": "git status" },
   "result": "success"
 }
 ```
@@ -178,6 +180,7 @@ Deploy via GCP Vertex AI:
 On-premises deployment:
 
 **Docker:**
+
 ```bash
 docker run -d \
   -v /workspace:/workspace \
@@ -186,6 +189,7 @@ docker run -d \
 ```
 
 **Kubernetes:**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -196,14 +200,14 @@ spec:
   template:
     spec:
       containers:
-      - name: claude-code
-        image: anthropic/claude-code:latest
-        env:
-        - name: ANTHROPIC_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: claude-secrets
-              key: api-key
+        - name: claude-code
+          image: anthropic/claude-code:latest
+          env:
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: claude-secrets
+                  key: api-key
 ```
 
 ### LLM Gateway
@@ -255,6 +259,7 @@ claude analytics export --format csv > metrics.csv
 ```
 
 **Metrics tracked:**
+
 - Requests per user/project
 - Token usage
 - Tool invocations
@@ -348,11 +353,7 @@ Restrict access by IP:
 {
   "ipAllowlist": {
     "enabled": true,
-    "addresses": [
-      "10.0.0.0/8",
-      "192.168.1.0/24",
-      "203.0.113.42"
-    ]
+    "addresses": ["10.0.0.0/8", "192.168.1.0/24", "203.0.113.42"]
   }
 }
 ```
@@ -417,15 +418,10 @@ Distribute requests across instances:
 
 ```yaml
 # HAProxy configuration
-frontend claude_front
-  bind *:443 ssl crt /etc/ssl/certs/claude.pem
-  default_backend claude_back
+frontend claude_front bind *:443 ssl crt /etc/ssl/certs/claude.pem default_backend claude_back
 
-backend claude_back
-  balance roundrobin
-  server claude1 10.0.1.10:8080 check
-  server claude2 10.0.1.11:8080 check
-  server claude3 10.0.1.12:8080 check
+backend claude_back balance roundrobin server claude1 10.0.1.10:8080 check server claude2 10.0.1.11:8080 check server
+claude3 10.0.1.12:8080 check
 ```
 
 ### Failover

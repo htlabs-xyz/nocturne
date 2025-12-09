@@ -2,9 +2,7 @@
 
 **Use when:** llms.txt not available on context7.com or official site
 
-**Speed:** ⚡⚡⚡ Slower (5-10min)
-**Token usage:** 🔴 High
-**Accuracy:** 🔍 Code-based
+**Speed:** ⚡⚡⚡ Slower (5-10min) **Token usage:** 🔴 High **Accuracy:** 🔍 Code-based
 
 ## When to Use
 
@@ -49,6 +47,7 @@
 ## Example
 
 **Obscure library without llms.txt:**
+
 ```bash
 # 1. Find
 WebSearch: "MyLibrary github repository"
@@ -78,14 +77,9 @@ Health: 1.2K stars, active
 
 ## Repomix Benefits
 
-✅ Entire repo in single file
-✅ Preserves directory structure
-✅ AI-optimized format
-✅ Includes metadata
+✅ Entire repo in single file ✅ Preserves directory structure ✅ AI-optimized format ✅ Includes metadata
 
 ## Alternative
 
-If no GitHub repo exists:
-→ Deploy multiple Researcher agents
-→ Gather: Official site, blog posts, tutorials, Stack Overflow
-→ Note: Quality varies, cross-reference sources
+If no GitHub repo exists: → Deploy multiple Researcher agents → Gather: Official site, blog posts, tutorials, Stack
+Overflow → Note: Quality varies, cross-reference sources

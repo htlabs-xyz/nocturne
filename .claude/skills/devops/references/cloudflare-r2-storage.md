@@ -5,6 +5,7 @@ S3-compatible object storage with zero egress fees.
 ## Quick Start
 
 ### Create Bucket
+
 ```bash
 wrangler r2 bucket create my-bucket
 wrangler r2 bucket create my-bucket --location=wnam
@@ -13,6 +14,7 @@ wrangler r2 bucket create my-bucket --location=wnam
 Locations: `wnam`, `enam`, `weur`, `eeur`, `apac`
 
 ### Upload Object
+
 ```bash
 wrangler r2 object put my-bucket/file.txt --file=./local-file.txt
 ```
@@ -20,6 +22,7 @@ wrangler r2 object put my-bucket/file.txt --file=./local-file.txt
 ### Workers Binding
 
 **wrangler.toml:**
+
 ```toml
 [[r2_buckets]]
 binding = "MY_BUCKET"
@@ -27,17 +30,18 @@ bucket_name = "my-bucket"
 ```
 
 **Worker:**
+
 ```typescript
 // Put
 await env.MY_BUCKET.put('user-uploads/photo.jpg', imageData, {
   httpMetadata: {
     contentType: 'image/jpeg',
-    cacheControl: 'public, max-age=31536000'
+    cacheControl: 'public, max-age=31536000',
   },
   customMetadata: {
     uploadedBy: userId,
-    uploadDate: new Date().toISOString()
-  }
+    uploadDate: new Date().toISOString(),
+  },
 });
 
 // Get
@@ -49,14 +53,14 @@ if (!object) {
 return new Response(object.body, {
   headers: {
     'Content-Type': object.httpMetadata.contentType,
-    'ETag': object.etag
-  }
+    ETag: object.etag,
+  },
 });
 
 // List
 const listed = await env.MY_BUCKET.list({
   prefix: 'user-uploads/',
-  limit: 100
+  limit: 100,
 });
 
 // Delete
@@ -72,6 +76,7 @@ if (object) {
 ## S3 API Integration
 
 ### AWS CLI
+
 ```bash
 # Configure
 aws configure
@@ -89,26 +94,30 @@ aws s3 presign s3://my-bucket/file.txt --endpoint-url https://<accountid>.r2.clo
 ```
 
 ### JavaScript (AWS SDK v3)
+
 ```javascript
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({
-  region: "auto",
+  region: 'auto',
   endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY
-  }
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+  },
 });
 
-await s3.send(new PutObjectCommand({
-  Bucket: "my-bucket",
-  Key: "file.txt",
-  Body: fileContents
-}));
+await s3.send(
+  new PutObjectCommand({
+    Bucket: 'my-bucket',
+    Key: 'file.txt',
+    Body: fileContents,
+  }),
+);
 ```
 
 ### Python (Boto3)
+
 ```python
 import boto3
 
@@ -140,6 +149,7 @@ const object = await multipart.complete([part1, part2]);
 ```
 
 ### Rclone (Large Files)
+
 ```bash
 rclone config  # Configure Cloudflare R2
 
@@ -152,16 +162,17 @@ rclone copy large-video.mp4 r2:my-bucket/ \
 ## Public Buckets
 
 ### Enable Public Access
+
 1. Dashboard → R2 → Bucket → Settings → Public Access
 2. Add custom domain (recommended) or use r2.dev
 
 **r2.dev (rate-limited):**
+
 ```
 https://pub-<hash>.r2.dev/file.txt
 ```
 
-**Custom domain (production):**
-Cloudflare handles DNS/TLS automatically
+**Custom domain (production):** Cloudflare handles DNS/TLS automatically
 
 ## CORS Configuration
 
@@ -207,6 +218,7 @@ Supported events: `object-create`, `object-delete`
 ## Data Migration
 
 ### Sippy (Incremental)
+
 ```bash
 wrangler r2 bucket sippy enable my-bucket \
   --provider=aws \
@@ -219,17 +231,20 @@ wrangler r2 bucket sippy enable my-bucket \
 Objects migrate on first request.
 
 ### Super Slurper (Bulk)
+
 Use dashboard for one-time complete migration from AWS, GCS, Azure.
 
 ## Best Practices
 
 ### Performance
+
 - Use Cloudflare Cache with custom domains
 - Multipart uploads for files >100MB
 - Rclone for batch operations
 - Location hints match user geography
 
 ### Security
+
 - Never commit Access Keys
 - Use environment variables
 - Bucket-scoped tokens for least privilege
@@ -237,12 +252,14 @@ Use dashboard for one-time complete migration from AWS, GCS, Azure.
 - Enable Cloudflare Access for protection
 
 ### Cost Optimization
+
 - Infrequent Access storage for archives (30+ days)
 - Lifecycle rules to auto-transition/delete
 - Larger multipart chunks = fewer Class A operations
 - Monitor usage via dashboard
 
 ### Naming
+
 - Bucket names: lowercase, hyphens, 3-63 chars
 - Avoid sequential prefixes (use hashed for performance)
 - No dots in bucket names if using custom domains with TLS
@@ -258,16 +275,19 @@ Use dashboard for one-time complete migration from AWS, GCS, Azure.
 ## Troubleshooting
 
 **401 Unauthorized:**
+
 - Verify Access Keys
 - Check endpoint URL includes account ID
 - Ensure region is "auto"
 
 **403 Forbidden:**
+
 - Check bucket permissions
 - Verify CORS configuration
 - Confirm bucket exists
 
 **Presigned URLs not working:**
+
 - Verify CORS configuration
 - Check URL expiry time
 - Ensure origin matches CORS rules

@@ -31,7 +31,8 @@ Create `repomix.config.json` in project root:
 
 - `filePath`: Output file path (default: `repomix-output.xml`)
 - `style`: Format - `xml`, `markdown`, `json`, `plain` (default: `xml`)
-- `removeComments`: Strip comments (default: `false`). Supports HTML, CSS, JS/TS, Vue, Svelte, Python, PHP, Ruby, C, C#, Java, Go, Rust, Swift, Kotlin, Dart, Shell, YAML
+- `removeComments`: Strip comments (default: `false`). Supports HTML, CSS, JS/TS, Vue, Svelte, Python, PHP, Ruby, C, C#,
+  Java, Go, Rust, Swift, Kotlin, Dart, Shell, YAML
 - `showLineNumbers`: Include line numbers (default: `true`)
 - `copyToClipboard`: Auto-copy output (default: `false`)
 
@@ -50,6 +51,7 @@ Create `repomix.config.json` in project root:
 ## Glob Patterns
 
 **Wildcards:**
+
 - `*` - Any chars except `/`
 - `**` - Any chars including `/`
 - `?` - Single char
@@ -57,6 +59,7 @@ Create `repomix.config.json` in project root:
 - `{js,ts}` - Either extension
 
 **Examples:**
+
 - `**/*.ts` - All TypeScript
 - `src/**` - Specific dir
 - `**/*.{js,jsx,ts,tsx}` - Multiple extensions
@@ -125,6 +128,7 @@ logs/
 ### Pattern Precedence
 
 Order (highest to lowest priority):
+
 1. CLI ignore patterns (`-i`)
 2. `.repomixignore` file
 3. Custom patterns in config
@@ -134,49 +138,59 @@ Order (highest to lowest priority):
 ### Pattern Examples
 
 **TypeScript:**
+
 ```json
-{"include": ["**/*.ts", "**/*.tsx"], "ignore": {"customPatterns": ["**/*.test.ts", "dist/"]}}
+{ "include": ["**/*.ts", "**/*.tsx"], "ignore": { "customPatterns": ["**/*.test.ts", "dist/"] } }
 ```
 
 **React:**
+
 ```json
-{"include": ["src/**/*.{js,jsx,ts,tsx}", "*.md"], "ignore": {"customPatterns": ["build/"]}}
+{ "include": ["src/**/*.{js,jsx,ts,tsx}", "*.md"], "ignore": { "customPatterns": ["build/"] } }
 ```
 
 **Monorepo:**
+
 ```json
-{"include": ["packages/*/src/**"], "ignore": {"customPatterns": ["packages/*/dist/"]}}
+{ "include": ["packages/*/src/**"], "ignore": { "customPatterns": ["packages/*/dist/"] } }
 ```
 
 ## Output Formats
 
 ### XML (Default)
+
 ```bash
 repomix --style xml
 ```
-Structured AI consumption. Features: tags, hierarchy, metadata, AI-optimized separators.
-Use for: LLMs, structured analysis, programmatic parsing.
+
+Structured AI consumption. Features: tags, hierarchy, metadata, AI-optimized separators. Use for: LLMs, structured
+analysis, programmatic parsing.
 
 ### Markdown
+
 ```bash
 repomix --style markdown
 ```
-Human-readable with syntax highlighting. Features: syntax highlighting, headers, TOC.
-Use for: documentation, code review, sharing.
+
+Human-readable with syntax highlighting. Features: syntax highlighting, headers, TOC. Use for: documentation, code
+review, sharing.
 
 ### JSON
+
 ```bash
 repomix --style json
 ```
-Programmatic processing. Features: structured data, easy parsing, metadata.
-Use for: API integration, custom tooling, data analysis.
+
+Programmatic processing. Features: structured data, easy parsing, metadata. Use for: API integration, custom tooling,
+data analysis.
 
 ### Plain Text
+
 ```bash
 repomix --style plain
 ```
-Simple concatenation. Features: no formatting, minimal overhead.
-Use for: simple analysis, minimal processing.
+
+Simple concatenation. Features: no formatting, minimal overhead. Use for: simple analysis, minimal processing.
 
 ## Advanced Options
 
@@ -196,9 +210,11 @@ repomix --no-line-numbers
 
 ### Performance
 
-**Worker Threads:** Parallel processing handles large codebases efficiently (e.g., facebook/react: 29x faster, 123s → 4s)
+**Worker Threads:** Parallel processing handles large codebases efficiently (e.g., facebook/react: 29x faster, 123s →
+4s)
 
 **Optimization:**
+
 ```bash
 # Exclude unnecessary files
 repomix -i "node_modules/**,dist/**,*.min.js"

@@ -5,21 +5,24 @@ Multi-language SDKs and framework adapters.
 ## TypeScript/JavaScript
 
 **Installation:**
+
 ```bash
 npm install @polar-sh/sdk
 ```
 
 **Configuration:**
+
 ```typescript
 import { Polar } from '@polar-sh/sdk';
 
 const polar = new Polar({
   accessToken: process.env.POLAR_ACCESS_TOKEN,
-  server: "production" // or "sandbox"
+  server: 'production', // or "sandbox"
 });
 ```
 
 **Usage:**
+
 ```typescript
 // Products
 const products = await polar.products.list({ organization_id: "org_xxx" });
@@ -51,6 +54,7 @@ await polar.events.create({
 ```
 
 **Pagination:**
+
 ```typescript
 // Automatic pagination
 for await (const product of polar.products.listAutoPaging()) {
@@ -70,11 +74,13 @@ while (true) {
 ## Python
 
 **Installation:**
+
 ```bash
 pip install polar-sdk
 ```
 
 **Configuration:**
+
 ```python
 from polar_sdk import Polar
 
@@ -85,6 +91,7 @@ polar = Polar(
 ```
 
 **Sync Usage:**
+
 ```python
 # Products
 products = polar.products.list(organization_id="org_xxx")
@@ -113,6 +120,7 @@ polar.events.create(
 ```
 
 **Async Usage:**
+
 ```python
 import asyncio
 from polar_sdk import AsyncPolar
@@ -129,11 +137,13 @@ asyncio.run(main())
 ## PHP
 
 **Installation:**
+
 ```bash
 composer require polar-sh/sdk
 ```
 
 **Configuration:**
+
 ```php
 use Polar\Polar;
 
@@ -144,6 +154,7 @@ $polar = new Polar(
 ```
 
 **Usage:**
+
 ```php
 // Products
 $products = $polar->products->list(['organization_id' => 'org_xxx']);
@@ -174,11 +185,13 @@ $polar->events->create([
 ## Go
 
 **Installation:**
+
 ```bash
 go get github.com/polarsource/polar-go
 ```
 
 **Usage:**
+
 ```go
 import (
     "github.com/polarsource/polar-go"
@@ -206,32 +219,35 @@ checkout, err := client.Checkouts.Create(ctx, &polar.CheckoutCreateParams{
 ### Next.js (@polar-sh/nextjs)
 
 **Quick Start:**
+
 ```bash
 npx polar-init
 ```
 
 **Configuration:**
+
 ```typescript
 // lib/polar.ts
 import { PolarClient } from '@polar-sh/nextjs';
 
 export const polar = new PolarClient({
   accessToken: process.env.POLAR_ACCESS_TOKEN!,
-  webhookSecret: process.env.POLAR_WEBHOOK_SECRET!
+  webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
 });
 ```
 
 **Checkout Handler:**
+
 ```typescript
 // app/actions/checkout.ts
-'use server'
+'use server';
 
 import { polar } from '@/lib/polar';
 
 export async function createCheckout(priceId: string) {
   const session = await polar.checkouts.create({
     product_price_id: priceId,
-    success_url: `${process.env.NEXT_PUBLIC_URL}/success?checkout_id={CHECKOUT_ID}`
+    success_url: `${process.env.NEXT_PUBLIC_URL}/success?checkout_id={CHECKOUT_ID}`,
   });
 
   return session.url;
@@ -239,6 +255,7 @@ export async function createCheckout(priceId: string) {
 ```
 
 **Webhook Handler:**
+
 ```typescript
 // app/api/webhook/polar/route.ts
 import { polar } from '@/lib/polar';
@@ -260,6 +277,7 @@ export async function POST(req: Request) {
 ### Laravel (polar-sh/laravel)
 
 **Installation:**
+
 ```bash
 composer require polar-sh/laravel
 php artisan vendor:publish --tag=polar-config
@@ -268,6 +286,7 @@ php artisan migrate
 ```
 
 **Configuration:**
+
 ```php
 // config/polar.php
 return [
@@ -277,6 +296,7 @@ return [
 ```
 
 **Checkout:**
+
 ```php
 use Polar\Facades\Polar;
 
@@ -292,6 +312,7 @@ Route::post('/checkout', function (Request $request) {
 ```
 
 **Webhook:**
+
 ```php
 use Polar\Events\WebhookReceived;
 
@@ -325,18 +346,14 @@ app.post('/checkout', async (req, res) => {
   const session = await polar.checkouts.create({
     product_price_id: req.body.priceId,
     success_url: 'https://example.com/success',
-    external_customer_id: req.user.id
+    external_customer_id: req.user.id,
   });
 
   res.json({ url: session.url });
 });
 
 app.post('/webhook/polar', (req, res) => {
-  const event = validateEvent(
-    req.body,
-    req.headers,
-    process.env.POLAR_WEBHOOK_SECRET
-  );
+  const event = validateEvent(req.body, req.headers, process.env.POLAR_WEBHOOK_SECRET);
 
   handleEvent(event);
   res.json({ received: true });
@@ -356,7 +373,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const session = await polar.checkouts.create({
     product_price_id: priceId,
-    success_url: `${request.url}/success`
+    success_url: `${request.url}/success`,
   });
 
   return redirect(session.url);
@@ -366,11 +383,13 @@ export async function action({ request }: ActionFunctionArgs) {
 ## BetterAuth Integration
 
 **Installation:**
+
 ```bash
 npm install @polar-sh/better-auth
 ```
 
 **Configuration:**
+
 ```typescript
 import { betterAuth } from 'better-auth';
 import { polarPlugin } from '@polar-sh/better-auth';
@@ -380,13 +399,14 @@ export const auth = betterAuth({
   plugins: [
     polarPlugin({
       organizationId: process.env.POLAR_ORG_ID!,
-      accessToken: process.env.POLAR_ACCESS_TOKEN!
-    })
-  ]
+      accessToken: process.env.POLAR_ACCESS_TOKEN!,
+    }),
+  ],
 });
 ```
 
 **Features:**
+
 - Auto-create Polar customers on signup
 - Automatic external_id mapping
 - User-customer sync
@@ -395,6 +415,7 @@ export const auth = betterAuth({
 ## Error Handling
 
 **TypeScript:**
+
 ```typescript
 try {
   const product = await polar.products.get(productId);
@@ -410,6 +431,7 @@ try {
 ```
 
 **Python:**
+
 ```python
 from polar_sdk.exceptions import PolarException
 

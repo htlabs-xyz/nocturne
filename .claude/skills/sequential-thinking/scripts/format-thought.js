@@ -14,7 +14,8 @@
 
 class ThoughtFormatter {
   static format(thoughtData) {
-    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } = thoughtData;
+    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } =
+      thoughtData;
 
     let prefix = '';
     let context = '';
@@ -27,7 +28,9 @@ class ThoughtFormatter {
     } else if (branchFromThought) {
       emoji = '🌿';
       prefix = 'BRANCH';
-      context = branchId ? ` (from thought ${branchFromThought}, ID: ${branchId})` : ` (from thought ${branchFromThought})`;
+      context = branchId
+        ? ` (from thought ${branchFromThought}, ID: ${branchId})`
+        : ` (from thought ${branchFromThought})`;
     } else {
       emoji = '💭';
       prefix = 'Thought';
@@ -40,7 +43,7 @@ class ThoughtFormatter {
 
     // Wrap long thoughts
     const wrappedThought = this.wrapText(thought, maxLength);
-    const thoughtLines = wrappedThought.map(line => `│ ${line.padEnd(maxLength + 2)} │`).join('\n');
+    const thoughtLines = wrappedThought.map((line) => `│ ${line.padEnd(maxLength + 2)} │`).join('\n');
 
     return `
 ┌${border}┐
@@ -73,26 +76,32 @@ ${thoughtLines}
   }
 
   static formatSimple(thoughtData) {
-    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } = thoughtData;
+    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } =
+      thoughtData;
 
     let marker = '';
     if (isRevision && revisesThought) {
       marker = ` [REVISION of Thought ${revisesThought}]`;
     } else if (branchFromThought) {
-      marker = branchId ? ` [BRANCH ${branchId.toUpperCase()} from Thought ${branchFromThought}]` : ` [BRANCH from Thought ${branchFromThought}]`;
+      marker = branchId
+        ? ` [BRANCH ${branchId.toUpperCase()} from Thought ${branchFromThought}]`
+        : ` [BRANCH from Thought ${branchFromThought}]`;
     }
 
     return `Thought ${thoughtNumber}/${totalThoughts}${marker}: ${thought}`;
   }
 
   static formatMarkdown(thoughtData) {
-    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } = thoughtData;
+    const { thoughtNumber, totalThoughts, thought, isRevision, revisesThought, branchFromThought, branchId } =
+      thoughtData;
 
     let marker = '';
     if (isRevision && revisesThought) {
       marker = ` **[REVISION of Thought ${revisesThought}]**`;
     } else if (branchFromThought) {
-      marker = branchId ? ` **[BRANCH ${branchId.toUpperCase()} from Thought ${branchFromThought}]**` : ` **[BRANCH from Thought ${branchFromThought}]**`;
+      marker = branchId
+        ? ` **[BRANCH ${branchId.toUpperCase()} from Thought ${branchFromThought}]**`
+        : ` **[BRANCH from Thought ${branchFromThought}]**`;
     }
 
     return `**Thought ${thoughtNumber}/${totalThoughts}**${marker}\n\n${thought}\n`;
@@ -135,7 +144,7 @@ if (require.main === module) {
     isRevision: input.revision !== undefined,
     revisesThought: input.revision,
     branchFromThought: input.branch,
-    branchId: input.branchId
+    branchId: input.branchId,
   };
 
   const format = input.format || 'box';

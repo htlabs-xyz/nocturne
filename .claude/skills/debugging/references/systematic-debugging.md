@@ -25,7 +25,8 @@ Must complete each phase before proceeding to next.
    - For EACH component boundary: log data entering/exiting, verify environment propagation
    - Run once to gather evidence showing WHERE it breaks
    - THEN analyze to identify failing component
-5. **Trace Data Flow** - Where does bad value originate? Trace up call stack until finding source (see root-cause-tracing.md)
+5. **Trace Data Flow** - Where does bad value originate? Trace up call stack until finding source (see
+   root-cause-tracing.md)
 
 ### Phase 2: Pattern Analysis
 
@@ -64,6 +65,7 @@ Must complete each phase before proceeding to next.
 ## Red Flags - STOP and Follow Process
 
 If catch yourself thinking:
+
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "Add multiple changes, run tests"
@@ -86,16 +88,17 @@ If catch yourself thinking:
 
 ## Common Rationalizations
 
-| Excuse | Reality |
-|--------|---------|
-| "Issue is simple, don't need process" | Simple issues have root causes too |
-| "Emergency, no time for process" | Systematic is FASTER than guess-and-check |
-| "Just try this first, then investigate" | First fix sets pattern. Do right from start |
-| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem |
+| Excuse                                     | Reality                                     |
+| ------------------------------------------ | ------------------------------------------- |
+| "Issue is simple, don't need process"      | Simple issues have root causes too          |
+| "Emergency, no time for process"           | Systematic is FASTER than guess-and-check   |
+| "Just try this first, then investigate"    | First fix sets pattern. Do right from start |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem         |
 
 ## Real-World Impact
 
 From debugging sessions:
+
 - Systematic approach: 15-30 minutes to fix
 - Random fixes approach: 2-3 hours of thrashing
 - First-time fix rate: 95% vs 40%

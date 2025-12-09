@@ -34,7 +34,7 @@ describe('ThoughtProcessor', () => {
       const result = processor.processThought({
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       expect(result.success).toBe(false);
@@ -46,7 +46,7 @@ describe('ThoughtProcessor', () => {
         thought: '   ',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       expect(result.success).toBe(false);
@@ -58,7 +58,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Test',
         thoughtNumber: 0,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       expect(result.success).toBe(false);
@@ -69,7 +69,7 @@ describe('ThoughtProcessor', () => {
       const result = processor.processThought({
         thought: 'Test',
         thoughtNumber: 1,
-        totalThoughts: 5
+        totalThoughts: 5,
       });
 
       expect(result.success).toBe(false);
@@ -81,7 +81,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Valid thought',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       expect(result.success).toBe(true);
@@ -96,21 +96,21 @@ describe('ThoughtProcessor', () => {
         thought: 'First thought',
         thoughtNumber: 1,
         totalThoughts: 3,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       processor.processThought({
         thought: 'Second thought',
         thoughtNumber: 2,
         totalThoughts: 3,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       const result = processor.processThought({
         thought: 'Third thought',
         thoughtNumber: 3,
         totalThoughts: 3,
-        nextThoughtNeeded: false
+        nextThoughtNeeded: false,
       });
 
       expect(result.thoughtHistoryLength).toBe(3);
@@ -121,7 +121,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Thought 5',
         thoughtNumber: 5,
         totalThoughts: 3,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       expect(result.totalThoughts).toBe(5);
@@ -132,7 +132,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Original thought',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       const result = processor.processThought({
@@ -141,7 +141,7 @@ describe('ThoughtProcessor', () => {
         totalThoughts: 5,
         nextThoughtNeeded: true,
         isRevision: true,
-        revisesThought: 1
+        revisesThought: 1,
       });
 
       expect(result.success).toBe(true);
@@ -153,7 +153,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Main thought',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       processor.processThought({
@@ -162,7 +162,7 @@ describe('ThoughtProcessor', () => {
         totalThoughts: 5,
         nextThoughtNeeded: true,
         branchFromThought: 1,
-        branchId: 'branch-a'
+        branchId: 'branch-a',
       });
 
       const result = processor.processThought({
@@ -171,7 +171,7 @@ describe('ThoughtProcessor', () => {
         totalThoughts: 5,
         nextThoughtNeeded: false,
         branchFromThought: 1,
-        branchId: 'branch-b'
+        branchId: 'branch-b',
       });
 
       expect(result.branches).toContain('branch-a');
@@ -186,7 +186,7 @@ describe('ThoughtProcessor', () => {
         thought: 'First thought',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       processor.resetHistory();
@@ -201,7 +201,7 @@ describe('ThoughtProcessor', () => {
         thought: 'Persisted thought',
         thoughtNumber: 1,
         totalThoughts: 5,
-        nextThoughtNeeded: true
+        nextThoughtNeeded: true,
       });
 
       // Create new processor instance (should load from file)

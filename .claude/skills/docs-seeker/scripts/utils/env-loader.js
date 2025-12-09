@@ -27,8 +27,7 @@ function parseEnvFile(content) {
       let value = match[2].trim();
 
       // Remove quotes if present
-      if ((value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))) {
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1);
       }
 
@@ -50,9 +49,9 @@ function loadEnv() {
   const claudeDir = path.resolve(skillsDir, '..');
 
   const envPaths = [
-    path.join(claudeDir, '.env'),      // Lowest priority
+    path.join(claudeDir, '.env'), // Lowest priority
     path.join(skillsDir, '.env'),
-    path.join(skillDir, '.env'),       // Highest priority (file)
+    path.join(skillDir, '.env'), // Highest priority (file)
   ];
 
   let mergedEnv = {};

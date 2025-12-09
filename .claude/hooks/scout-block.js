@@ -74,7 +74,7 @@ try {
     execSync(`powershell -NoProfile -ExecutionPolicy Bypass -File "${psScript}"`, {
       input: hookInput,
       stdio: ['pipe', 'inherit', 'inherit'],
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     });
   } else {
     // Unix (Linux, macOS, WSL): Use bash implementation
@@ -90,7 +90,7 @@ try {
     execSync(`bash "${bashScript}"`, {
       input: hookInput,
       stdio: ['pipe', 'inherit', 'inherit'],
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     });
   }
 } catch (error) {

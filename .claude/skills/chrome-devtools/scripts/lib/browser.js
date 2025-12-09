@@ -20,24 +20,19 @@ export async function getBrowser(options = {}) {
 
   const launchOptions = {
     headless: options.headless !== false,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      ...(options.args || [])
-    ],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', ...(options.args || [])],
     defaultViewport: options.viewport || {
       width: 1920,
-      height: 1080
+      height: 1080,
     },
-    ...options
+    ...options,
   };
 
   if (options.browserUrl || options.wsEndpoint) {
     log('Connecting to existing browser');
     browserInstance = await puppeteer.connect({
       browserURL: options.browserUrl,
-      browserWSEndpoint: options.wsEndpoint
+      browserWSEndpoint: options.wsEndpoint,
     });
   } else {
     log('Launching new browser');
@@ -113,10 +108,16 @@ export function outputJSON(data) {
  * Output error
  */
 export function outputError(error) {
-  console.error(JSON.stringify({
-    success: false,
-    error: error.message,
-    stack: error.stack
-  }, null, 2));
+  console.error(
+    JSON.stringify(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      null,
+      2,
+    ),
+  );
   process.exit(1);
 }

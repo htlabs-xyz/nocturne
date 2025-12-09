@@ -14,6 +14,7 @@ description: ⚡⚡⚡ Analyze the codebase and update documentation
 ## Phase 2: Documentation Update (docs-manager Agent)
 
 Pass the gathered file list to `docs-manager` agent to update documentation:
+
 - `README.md`: Update README (keep it under 300 lines)
 - `docs/project-overview-pdr.md`: Update project overview and PDR (Product Development Requirements)
 - `docs/codebase-summary.md`: Update codebase summary
@@ -24,11 +25,11 @@ Pass the gathered file list to `docs-manager` agent to update documentation:
 - `docs/design-guidelines.md` [optional]: Update design guidelines
 
 ## Additional requests
-<additional_requests>
-  $ARGUMENTS
-</additional_requests>
+
+<additional_requests> $ARGUMENTS </additional_requests>
 
 ## Important
+
 - Use `docs/` directory as the source of truth for documentation.
 
 **IMPORTANT**: **Do not** start implementing.

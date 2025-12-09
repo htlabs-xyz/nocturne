@@ -15,7 +15,7 @@ async function evaluate() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== 'false'
+      headless: args.headless !== 'false',
     });
 
     const page = await getPage(browser);
@@ -23,7 +23,7 @@ async function evaluate() {
     // Navigate if URL provided
     if (args.url) {
       await page.goto(args.url, {
-        waitUntil: args['wait-until'] || 'networkidle2'
+        waitUntil: args['wait-until'] || 'networkidle2',
       });
     }
 
@@ -35,7 +35,7 @@ async function evaluate() {
     outputJSON({
       success: true,
       result: result,
-      url: page.url()
+      url: page.url(),
     });
 
     if (args.close !== 'false') {

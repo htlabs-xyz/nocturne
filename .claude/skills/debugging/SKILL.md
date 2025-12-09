@@ -1,31 +1,40 @@
 ---
 name: Debugging
-description: Systematic debugging framework ensuring root cause investigation before fixes. Includes four-phase debugging process, backward call stack tracing, multi-layer validation, and verification protocols. Use when encountering bugs, test failures, unexpected behavior, performance issues, or before claiming work complete. Prevents random fixes, masks over symptoms, and false completion claims.
+description:
+  Systematic debugging framework ensuring root cause investigation before fixes. Includes four-phase debugging process,
+  backward call stack tracing, multi-layer validation, and verification protocols. Use when encountering bugs, test
+  failures, unexpected behavior, performance issues, or before claiming work complete. Prevents random fixes, masks over
+  symptoms, and false completion claims.
 version: 3.0.0
 languages: all
 ---
 
 # Debugging
 
-Comprehensive debugging framework combining systematic investigation, root cause tracing, defense-in-depth validation, and verification protocols.
+Comprehensive debugging framework combining systematic investigation, root cause tracing, defense-in-depth validation,
+and verification protocols.
 
 ## Core Principle
 
 **NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST**
 
-Random fixes waste time and create new bugs. Find the root cause, fix at source, validate at every layer, verify before claiming success.
+Random fixes waste time and create new bugs. Find the root cause, fix at source, validate at every layer, verify before
+claiming success.
 
 ## When to Use
 
-**Always use for:** Test failures, bugs, unexpected behavior, performance issues, build failures, integration problems, before claiming work complete
+**Always use for:** Test failures, bugs, unexpected behavior, performance issues, build failures, integration problems,
+before claiming work complete
 
-**Especially when:** Under time pressure, "quick fix" seems obvious, tried multiple fixes, don't fully understand issue, about to claim success
+**Especially when:** Under time pressure, "quick fix" seems obvious, tried multiple fixes, don't fully understand issue,
+about to claim success
 
 ## The Four Techniques
 
 ### 1. Systematic Debugging (`references/systematic-debugging.md`)
 
 Four-phase framework ensuring proper investigation:
+
 - Phase 1: Root Cause Investigation (read errors, reproduce, check changes, gather evidence)
 - Phase 2: Pattern Analysis (find working examples, compare, identify differences)
 - Phase 3: Hypothesis and Testing (form theory, test minimally, verify)
@@ -39,7 +48,8 @@ Four-phase framework ensuring proper investigation:
 
 Trace bugs backward through call stack to find original trigger.
 
-**Technique:** When error appears deep in execution, trace backward level-by-level until finding source where invalid data originated. Fix at source, not at symptom.
+**Technique:** When error appears deep in execution, trace backward level-by-level until finding source where invalid
+data originated. Fix at source, not at symptom.
 
 **Includes:** `scripts/find-polluter.sh` for bisecting test pollution
 
@@ -75,6 +85,7 @@ Bug → systematic-debugging.md (Phase 1-4)
 ## Red Flags
 
 Stop and follow process if thinking:
+
 - "Quick fix for now, investigate later"
 - "Just try changing X and see if it works"
 - "It's probably X, let me fix that"

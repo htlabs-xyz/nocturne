@@ -1,6 +1,10 @@
 ---
 name: docs-seeker
-description: "Search technical documentation using executable scripts to detect query type, fetch from llms.txt sources (context7.com), and analyze results. Use when user needs: (1) Topic-specific documentation (features/components/concepts), (2) Library/framework documentation, (3) GitHub repository analysis, (4) Documentation discovery with automated agent distribution strategy"
+description:
+  'Search technical documentation using executable scripts to detect query type, fetch from llms.txt sources
+  (context7.com), and analyze results. Use when user needs: (1) Topic-specific documentation
+  (features/components/concepts), (2) Library/framework documentation, (3) GitHub repository analysis, (4) Documentation
+  discovery with automated agent distribution strategy'
 version: 3.1.0
 ---
 
@@ -32,18 +36,21 @@ Scripts handle URL construction, fallback chains, and error handling automatical
 ## Scripts
 
 **`detect-topic.js`** - Classify query type
+
 - Identifies topic-specific vs general queries
 - Extracts library name + topic keyword
 - Returns JSON: `{topic, library, isTopicSpecific}`
 - Zero-token execution
 
 **`fetch-docs.js`** - Retrieve documentation
+
 - Constructs context7.com URLs automatically
 - Handles fallback: topic → general → error
 - Outputs llms.txt content or error message
 - Zero-token execution
 
 **`analyze-llms-txt.js`** - Process llms.txt
+
 - Categorizes URLs (critical/important/supplementary)
 - Recommends agent distribution (1 agent, 3 agents, 7 agents, phased)
 - Returns JSON with strategy
@@ -76,6 +83,7 @@ Scripts handle URL construction, fallback chains, and error handling automatical
 ## Quick Start
 
 **Topic query:** "How do I use date picker in shadcn?"
+
 ```bash
 node scripts/detect-topic.js "<query>"  # → {topic, library, isTopicSpecific}
 node scripts/fetch-docs.js "<query>"    # → 2-3 URLs
@@ -83,6 +91,7 @@ node scripts/fetch-docs.js "<query>"    # → 2-3 URLs
 ```
 
 **General query:** "Documentation for Next.js"
+
 ```bash
 node scripts/detect-topic.js "<query>"         # → {isTopicSpecific: false}
 node scripts/fetch-docs.js "<query>"           # → 8+ URLs

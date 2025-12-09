@@ -19,7 +19,7 @@ async function click() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== 'false'
+      headless: args.headless !== 'false',
     });
 
     const page = await getPage(browser);
@@ -27,7 +27,7 @@ async function click() {
     // Navigate if URL provided
     if (args.url) {
       await page.goto(args.url, {
-        waitUntil: args['wait-until'] || 'networkidle2'
+        waitUntil: args['wait-until'] || 'networkidle2',
       });
     }
 
@@ -37,14 +37,16 @@ async function click() {
     // Wait for element based on selector type
     await waitForElement(page, parsed, {
       visible: true,
-      timeout: parseInt(args.timeout || '5000')
+      timeout: parseInt(args.timeout || '5000'),
     });
 
     // Set up navigation promise BEFORE clicking (in case click triggers immediate navigation)
-    const navigationPromise = page.waitForNavigation({
-      waitUntil: 'load',
-      timeout: 5000
-    }).catch(() => null); // Catch timeout - navigation may not occur
+    const navigationPromise = page
+      .waitForNavigation({
+        waitUntil: 'load',
+        timeout: 5000,
+      })
+      .catch(() => null); // Catch timeout - navigation may not occur
 
     // Click element
     await clickElement(page, parsed);
@@ -52,7 +54,7 @@ async function click() {
     // Wait for optional selector after click
     if (args['wait-for']) {
       await page.waitForSelector(args['wait-for'], {
-        timeout: parseInt(args.timeout || '5000')
+        timeout: parseInt(args.timeout || '5000'),
       });
     } else {
       // Wait for navigation to complete (or timeout if no navigation)
@@ -62,7 +64,7 @@ async function click() {
     outputJSON({
       success: true,
       url: page.url(),
-      title: await page.title()
+      title: await page.title(),
     });
 
     if (args.close !== 'false') {

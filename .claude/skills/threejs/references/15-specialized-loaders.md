@@ -18,7 +18,7 @@ loader.load('image.svg', (data) => {
     const material = new THREE.MeshBasicMaterial({
       color: path.color,
       side: THREE.DoubleSide,
-      depthWrite: false
+      depthWrite: false,
     });
 
     const shapes = SVGLoader.createShapes(path);
@@ -34,7 +34,7 @@ loader.load('image.svg', (data) => {
     const shapes = SVGLoader.createShapes(path);
     const geometry = new THREE.ExtrudeGeometry(shapes, {
       depth: 10,
-      bevelEnabled: false
+      bevelEnabled: false,
     });
     const mesh = new THREE.Mesh(geometry, material);
     group.add(mesh);
@@ -59,7 +59,7 @@ loader.load('model.dae', (collada) => {
   // Access animations
   const animations = collada.animations;
   const mixer = new THREE.AnimationMixer(model);
-  animations.forEach(clip => mixer.clipAction(clip).play());
+  animations.forEach((clip) => mixer.clipAction(clip).play());
 });
 ```
 
@@ -182,9 +182,9 @@ loader.load('model.ply', (geometry) => {
   geometry.computeVertexNormals();
 
   // Check if has vertex colors
-  const material = geometry.attributes.color ?
-    new THREE.MeshStandardMaterial({ vertexColors: true }) :
-    new THREE.MeshStandardMaterial({ color: 0x888888 });
+  const material = geometry.attributes.color
+    ? new THREE.MeshStandardMaterial({ vertexColors: true })
+    : new THREE.MeshStandardMaterial({ color: 0x888888 });
 
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
@@ -241,7 +241,7 @@ fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
     bevelEnabled: true,
     bevelThickness: 10,
     bevelSize: 8,
-    bevelSegments: 5
+    bevelSegments: 5,
   });
 
   const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
@@ -312,12 +312,16 @@ loader.load('texture.ktx2', (texture) => {
 // Load with progress
 loader.load(
   'file.ext',
-  (result) => { /* success */ },
+  (result) => {
+    /* success */
+  },
   (xhr) => {
-    const percent = (xhr.loaded / xhr.total * 100);
+    const percent = (xhr.loaded / xhr.total) * 100;
     console.log(`${percent}% loaded`);
   },
-  (error) => { /* error */ }
+  (error) => {
+    /* error */
+  },
 );
 
 // Center imported model

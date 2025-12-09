@@ -2,8 +2,7 @@
 description: Analyze and fix the issue [FAST]
 ---
 
-Analyze and fix this issue:
-<issue>$ARGUMENTS</issue>
+Analyze and fix this issue: <issue>$ARGUMENTS</issue>
 
 ## Development Rules
 

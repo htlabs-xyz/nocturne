@@ -29,22 +29,28 @@ project/
 Document custom extensions:
 
 **README.md:**
+
 ```markdown
 ## Claude Code Setup
 
 ### Custom Commands
+
 - `/test-all`: Run full test suite
 - `/deploy`: Deploy to staging
 
 ### Skills
+
 - `api-testing`: REST API testing utilities
 
 ### MCP Servers
+
 - `postgres`: Database access
 - `github`: Repository integration
 
 ### Environment Variables
+
 Copy `.claude/.env.example` to `.claude/.env` and fill in:
+
 - GITHUB_TOKEN
 - DATABASE_URL
 ```
@@ -52,6 +58,7 @@ Copy `.claude/.env.example` to `.claude/.env` and fill in:
 ### Team Sharing
 
 **What to commit:**
+
 - `.claude/settings.json`
 - `.claude/commands/`
 - `.claude/skills/`
@@ -60,12 +67,14 @@ Copy `.claude/.env.example` to `.claude/.env` and fill in:
 - `.claude/.env.example`
 
 **What NOT to commit:**
+
 - `.claude/.env` (contains secrets)
 - `.claude/memory/` (optional)
 - `.claude/cache/`
 - API keys or tokens
 
 **.gitignore:**
+
 ```
 .claude/.env
 .claude/memory/
@@ -78,6 +87,7 @@ Copy `.claude/.env.example` to `.claude/.env` and fill in:
 ### API Key Management
 
 **Never commit API keys:**
+
 ```bash
 # Use environment variables
 export ANTHROPIC_API_KEY=sk-ant-xxxxx
@@ -87,6 +97,7 @@ echo 'ANTHROPIC_API_KEY=sk-ant-xxxxx' > .claude/.env
 ```
 
 **Rotate keys regularly:**
+
 ```bash
 # Generate new key
 # Update in all environments
@@ -94,6 +105,7 @@ echo 'ANTHROPIC_API_KEY=sk-ant-xxxxx' > .claude/.env
 ```
 
 **Use workspace keys:**
+
 ```bash
 # For team projects, use workspace API keys
 # Easier to manage and rotate
@@ -157,18 +169,21 @@ claude plugin install gh:anthropics/official-plugin
 Choose appropriate model for task:
 
 **Haiku** - Fast, cost-effective:
+
 ```bash
 claude --model haiku "fix typo in README"
 claude --model haiku "format code"
 ```
 
 **Sonnet** - Balanced (default):
+
 ```bash
 claude "implement user authentication"
 claude "review this PR"
 ```
 
 **Opus** - Complex tasks:
+
 ```bash
 claude --model opus "architect microservices system"
 claude --model opus "optimize algorithm performance"
@@ -194,6 +209,7 @@ const response = await client.messages.create({
 ```
 
 **Benefits:**
+
 - 90% cost reduction on cached tokens
 - Faster responses
 - Better for iterative development
@@ -244,13 +260,16 @@ Create consistent slash commands:
 
 ```markdown
 # .claude/commands/test.md
+
 Run test suite with coverage report.
 
 Options:
+
 - {{suite}}: Specific test suite (optional)
 ```
 
 **Usage:**
+
 ```bash
 /test
 /test unit
@@ -281,6 +300,7 @@ tar -czf team-plugin.tar.gz .
 Use project settings for consistency:
 
 **.claude/settings.json:**
+
 ```json
 {
   "model": "claude-sonnet-4-5-20250929",
@@ -307,6 +327,7 @@ Use project memory for shared context:
 ```
 
 **Benefits:**
+
 - Shared project knowledge
 - Consistent behavior across team
 - Reduced onboarding time
@@ -348,6 +369,7 @@ claude analytics export --format csv > usage.csv
 ### Cost Optimization
 
 **Use Haiku for simple tasks:**
+
 ```bash
 # Expensive (Sonnet)
 claude "fix typo in README"
@@ -357,6 +379,7 @@ claude --model haiku "fix typo in README"
 ```
 
 **Enable caching:**
+
 ```json
 {
   "caching": {
@@ -367,6 +390,7 @@ claude --model haiku "fix typo in README"
 ```
 
 **Batch operations:**
+
 ```bash
 # Instead of multiple requests
 claude "fix file1.js"
@@ -378,6 +402,7 @@ claude "fix all files: file1.js file2.js file3.js"
 ```
 
 **Track per-project costs:**
+
 ```bash
 # Tag projects
 claude --project my-project "implement feature"

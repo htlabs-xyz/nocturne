@@ -12,7 +12,7 @@ describe('ThoughtFormatter', () => {
       const result = ThoughtFormatter.formatSimple({
         thought: 'Test thought',
         thoughtNumber: 1,
-        totalThoughts: 5
+        totalThoughts: 5,
       });
 
       expect(result).toBe('Thought 1/5: Test thought');
@@ -24,7 +24,7 @@ describe('ThoughtFormatter', () => {
         thoughtNumber: 2,
         totalThoughts: 5,
         isRevision: true,
-        revisesThought: 1
+        revisesThought: 1,
       });
 
       expect(result).toContain('[REVISION of Thought 1]');
@@ -37,7 +37,7 @@ describe('ThoughtFormatter', () => {
         thoughtNumber: 3,
         totalThoughts: 5,
         branchFromThought: 2,
-        branchId: 'a'
+        branchId: 'a',
       });
 
       expect(result).toContain('[BRANCH A from Thought 2]');
@@ -50,7 +50,7 @@ describe('ThoughtFormatter', () => {
       const result = ThoughtFormatter.formatMarkdown({
         thought: 'Test thought',
         thoughtNumber: 1,
-        totalThoughts: 5
+        totalThoughts: 5,
       });
 
       expect(result).toContain('**Thought 1/5**');
@@ -63,7 +63,7 @@ describe('ThoughtFormatter', () => {
         thoughtNumber: 2,
         totalThoughts: 5,
         isRevision: true,
-        revisesThought: 1
+        revisesThought: 1,
       });
 
       expect(result).toContain('**[REVISION of Thought 1]**');
@@ -75,7 +75,7 @@ describe('ThoughtFormatter', () => {
       const result = ThoughtFormatter.format({
         thought: 'Test thought',
         thoughtNumber: 1,
-        totalThoughts: 5
+        totalThoughts: 5,
       });
 
       expect(result).toContain('┌');
@@ -90,7 +90,7 @@ describe('ThoughtFormatter', () => {
         thoughtNumber: 2,
         totalThoughts: 5,
         isRevision: true,
-        revisesThought: 1
+        revisesThought: 1,
       });
 
       expect(result).toContain('🔄');
@@ -103,7 +103,7 @@ describe('ThoughtFormatter', () => {
         thoughtNumber: 3,
         totalThoughts: 5,
         branchFromThought: 2,
-        branchId: 'a'
+        branchId: 'a',
       });
 
       expect(result).toContain('🌿');
@@ -113,11 +113,12 @@ describe('ThoughtFormatter', () => {
 
   describe('Text Wrapping', () => {
     test('wraps long text', () => {
-      const longText = 'This is a very long thought that should be wrapped across multiple lines when it exceeds the maximum width specified for the formatter';
+      const longText =
+        'This is a very long thought that should be wrapped across multiple lines when it exceeds the maximum width specified for the formatter';
       const wrapped = ThoughtFormatter.wrapText(longText, 50);
 
       expect(wrapped.length).toBeGreaterThan(1);
-      wrapped.forEach(line => {
+      wrapped.forEach((line) => {
         expect(line.length).toBeLessThanOrEqual(50);
       });
     });

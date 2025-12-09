@@ -3,8 +3,8 @@
 **Problem**: Design authentication API for multi-tenant SaaS.
 
 ## Without Sequential Thinking
-"Use JWT with OAuth2. Add tenant ID to claims. Implement refresh tokens."
-(Misses edge cases, scaling, security)
+
+"Use JWT with OAuth2. Add tenant ID to claims. Implement refresh tokens." (Misses edge cases, scaling, security)
 
 ## With Sequential Thinking
 

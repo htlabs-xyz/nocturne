@@ -4,6 +4,7 @@ argument-hint: [task]
 ---
 
 ## Your mission
+
 <task>
 $ARGUMENTS
 </task>
@@ -22,15 +23,17 @@ Before delegating to plan subcommands, check for existing active plan:
 `<WORKING-DIR>` = current project's working directory (where Claude was launched or `pwd`).
 
 ## Workflow
+
 - Analyze the given task and use `AskUserQuestion` tool to ask for more details if needed.
 - Decide to use `/plan:fast` or `/plan:hard` SlashCommands based on the complexity.
 - Execute SlashCommand: `/plan:fast <detailed-instructions-prompt>` or `/plan:hard <detailed-instructions-prompt>`
 - Activate `planning` skill.
-- Note: `detailed-instructions-prompt` is **an enhanced prompt** that describes the task in detail based on the provided task description.
+- Note: `detailed-instructions-prompt` is **an enhanced prompt** that describes the task in detail based on the provided
+  task description.
 
 ## Important Notes
+
 **IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** Ensure token efficiency while maintaining high quality.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports. **IMPORTANT:** Ensure token efficiency
+while maintaining high quality. **IMPORTANT:** In reports, list any unresolved questions at the end, if any.
 **IMPORTANT**: **Do not** start implementing.

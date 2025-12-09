@@ -7,6 +7,7 @@ Integrate Claude Code into development workflows with GitHub Actions and GitLab 
 ### Basic Workflow
 
 **.github/workflows/claude.yml:**
+
 ```yaml
 name: Claude Code CI
 
@@ -138,6 +139,7 @@ jobs:
 ### Basic Pipeline
 
 **.gitlab-ci.yml:**
+
 ```yaml
 stages:
   - review
@@ -159,7 +161,7 @@ claude-review:
 
 ```yaml
 variables:
-  CLAUDE_MODEL: "claude-sonnet-4-5-20250929"
+  CLAUDE_MODEL: 'claude-sonnet-4-5-20250929'
 
 stages:
   - lint
@@ -287,12 +289,14 @@ Limit CI usage to control costs:
 ### API Key Management
 
 **GitHub:**
+
 ```
 Settings → Secrets and variables → Actions
 Add: ANTHROPIC_API_KEY
 ```
 
 **GitLab:**
+
 ```
 Settings → CI/CD → Variables
 Add: ANTHROPIC_API_KEY (Protected, Masked)
@@ -301,6 +305,7 @@ Add: ANTHROPIC_API_KEY (Protected, Masked)
 ### Restricted Permissions
 
 **GitHub Actions:**
+
 ```yaml
 permissions:
   contents: read
@@ -309,6 +314,7 @@ permissions:
 ```
 
 **GitLab CI:**
+
 ```yaml
 variables:
   GIT_STRATEGY: clone
@@ -333,6 +339,7 @@ Prevent API key exposure:
 ### Workflow Logs
 
 **GitHub Actions:**
+
 ```yaml
 - name: Debug Info
   run: |
@@ -342,6 +349,7 @@ Prevent API key exposure:
 ```
 
 **GitLab CI:**
+
 ```yaml
 debug:
   script:
@@ -388,6 +396,7 @@ artifacts:
 ### Caching
 
 **GitHub Actions:**
+
 ```yaml
 - uses: actions/cache@v3
   with:
@@ -396,6 +405,7 @@ artifacts:
 ```
 
 **GitLab CI:**
+
 ```yaml
 cache:
   key: claude-cache

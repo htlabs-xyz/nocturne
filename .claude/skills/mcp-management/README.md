@@ -4,7 +4,8 @@ Intelligent management and execution of Model Context Protocol (MCP) servers.
 
 ## Overview
 
-This skill enables Claude to discover, analyze, and execute MCP server capabilities without polluting the main context window. Perfect for context-efficient MCP integration using subagent-based architecture.
+This skill enables Claude to discover, analyze, and execute MCP server capabilities without polluting the main context
+window. Perfect for context-efficient MCP integration using subagent-based architecture.
 
 ## Features
 
@@ -63,7 +64,8 @@ npx ts-node scripts/cli.ts list-resources
 
 ### Pattern 2: LLM-Driven Tool Selection
 
-The LLM reads `assets/tools.json` and intelligently selects tools. No separate analysis command needed - the LLM's understanding of context and intent is superior to keyword matching.
+The LLM reads `assets/tools.json` and intelligently selects tools. No separate analysis command needed - the LLM's
+understanding of context and intent is superior to keyword matching.
 
 ### Pattern 3: Execute MCP Tools
 
@@ -95,6 +97,7 @@ MCP Servers (memory, filesystem, etc.)
 ```
 
 **Benefits**:
+
 - Main agent context stays clean
 - MCP discovery happens in isolated subagent context
 - Only relevant tool definitions loaded when needed
@@ -123,6 +126,7 @@ mcp-management/
 ### mcp-client.ts
 
 Core client manager class:
+
 - Load config from `.claude/.mcp.json`
 - Connect to multiple MCP servers
 - List/execute tools, prompts, resources
@@ -131,12 +135,14 @@ Core client manager class:
 ### cli.ts
 
 Command-line interface:
+
 - `list-tools` - Show all tools and save to assets/tools.json
 - `list-prompts` - Show all prompts
 - `list-resources` - Show all resources
 - `call-tool <server> <tool> <json>` - Execute tool
 
-**Note**: Tool analysis is performed by the LLM reading `assets/tools.json`, which provides better context understanding than algorithmic matching.
+**Note**: Tool analysis is performed by the LLM reading `assets/tools.json`, which provides better context understanding
+than algorithmic matching.
 
 ## Configuration
 
@@ -155,11 +161,12 @@ Scripts check for variables in this order:
 {
   "mcpServers": {
     "server-name": {
-      "command": "executable",          // Required
-      "args": ["arg1", "arg2"],        // Required
-      "env": {                          // Optional
+      "command": "executable", // Required
+      "args": ["arg1", "arg2"], // Required
+      "env": {
+        // Optional
         "VAR": "value",
-        "API_KEY": "${ENV_VAR}"        // Reference env vars
+        "API_KEY": "${ENV_VAR}" // Reference env vars
       }
     }
   }
@@ -196,6 +203,7 @@ Ensure `.claude/.mcp.json` exists and is valid JSON.
 ### "Server connection failed"
 
 Check:
+
 - Server command is installed (`npx` packages installed?)
 - Server args are correct
 - Environment variables are set
@@ -203,6 +211,7 @@ Check:
 ### "Tool not found"
 
 List available tools first:
+
 ```bash
 npx ts-node scripts/cli.ts list-tools
 ```

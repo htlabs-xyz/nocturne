@@ -40,19 +40,19 @@ console.log('## Testing buildContext7Url()');
 assertEqual(
   buildContext7Url('vercel/next.js'),
   'https://context7.com/vercel/next.js/llms.txt',
-  'Build URL for GitHub repo'
+  'Build URL for GitHub repo',
 );
 
 assertEqual(
   buildContext7Url('vercel/next.js', 'cache'),
   'https://context7.com/vercel/next.js/llms.txt?topic=cache',
-  'Build URL with topic parameter'
+  'Build URL with topic parameter',
 );
 
 assertEqual(
   buildContext7Url('shadcn-ui/ui', 'date'),
   'https://context7.com/shadcn-ui/ui/llms.txt?topic=date',
-  'Build URL for shadcn with topic'
+  'Build URL for shadcn with topic',
 );
 
 // Test getUrlVariations

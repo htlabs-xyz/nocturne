@@ -102,11 +102,21 @@ transformControls.addEventListener('dragging-changed', (event) => {
 // Keyboard shortcuts
 window.addEventListener('keydown', (event) => {
   switch (event.key) {
-    case 'g': transformControls.setMode('translate'); break;
-    case 'r': transformControls.setMode('rotate'); break;
-    case 's': transformControls.setMode('scale'); break;
-    case 'x': transformControls.showX = !transformControls.showX; break;
-    case 'Escape': transformControls.detach(); break;
+    case 'g':
+      transformControls.setMode('translate');
+      break;
+    case 'r':
+      transformControls.setMode('rotate');
+      break;
+    case 's':
+      transformControls.setMode('scale');
+      break;
+    case 'x':
+      transformControls.showX = !transformControls.showX;
+      break;
+    case 'Escape':
+      transformControls.detach();
+      break;
   }
 });
 ```
@@ -129,7 +139,7 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
   selectionBox.startPoint.set(
     (event.clientX / window.innerWidth) * 2 - 1,
     -(event.clientY / window.innerHeight) * 2 + 1,
-    0.5
+    0.5,
   );
 });
 
@@ -138,7 +148,7 @@ renderer.domElement.addEventListener('pointermove', (event) => {
     selectionBox.endPoint.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1,
-      0.5
+      0.5,
     );
     const allSelected = selectionBox.select();
     console.log('Selected:', allSelected.length);

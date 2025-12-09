@@ -5,6 +5,7 @@ Product management, pricing models, and usage-based billing.
 ## Billing Cycles
 
 **Options:**
+
 - One-time: Charged once, forever access
 - Monthly: Charged every month
 - Yearly: Charged every year
@@ -13,32 +14,34 @@ Product management, pricing models, and usage-based billing.
 
 ## Pricing Types
 
-**Fixed Price:** Set amount
-**Pay What You Want:** Customer decides (optional minimum)
-**Free:** No charge
+**Fixed Price:** Set amount **Pay What You Want:** Customer decides (optional minimum) **Free:** No charge
 
 **Important:** Cannot change after product creation
 
 ## Advanced Pricing Models
 
 ### Seat-Based Pricing
+
 - Team access with assignable seats
 - Works for recurring or one-time
 - Tiered pricing structures
 - Customer manages seat assignments
 
 **Configuration:**
+
 ```typescript
 const product = await polar.products.create({
-  name: "Team Plan",
-  prices: [{
-    type: "recurring",
-    recurring_interval: "month",
-    price_amount: 5000, // per seat
-    pricing_type: "fixed"
-  }],
+  name: 'Team Plan',
+  prices: [
+    {
+      type: 'recurring',
+      recurring_interval: 'month',
+      price_amount: 5000, // per seat
+      pricing_type: 'fixed',
+    },
+  ],
   is_seat_based: true,
-  max_seats: 100
+  max_seats: 100,
 });
 ```
 
@@ -47,47 +50,52 @@ const product = await polar.products.create({
 **Architecture:** Events → Meters → Metered Prices
 
 **1. Events:** Usage data from your application
+
 ```typescript
 await polar.events.create({
-  external_customer_id: "user_123",
-  event_name: "api_call",
+  external_customer_id: 'user_123',
+  event_name: 'api_call',
   properties: {
     tokens: 1000,
-    model: "gpt-4"
-  }
+    model: 'gpt-4',
+  },
 });
 ```
 
 **2. Meters:** Filter & aggregate events
+
 ```typescript
 const meter = await polar.meters.create({
-  name: "API Tokens",
-  slug: "api_tokens",
-  event_name: "api_call",
+  name: 'API Tokens',
+  slug: 'api_tokens',
+  event_name: 'api_call',
   aggregation: {
-    type: "sum",
-    property: "tokens"
-  }
+    type: 'sum',
+    property: 'tokens',
+  },
 });
 ```
 
 **3. Metered Prices:** Billing based on usage
+
 ```typescript
 const price = await polar.products.createPrice(productId, {
-  type: "metered",
+  type: 'metered',
   meter_id: meter.id,
   price_per_unit: 10, // 10 cents per 1000 tokens
-  billing_interval: "month"
+  billing_interval: 'month',
 });
 ```
 
 **Credits System:**
+
 - Pre-purchased usage credits
 - Credit customer's meter balance
 - Use as subscription benefit
 - Balance tracking API
 
 **Ingestion Strategies:**
+
 - LLM Strategy: AI/ML tracking
 - S3 Strategy: Bulk import
 - Stream Strategy: Real-time
@@ -96,40 +104,43 @@ const price = await polar.products.createPrice(productId, {
 ## Product Features
 
 ### Metadata
+
 ```typescript
 const product = await polar.products.create({
-  name: "Pro Plan",
+  name: 'Pro Plan',
   metadata: {
-    feature_x: "enabled",
-    tier: "pro",
-    custom_field: "value"
-  }
+    feature_x: 'enabled',
+    tier: 'pro',
+    custom_field: 'value',
+  },
 });
 ```
 
 ### Custom Fields
+
 ```typescript
 const product = await polar.products.create({
-  name: "Enterprise Plan",
+  name: 'Enterprise Plan',
   custom_fields: [
     {
-      slug: "company_name",
-      label: "Company Name",
-      type: "text",
-      required: true
+      slug: 'company_name',
+      label: 'Company Name',
+      type: 'text',
+      required: true,
     },
     {
-      slug: "employees",
-      label: "Number of Employees",
-      type: "number"
-    }
-  ]
+      slug: 'employees',
+      label: 'Number of Employees',
+      type: 'number',
+    },
+  ],
 });
 ```
 
 Data collected at checkout, accessible via Orders/Subscriptions API in `custom_field_data`.
 
 ### Trials
+
 - Set on recurring products
 - Customer not charged during trial
 - Benefits granted immediately
@@ -137,50 +148,58 @@ Data collected at checkout, accessible via Orders/Subscriptions API in `custom_f
 
 ```typescript
 const product = await polar.products.create({
-  name: "Pro Plan",
-  prices: [{
-    type: "recurring",
-    recurring_interval: "month",
-    price_amount: 2000,
-    trial_period_days: 14
-  }]
+  name: 'Pro Plan',
+  prices: [
+    {
+      type: 'recurring',
+      recurring_interval: 'month',
+      price_amount: 2000,
+      trial_period_days: 14,
+    },
+  ],
 });
 ```
 
 ## Product Operations
 
 ### Create Product
+
 ```typescript
 const product = await polar.products.create({
-  organization_id: "org_xxx",
-  name: "Pro Plan",
-  description: "Professional features",
-  prices: [{
-    type: "recurring",
-    recurring_interval: "month",
-    price_amount: 2000,
-    pricing_type: "fixed"
-  }]
+  organization_id: 'org_xxx',
+  name: 'Pro Plan',
+  description: 'Professional features',
+  prices: [
+    {
+      type: 'recurring',
+      recurring_interval: 'month',
+      price_amount: 2000,
+      pricing_type: 'fixed',
+    },
+  ],
 });
 ```
 
 ### List Products
+
 ```typescript
 const products = await polar.products.list({
-  organization_id: "org_xxx",
-  is_archived: false
+  organization_id: 'org_xxx',
+  is_archived: false,
 });
 ```
 
 ### Update Product
+
 ```typescript
 const product = await polar.products.update(productId, {
-  name: "Pro Plan Updated",
-  description: "New description"
+  name: 'Pro Plan Updated',
+  description: 'New description',
 });
 ```
 
 ### Archive Product
+
 ```typescript
 await polar.products.archive(productId);
 // Products can be unarchived later
@@ -188,9 +207,10 @@ await polar.products.archive(productId);
 ```
 
 ### Update Benefits
+
 ```typescript
 await polar.products.updateBenefits(productId, {
-  benefits: [benefitId1, benefitId2]
+  benefits: [benefitId1, benefitId2],
 });
 ```
 

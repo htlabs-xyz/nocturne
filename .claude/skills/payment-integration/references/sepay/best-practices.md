@@ -5,22 +5,24 @@ Security, patterns, and monitoring for production SePay integrations.
 ## Security
 
 ### Credential Management
+
 ```javascript
 // ✓ Good: Environment variables
 const client = new SePayClient({
   merchant_id: process.env.SEPAY_MERCHANT_ID,
   secret_key: process.env.SEPAY_SECRET_KEY,
-  env: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox'
+  env: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
 });
 
 // ✗ Bad: Hardcoded credentials
 const client = new SePayClient({
   merchant_id: 'SP-TEST-12345',
-  secret_key: 'spsk_test_xxxxxxx'
+  secret_key: 'spsk_test_xxxxxxx',
 });
 ```
 
 ### Webhook Security
+
 1. **IP Whitelisting:** Restrict endpoint to SePay IPs
 2. **API Key Verification:** Validate authorization header
 3. **HTTPS Only:** Never accept HTTP webhooks
@@ -28,6 +30,7 @@ const client = new SePayClient({
 5. **Duplicate Detection:** Use transaction ID for deduplication
 
 ### Transaction Verification
+
 ```javascript
 // Always verify payment status via API, don't trust only redirects
 app.get('/payment/success', async (req, res) => {
@@ -48,6 +51,7 @@ app.get('/payment/success', async (req, res) => {
 ## Implementation Patterns
 
 ### Payment Flow Pattern
+
 ```javascript
 class PaymentService {
   async createPayment(order) {
@@ -83,6 +87,7 @@ class PaymentService {
 ```
 
 ### Webhook Resilience Pattern
+
 ```javascript
 async function handleWebhook(data) {
   const maxRetries = 3;
@@ -92,9 +97,7 @@ async function handleWebhook(data) {
     try {
       await db.transaction(async (trx) => {
         // Check duplicate
-        const exists = await trx('transactions')
-          .where('sepay_id', data.id)
-          .first();
+        const exists = await trx('transactions').where('sepay_id', data.id).first();
 
         if (exists) return;
 
@@ -124,6 +127,7 @@ async function handleWebhook(data) {
 ```
 
 ### Reconciliation Pattern
+
 ```javascript
 async function reconcilePayments(fromDate, toDate) {
   // Get all pending orders
@@ -146,9 +150,7 @@ async function reconcilePayments(fromDate, toDate) {
 
     // Match and update
     for (const transaction of transactions) {
-      const order = pendingOrders.find(o =>
-        transaction.content.includes(o.payment_code)
-      );
+      const order = pendingOrders.find((o) => transaction.content.includes(o.payment_code));
 
       if (order) {
         await order.markAsPaid(transaction);
@@ -163,6 +165,7 @@ async function reconcilePayments(fromDate, toDate) {
 ## Performance Optimization
 
 ### Caching
+
 ```javascript
 // Cache bank list
 const getBankList = memoize(
@@ -170,7 +173,7 @@ const getBankList = memoize(
     const response = await fetch('https://qr.sepay.vn/banks.json');
     return response.json();
   },
-  { maxAge: 86400000 } // 24 hours
+  { maxAge: 86400000 }, // 24 hours
 );
 
 // Cache QR codes for fixed amounts
@@ -187,6 +190,7 @@ function getCachedQRUrl(account, bank, amount) {
 ```
 
 ### Rate Limit Management
+
 ```javascript
 const RateLimiter = require('bottleneck');
 
@@ -205,6 +209,7 @@ const apiCall = limiter.wrap(async (endpoint, params) => {
 ```
 
 ### Async Processing
+
 ```javascript
 // Queue webhook processing
 app.post('/webhook/sepay', async (req, res) => {
@@ -230,6 +235,7 @@ webhookQueue.process('process-sepay-webhook', async (job) => {
 ## Monitoring & Logging
 
 ### Essential Metrics
+
 ```javascript
 const metrics = {
   payment_initiated: counter('sepay_payment_initiated_total'),
@@ -249,6 +255,7 @@ timer();
 ```
 
 ### Structured Logging
+
 ```javascript
 logger.info('Payment initiated', {
   order_id: order.id,
@@ -273,9 +280,11 @@ logger.error('Payment failed', {
 ```
 
 ### Alerting
+
 ```javascript
 // Alert on high failure rate
-if (failureRate > 0.1) { // 10%
+if (failureRate > 0.1) {
+  // 10%
   alert.send({
     severity: 'high',
     message: 'SePay payment failure rate exceeds 10%',
@@ -296,6 +305,7 @@ if (webhookFailures > 10) {
 ## Testing Strategy
 
 ### Sandbox Testing Checklist
+
 - [ ] Successful payment flow
 - [ ] Failed payment handling
 - [ ] Canceled payment handling
@@ -308,6 +318,7 @@ if (webhookFailures > 10) {
 - [ ] Order reconciliation
 
 ### Load Testing
+
 ```javascript
 // Simulate high volume
 for (let i = 0; i < 1000; i++) {

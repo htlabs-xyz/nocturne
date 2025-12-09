@@ -1,6 +1,10 @@
 ---
 name: Problem-Solving Techniques
-description: Apply systematic problem-solving techniques for complexity spirals (simplification cascades), innovation blocks (collision-zone thinking), recurring patterns (meta-pattern recognition), assumption constraints (inversion exercise), scale uncertainty (scale game), and dispatch when stuck. Techniques derived from Microsoft Amplifier project patterns adapted for immediate application.
+description:
+  Apply systematic problem-solving techniques for complexity spirals (simplification cascades), innovation blocks
+  (collision-zone thinking), recurring patterns (meta-pattern recognition), assumption constraints (inversion exercise),
+  scale uncertainty (scale game), and dispatch when stuck. Techniques derived from Microsoft Amplifier project patterns
+  adapted for immediate application.
 version: 2.0.0
 ---
 
@@ -11,6 +15,7 @@ Systematic approaches for different types of stuck-ness. Each technique targets 
 ## When to Use
 
 Apply when encountering:
+
 - **Complexity spiraling** - Multiple implementations, growing special cases, excessive branching
 - **Innovation blocks** - Conventional solutions inadequate, need breakthrough thinking
 - **Recurring patterns** - Same issue across domains, reinventing solutions
@@ -22,18 +27,19 @@ Apply when encountering:
 
 **Match symptom to technique:**
 
-| Stuck Symptom | Technique | Reference |
-|---------------|-----------|-----------|
-| Same thing implemented 5+ ways, growing special cases | **Simplification Cascades** | `references/simplification-cascades.md` |
-| Conventional solutions inadequate, need breakthrough | **Collision-Zone Thinking** | `references/collision-zone-thinking.md` |
-| Same issue in different places, reinventing wheels | **Meta-Pattern Recognition** | `references/meta-pattern-recognition.md` |
-| Solution feels forced, "must be done this way" | **Inversion Exercise** | `references/inversion-exercise.md` |
-| Will this work at production? Edge cases unclear? | **Scale Game** | `references/scale-game.md` |
-| Unsure which technique to use | **When Stuck** | `references/when-stuck.md` |
+| Stuck Symptom                                         | Technique                    | Reference                                |
+| ----------------------------------------------------- | ---------------------------- | ---------------------------------------- |
+| Same thing implemented 5+ ways, growing special cases | **Simplification Cascades**  | `references/simplification-cascades.md`  |
+| Conventional solutions inadequate, need breakthrough  | **Collision-Zone Thinking**  | `references/collision-zone-thinking.md`  |
+| Same issue in different places, reinventing wheels    | **Meta-Pattern Recognition** | `references/meta-pattern-recognition.md` |
+| Solution feels forced, "must be done this way"        | **Inversion Exercise**       | `references/inversion-exercise.md`       |
+| Will this work at production? Edge cases unclear?     | **Scale Game**               | `references/scale-game.md`               |
+| Unsure which technique to use                         | **When Stuck**               | `references/when-stuck.md`               |
 
 ## Core Techniques
 
 ### 1. Simplification Cascades
+
 Find one insight eliminating multiple components. "If this is true, we don't need X, Y, Z."
 
 **Key insight:** Everything is a special case of one general pattern.
@@ -41,6 +47,7 @@ Find one insight eliminating multiple components. "If this is true, we don't nee
 **Red flag:** "Just need to add one more case..." (repeating forever)
 
 ### 2. Collision-Zone Thinking
+
 Force unrelated concepts together to discover emergent properties. "What if we treated X like Y?"
 
 **Key insight:** Revolutionary ideas from deliberate metaphor-mixing.
@@ -48,6 +55,7 @@ Force unrelated concepts together to discover emergent properties. "What if we t
 **Red flag:** "I've tried everything in this domain"
 
 ### 3. Meta-Pattern Recognition
+
 Spot patterns appearing in 3+ domains to find universal principles.
 
 **Key insight:** Patterns in how patterns emerge reveal reusable abstractions.
@@ -55,6 +63,7 @@ Spot patterns appearing in 3+ domains to find universal principles.
 **Red flag:** "This problem is unique" (probably not)
 
 ### 4. Inversion Exercise
+
 Flip core assumptions to reveal hidden constraints. "What if the opposite were true?"
 
 **Key insight:** Valid inversions reveal context-dependence of "rules."
@@ -62,6 +71,7 @@ Flip core assumptions to reveal hidden constraints. "What if the opposite were t
 **Red flag:** "There's only one way to do this"
 
 ### 5. Scale Game
+
 Test at extremes (1000x bigger/smaller, instant/year-long) to expose fundamental truths.
 
 **Key insight:** What works at one scale fails at another.
@@ -79,6 +89,7 @@ Test at extremes (1000x bigger/smaller, instant/year-long) to expose fundamental
 ## Combining Techniques
 
 Powerful combinations:
+
 - **Simplification + Meta-pattern** - Find pattern, then simplify all instances
 - **Collision + Inversion** - Force metaphor, then invert its assumptions
 - **Scale + Simplification** - Extremes reveal what to eliminate
@@ -87,6 +98,7 @@ Powerful combinations:
 ## References
 
 Load detailed guides as needed:
+
 - `references/when-stuck.md` - Dispatch flowchart and decision tree
 - `references/simplification-cascades.md` - Cascade detection and extraction
 - `references/collision-zone-thinking.md` - Metaphor collision process

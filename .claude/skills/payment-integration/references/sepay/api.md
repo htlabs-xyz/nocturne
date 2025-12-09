@@ -1,16 +1,17 @@
 # SePay API Reference
 
-Base URL: `https://my.sepay.vn/userapi/`
-Rate Limit: 2 calls/second
+Base URL: `https://my.sepay.vn/userapi/` Rate Limit: 2 calls/second
 
 ## Transaction API
 
 ### List Transactions
+
 ```
 GET /userapi/transactions/list
 ```
 
 **Parameters:**
+
 - `account_number` (string) - Bank account ID
 - `transaction_date_min/max` (yyyy-mm-dd) - Date range
 - `since_id` (integer) - Start from ID
@@ -20,30 +21,35 @@ GET /userapi/transactions/list
 - `amount_out` (number) - Outgoing amount
 
 **Response:**
+
 ```json
 {
   "status": 200,
-  "transactions": [{
-    "id": 92704,
-    "gateway": "Vietcombank",
-    "transaction_date": "2023-03-25 14:02:37",
-    "account_number": "0123499999",
-    "content": "payment content",
-    "transfer_type": "in",
-    "transfer_amount": 2277000,
-    "accumulated": 19077000,
-    "reference_number": "MBVCB.3278907687",
-    "bank_account_id": 123
-  }]
+  "transactions": [
+    {
+      "id": 92704,
+      "gateway": "Vietcombank",
+      "transaction_date": "2023-03-25 14:02:37",
+      "account_number": "0123499999",
+      "content": "payment content",
+      "transfer_type": "in",
+      "transfer_amount": 2277000,
+      "accumulated": 19077000,
+      "reference_number": "MBVCB.3278907687",
+      "bank_account_id": 123
+    }
+  ]
 }
 ```
 
 ### Transaction Details
+
 ```
 GET /userapi/transactions/details/{transaction_id}
 ```
 
 ### Count Transactions
+
 ```
 GET /userapi/transactions/count
 ```
@@ -51,11 +57,13 @@ GET /userapi/transactions/count
 ## Bank Account API
 
 ### List Bank Accounts
+
 ```
 GET /userapi/bankaccounts/list
 ```
 
 **Parameters:**
+
 - `short_name` - Bank identifier
 - `last_transaction_date_min/max` - Date range
 - `since_id` - Starting account ID
@@ -63,6 +71,7 @@ GET /userapi/bankaccounts/list
 - `accumulated_min/max` - Balance range
 
 **Response:**
+
 ```json
 {
   "id": 123,
@@ -76,11 +85,13 @@ GET /userapi/bankaccounts/list
 ```
 
 ### Account Details
+
 ```
 GET /userapi/bankaccounts/details/{bank_account_id}
 ```
 
 ### Count Accounts
+
 ```
 GET /userapi/bankaccounts/count
 ```
@@ -90,6 +101,7 @@ GET /userapi/bankaccounts/count
 **Concept:** Each order gets unique VA with exact amount matching for automated confirmation.
 
 **Flow:**
+
 1. Create order → API generates unique VA
 2. Display VA + QR to customer
 3. Customer transfers to VA
@@ -98,6 +110,7 @@ GET /userapi/bankaccounts/count
 6. Update order status
 
 **Advantages:**
+
 - Precision: VA accepts only exact amounts
 - Independence: Each order has own VA (no content parsing)
 - Security: VAs auto-cancel after success/expiration
@@ -108,6 +121,7 @@ GET /userapi/bankaccounts/count
 ## Error Handling
 
 **HTTP Status Codes:**
+
 - 200 OK - Successful
 - 201 Created - Resource created
 - 400 Bad Request - Invalid parameters
@@ -119,6 +133,7 @@ GET /userapi/bankaccounts/count
 - 503 Service Unavailable - Temporarily unavailable
 
 **Rate Limit Response:**
+
 ```json
 {
   "status": 429,

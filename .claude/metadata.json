@@ -718,13 +718,7 @@
     "workflows/orchestration-protocol.md",
     "workflows/primary-workflow.md"
   ],
-  "userConfigFiles": [
-    ".gitignore",
-    ".repomixignore",
-    ".mcp.json",
-    ".ckignore",
-    "CLAUDE.md"
-  ],
+  "userConfigFiles": [".gitignore", ".repomixignore", ".mcp.json", ".ckignore", "CLAUDE.md"],
   "files": [
     {
       "path": ".ckignore",

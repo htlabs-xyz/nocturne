@@ -13,25 +13,27 @@ Configure once, automatic delivery. Polar handles granting and revoking based on
 **Auto-generate unique keys with customizable branding.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "license_keys",
-  organization_id: "org_xxx",
-  description: "Software License",
+  type: 'license_keys',
+  organization_id: 'org_xxx',
+  description: 'Software License',
   properties: {
-    prefix: "MYAPP",
+    prefix: 'MYAPP',
     expires: false,
     activations: 1,
-    limit_usage: false
-  }
+    limit_usage: false,
+  },
 });
 ```
 
 **Validation API (unauthenticated):**
+
 ```typescript
 const validation = await polar.licenses.validate({
-  key: "MYAPP-XXXX-XXXX-XXXX",
-  organization_id: "org_xxx"
+  key: 'MYAPP-XXXX-XXXX-XXXX',
+  organization_id: 'org_xxx',
 });
 
 if (validation.valid) {
@@ -40,9 +42,10 @@ if (validation.valid) {
 ```
 
 **Activation/Deactivation:**
+
 ```typescript
 await polar.licenses.activate(licenseKey, {
-  label: "User's MacBook Pro"
+  label: "User's MacBook Pro",
 });
 
 await polar.licenses.deactivate(activationId);
@@ -55,32 +58,35 @@ await polar.licenses.deactivate(activationId);
 **Auto-invite to private repos with permission management.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "github_repository",
-  organization_id: "org_xxx",
-  description: "Access to private repo",
+  type: 'github_repository',
+  organization_id: 'org_xxx',
+  description: 'Access to private repo',
   properties: {
-    repository_owner: "myorg",
-    repository_name: "private-repo",
-    permission: "pull" // or "push", "admin"
-  }
+    repository_owner: 'myorg',
+    repository_name: 'private-repo',
+    permission: 'pull', // or "push", "admin"
+  },
 });
 ```
 
 **Multiple Repos:**
+
 ```typescript
 {
   properties: {
     repositories: [
-      { owner: "myorg", name: "repo1", permission: "pull" },
-      { owner: "myorg", name: "repo2", permission: "push" }
-    ]
+      { owner: 'myorg', name: 'repo1', permission: 'pull' },
+      { owner: 'myorg', name: 'repo2', permission: 'push' },
+    ];
   }
 }
 ```
 
 **Behavior:**
+
 - Auto-invite on subscription activation
 - Permission managed by Polar
 - Auto-revoke on cancellation
@@ -90,19 +96,21 @@ const benefit = await polar.benefits.create({
 **Server invites and role assignment.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "discord",
-  organization_id: "org_xxx",
-  description: "Premium Discord role",
+  type: 'discord',
+  organization_id: 'org_xxx',
+  description: 'Premium Discord role',
   properties: {
-    guild_id: "123456789",
-    role_id: "987654321"
-  }
+    guild_id: '123456789',
+    role_id: '987654321',
+  },
 });
 ```
 
 **Multiple Roles:**
+
 ```typescript
 {
   properties: {
@@ -116,10 +124,12 @@ const benefit = await polar.benefits.create({
 ```
 
 **Requirements:**
+
 - Polar Discord app must be added to server
 - Configure in Polar dashboard
 
 **Behavior:**
+
 - Auto-invite to server
 - Assign roles automatically
 - Remove roles on cancellation
@@ -129,26 +139,29 @@ const benefit = await polar.benefits.create({
 **Secure file delivery up to 10GB each.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "downloadable",
-  organization_id: "org_xxx",
-  description: "Premium templates",
+  type: 'downloadable',
+  organization_id: 'org_xxx',
+  description: 'Premium templates',
   properties: {
     files: [
-      { name: "template1.zip", size: 5000000 },
-      { name: "template2.psd", size: 10000000 }
-    ]
-  }
+      { name: 'template1.zip', size: 5000000 },
+      { name: 'template2.psd', size: 10000000 },
+    ],
+  },
 });
 ```
 
 **Upload Files:**
+
 - Via Polar dashboard
 - Secure storage
 - Access control
 
 **Customer Access:**
+
 - Download links in customer portal
 - Secure, time-limited URLs
 - Multiple files supported
@@ -158,28 +171,31 @@ const benefit = await polar.benefits.create({
 **Pre-purchased usage for usage-based billing.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "custom",
-  organization_id: "org_xxx",
-  description: "10,000 API credits",
+  type: 'custom',
+  organization_id: 'org_xxx',
+  description: '10,000 API credits',
   properties: {
-    meter_id: "meter_xxx",
-    credits: 10000
-  }
+    meter_id: 'meter_xxx',
+    credits: 10000,
+  },
 });
 ```
 
 **Automatic Application:**
+
 - Credits added on subscription start
 - Balance tracked via API
 - Depletes with usage
 
 **Balance Check:**
+
 ```typescript
 const balance = await polar.meters.getBalance({
-  customer_id: "cust_xxx",
-  meter_id: "meter_xxx"
+  customer_id: 'cust_xxx',
+  meter_id: 'meter_xxx',
 });
 ```
 
@@ -188,18 +204,20 @@ const balance = await polar.meters.getBalance({
 **Flexible placeholder for manual fulfillment.**
 
 **Create:**
+
 ```typescript
 const benefit = await polar.benefits.create({
-  type: "custom",
-  organization_id: "org_xxx",
-  description: "Priority support via email",
+  type: 'custom',
+  organization_id: 'org_xxx',
+  description: 'Priority support via email',
   properties: {
-    note: "Email support@example.com with your order ID for priority support"
-  }
+    note: 'Email support@example.com with your order ID for priority support',
+  },
 });
 ```
 
 **Use Cases:**
+
 - Cal.com booking links
 - Email support access
 - Community forum access
@@ -210,46 +228,53 @@ const benefit = await polar.benefits.create({
 **Link between customer and benefit.**
 
 ### States
+
 - `created` - Grant created
 - `active` - Benefit delivered
 - `revoked` - Access removed
 
 ### Webhooks
+
 - `benefit_grant.created` - Grant created
 - `benefit_grant.updated` - Status changed
 - `benefit_grant.revoked` - Access revoked
 
 ### Auto-revoke Triggers
+
 - Subscription canceled
 - Subscription revoked
 - Refund processed
 - Product changed (if benefit not on new product)
 
 ### Querying Grants
+
 ```typescript
 const grants = await polar.benefitGrants.list({
-  customer_id: "cust_xxx",
-  benefit_id: "benefit_xxx",
-  is_granted: true
+  customer_id: 'cust_xxx',
+  benefit_id: 'benefit_xxx',
+  is_granted: true,
 });
 ```
 
 ## Attaching Benefits to Products
 
 ### Via API
+
 ```typescript
 await polar.products.updateBenefits(productId, {
-  benefits: [benefitId1, benefitId2, benefitId3]
+  benefits: [benefitId1, benefitId2, benefitId3],
 });
 ```
 
 ### Via Dashboard
+
 1. Navigate to product
 2. Benefits tab
 3. Select benefits to attach
 4. Save
 
 ### Order
+
 - Benefits granted in order attached
 - Customers see in that order
 - Reorder via dashboard or API
@@ -257,16 +282,18 @@ await polar.products.updateBenefits(productId, {
 ## Customer Experience
 
 ### Viewing Benefits
+
 - Customer portal shows all active benefits
 - Clear instructions for each type
 - Download links for files
 - License keys displayed
 
 ### Accessing Benefits
+
 ```typescript
 // Generate customer portal link
 const session = await polar.customerSessions.create({
-  external_customer_id: userId
+  external_customer_id: userId,
 });
 
 // Customer sees:
@@ -280,13 +307,14 @@ const session = await polar.customerSessions.create({
 ## Implementation Patterns
 
 ### License Key Validation
+
 ```typescript
 // In your application
 async function validateLicense(key) {
   try {
     const result = await polar.licenses.validate({
       key: key,
-      organization_id: process.env.POLAR_ORG_ID
+      organization_id: process.env.POLAR_ORG_ID,
     });
 
     if (!result.valid) {
@@ -306,6 +334,7 @@ async function validateLicense(key) {
 ```
 
 ### GitHub Access Check
+
 ```typescript
 // Listen to benefit grant webhook
 app.post('/webhook/polar', async (req, res) => {
@@ -325,6 +354,7 @@ app.post('/webhook/polar', async (req, res) => {
 ```
 
 ### Discord Role Sync
+
 ```typescript
 // Monitor benefit grants
 if (event.type === 'benefit_grant.created') {

@@ -67,7 +67,7 @@ export async function waitForElement(page, parsed, options = {}) {
   const defaultOptions = {
     visible: true,
     timeout: 5000,
-    ...options
+    ...options,
   };
 
   if (parsed.type === 'xpath') {
@@ -121,7 +121,7 @@ export async function typeIntoElement(page, parsed, value, options = {}) {
   } else {
     // CSS selector
     if (options.clear) {
-      await page.$eval(parsed.selector, el => el.value = '');
+      await page.$eval(parsed.selector, (el) => (el.value = ''));
     }
 
     await page.type(parsed.selector, value, { delay: options.delay || 0 });
@@ -139,13 +139,7 @@ export async function getElement(page, parsed) {
     // For XPath, use page.evaluate with XPath evaluation
     // This returns the first matching element
     const element = await page.evaluateHandle((xpath) => {
-      const result = document.evaluate(
-        xpath,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      );
+      const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
       return result.singleNodeValue;
     }, parsed.selector);
 
@@ -164,10 +158,13 @@ export async function getElement(page, parsed) {
  * @returns {Error} Enhanced error with troubleshooting tips
  */
 export function enhanceError(error, selector) {
-  if (error.message.includes('waiting for selector') ||
-      error.message.includes('waiting for XPath') ||
-      error.message.includes('No node found')) {
-    error.message += '\n\nTroubleshooting:\n' +
+  if (
+    error.message.includes('waiting for selector') ||
+    error.message.includes('waiting for XPath') ||
+    error.message.includes('No node found')
+  ) {
+    error.message +=
+      '\n\nTroubleshooting:\n' +
       '1. Use snapshot.js to find correct selector: node snapshot.js --url <url>\n' +
       '2. Try XPath selector: //button[text()="Click"] or //button[contains(text(),"Click")]\n' +
       '3. Check element is visible on page (not display:none or hidden)\n' +

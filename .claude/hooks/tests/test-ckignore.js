@@ -26,7 +26,7 @@ function runTest(name, input, expected) {
     execSync(`bash "${scriptPath}"`, {
       input: inputJson,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
     const actual = 'ALLOWED';
     const success = actual === expected;
@@ -61,7 +61,7 @@ console.log('--- Test 1: Default patterns from .ckignore ---');
 let result = runTest(
   'node_modules blocked (default)',
   { tool_name: 'Read', tool_input: { file_path: 'node_modules/pkg.json' } },
-  'BLOCKED'
+  'BLOCKED',
 );
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
@@ -78,7 +78,7 @@ writeCkignore(['# Custom ignore', 'vendor']);
 result = runTest(
   'vendor blocked (custom)',
   { tool_name: 'Read', tool_input: { file_path: 'vendor/lib.js' } },
-  'BLOCKED'
+  'BLOCKED',
 );
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
@@ -91,7 +91,7 @@ if (result.success) {
 result = runTest(
   'node_modules ALLOWED when not in .ckignore',
   { tool_name: 'Read', tool_input: { file_path: 'node_modules/pkg.json' } },
-  'ALLOWED'
+  'ALLOWED',
 );
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
@@ -105,11 +105,7 @@ if (result.success) {
 console.log('\n--- Test 3: Multiple custom patterns ---');
 writeCkignore(['vendor', 'temp', '.cache']);
 
-result = runTest(
-  'vendor blocked',
-  { tool_name: 'Grep', tool_input: { pattern: 'test', path: 'vendor' } },
-  'BLOCKED'
-);
+result = runTest('vendor blocked', { tool_name: 'Grep', tool_input: { pattern: 'test', path: 'vendor' } }, 'BLOCKED');
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
   passed++;
@@ -118,11 +114,7 @@ if (result.success) {
   failed++;
 }
 
-result = runTest(
-  'temp blocked',
-  { tool_name: 'Bash', tool_input: { command: 'ls temp/' } },
-  'BLOCKED'
-);
+result = runTest('temp blocked', { tool_name: 'Bash', tool_input: { command: 'ls temp/' } }, 'BLOCKED');
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
   passed++;
@@ -131,11 +123,7 @@ if (result.success) {
   failed++;
 }
 
-result = runTest(
-  '.cache blocked',
-  { tool_name: 'Glob', tool_input: { pattern: '.cache/**' } },
-  'BLOCKED'
-);
+result = runTest('.cache blocked', { tool_name: 'Glob', tool_input: { pattern: '.cache/**' } }, 'BLOCKED');
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
   passed++;
@@ -144,11 +132,7 @@ if (result.success) {
   failed++;
 }
 
-result = runTest(
-  'src still allowed',
-  { tool_name: 'Read', tool_input: { file_path: 'src/index.js' } },
-  'ALLOWED'
-);
+result = runTest('src still allowed', { tool_name: 'Read', tool_input: { file_path: 'src/index.js' } }, 'ALLOWED');
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
   passed++;
@@ -164,7 +148,7 @@ writeCkignore(['# This is a comment', '', 'blockeddir', '# Another comment', '']
 result = runTest(
   'blockeddir blocked',
   { tool_name: 'Read', tool_input: { file_path: 'blockeddir/file.txt' } },
-  'BLOCKED'
+  'BLOCKED',
 );
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
@@ -174,11 +158,7 @@ if (result.success) {
   failed++;
 }
 
-result = runTest(
-  'otherdir allowed',
-  { tool_name: 'Read', tool_input: { file_path: 'otherdir/file.txt' } },
-  'ALLOWED'
-);
+result = runTest('otherdir allowed', { tool_name: 'Read', tool_input: { file_path: 'otherdir/file.txt' } }, 'ALLOWED');
 if (result.success) {
   console.log(`✓ ${result.name}: ${result.actual}`);
   passed++;

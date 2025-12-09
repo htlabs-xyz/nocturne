@@ -2,9 +2,7 @@
 
 **Use when:** User asks about entire library/framework
 
-**Speed:** ⚡⚡ Moderate (30-60s)
-**Token usage:** 🟡 Medium
-**Accuracy:** 📚 Comprehensive
+**Speed:** ⚡⚡ Moderate (30-60s) **Token usage:** 🟡 Medium **Accuracy:** 📚 Comprehensive
 
 ## Trigger Patterns
 
@@ -44,6 +42,7 @@ cat llms.txt | node scripts/analyze-llms-txt.js -
 ## Examples
 
 **Astro framework:**
+
 ```bash
 # Execute scripts (no manual URL construction)
 node scripts/detect-topic.js "Documentation for Astro"
@@ -66,10 +65,8 @@ node scripts/analyze-llms-txt.js < llms.txt
 
 ## Agent Distribution
 
-**1-3 URLs:** Single agent
-**4-10 URLs:** 3-5 agents (2-3 URLs each)
-**11-20 URLs:** 7 agents (balanced)
-**21+ URLs:** Two-phase (critical first, then important)
+**1-3 URLs:** Single agent **4-10 URLs:** 3-5 agents (2-3 URLs each) **11-20 URLs:** 7 agents (balanced) **21+ URLs:**
+Two-phase (critical first, then important)
 
 ## Known Libraries
 
@@ -82,6 +79,7 @@ node scripts/analyze-llms-txt.js < llms.txt
 ## Fallback
 
 Scripts handle fallback automatically:
+
 1. `fetch-docs.js` tries context7.com
 2. If 404, script suggests WebSearch for llms.txt
 3. If still unavailable: [Repository Analysis](./repo-analysis.md)

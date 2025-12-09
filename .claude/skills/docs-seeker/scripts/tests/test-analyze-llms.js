@@ -42,10 +42,26 @@ console.log('Running analyze-llms-txt.js tests...\n');
 
 // Test categorizeUrl
 console.log('## Testing categorizeUrl()');
-assertEqual(categorizeUrl('https://docs.example.com/getting-started'), 'critical', 'Categorize getting-started as critical');
-assertEqual(categorizeUrl('https://docs.example.com/guide/routing'), 'important', 'Categorize routing guide as important');
-assertEqual(categorizeUrl('https://docs.example.com/advanced/internals'), 'supplementary', 'Categorize internals as supplementary');
-assertEqual(categorizeUrl('https://docs.example.com/api-reference'), 'important', 'Categorize API reference as important');
+assertEqual(
+  categorizeUrl('https://docs.example.com/getting-started'),
+  'critical',
+  'Categorize getting-started as critical',
+);
+assertEqual(
+  categorizeUrl('https://docs.example.com/guide/routing'),
+  'important',
+  'Categorize routing guide as important',
+);
+assertEqual(
+  categorizeUrl('https://docs.example.com/advanced/internals'),
+  'supplementary',
+  'Categorize internals as supplementary',
+);
+assertEqual(
+  categorizeUrl('https://docs.example.com/api-reference'),
+  'important',
+  'Categorize API reference as important',
+);
 
 // Test parseUrls
 console.log('\n## Testing parseUrls()');

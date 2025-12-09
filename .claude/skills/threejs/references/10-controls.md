@@ -23,9 +23,9 @@ controls.minDistance = 5;
 controls.maxDistance = 50;
 
 // Rotation limits
-controls.minPolarAngle = 0;                // radians
-controls.maxPolarAngle = Math.PI / 2;      // prevent going below ground
-controls.minAzimuthAngle = -Math.PI / 4;   // horizontal limit
+controls.minPolarAngle = 0; // radians
+controls.maxPolarAngle = Math.PI / 2; // prevent going below ground
+controls.minAzimuthAngle = -Math.PI / 4; // horizontal limit
 controls.maxAzimuthAngle = Math.PI / 4;
 
 // Behavior
@@ -39,7 +39,7 @@ controls.autoRotateSpeed = 2.0;
 controls.mouseButtons = {
   LEFT: THREE.MOUSE.ROTATE,
   MIDDLE: THREE.MOUSE.DOLLY,
-  RIGHT: THREE.MOUSE.PAN
+  RIGHT: THREE.MOUSE.PAN,
 };
 
 // In animation loop (required if damping enabled)
@@ -71,7 +71,7 @@ controls.maxPolarAngle = Math.PI / 2;
 controls.mouseButtons = {
   LEFT: THREE.MOUSE.PAN,
   MIDDLE: THREE.MOUSE.DOLLY,
-  RIGHT: THREE.MOUSE.ROTATE
+  RIGHT: THREE.MOUSE.ROTATE,
 };
 ```
 
@@ -152,10 +152,18 @@ const direction = new THREE.Vector3();
 
 window.addEventListener('keydown', (event) => {
   switch (event.code) {
-    case 'KeyW': moveForward = true; break;
-    case 'KeyS': moveBackward = true; break;
-    case 'KeyA': moveLeft = true; break;
-    case 'KeyD': moveRight = true; break;
+    case 'KeyW':
+      moveForward = true;
+      break;
+    case 'KeyS':
+      moveBackward = true;
+      break;
+    case 'KeyA':
+      moveLeft = true;
+      break;
+    case 'KeyD':
+      moveRight = true;
+      break;
   }
 });
 
@@ -219,13 +227,9 @@ function animate() {
 
 ## Controls Comparison
 
-**OrbitControls**: Product viewers, 3D models, general use
-**MapControls**: Top-down maps, strategy games
-**FirstPersonControls**: Architectural walkthroughs
-**FlyControls**: Space navigation, creative tools
-**PointerLockControls**: FPS games
-**TrackballControls**: CAD applications
-**ArcballControls**: Scientific visualization
+**OrbitControls**: Product viewers, 3D models, general use **MapControls**: Top-down maps, strategy games
+**FirstPersonControls**: Architectural walkthroughs **FlyControls**: Space navigation, creative tools
+**PointerLockControls**: FPS games **TrackballControls**: CAD applications **ArcballControls**: Scientific visualization
 
 ## Common Patterns
 
@@ -247,13 +251,13 @@ function moveCameraTo(position, target) {
     x: position.x,
     y: position.y,
     z: position.z,
-    onUpdate: () => controls.update()
+    onUpdate: () => controls.update(),
   });
   gsap.to(controls.target, {
     duration: 1,
     x: target.x,
     y: target.y,
-    z: target.z
+    z: target.z,
   });
 }
 ```

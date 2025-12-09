@@ -44,7 +44,7 @@ class PolarWebhookVerifier {
     }
 
     // Parse signatures
-    const signatures = webhookSignature.split(',').map(sig => {
+    const signatures = webhookSignature.split(',').map((sig) => {
       const parts = sig.split('=');
       const version = parts[0];
       const signature = parts.slice(1).join('='); // Rejoin in case signature contains '='
@@ -55,13 +55,10 @@ class PolarWebhookVerifier {
     const signedPayload = `${webhookTimestamp}.${payload}`;
 
     // Compute expected signature
-    const expectedSignature = crypto
-      .createHmac('sha256', this.secret)
-      .update(signedPayload)
-      .digest('base64');
+    const expectedSignature = crypto.createHmac('sha256', this.secret).update(signedPayload).digest('base64');
 
     // Check if any signature matches
-    const isValid = signatures.some(sig => {
+    const isValid = signatures.some((sig) => {
       return sig.version === 'v1' && sig.signature === expectedSignature;
     });
 
@@ -92,13 +89,13 @@ class PolarWebhookVerifier {
         success: true,
         event: {
           type: event.type,
-          data: event.data
-        }
+          data: event.data,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -114,7 +111,7 @@ class PolarWebhookVerifier {
       'customer.': 'customer',
       'benefit_grant.': 'benefit',
       'refund.': 'refund',
-      'product.': 'product'
+      'product.': 'product',
     };
 
     for (const [prefix, category] of Object.entries(categories)) {
@@ -166,15 +163,12 @@ if (require.main === module) {
     // Mock headers for CLI testing
     const timestamp = Math.floor(Date.now() / 1000);
     const signedPayload = `${timestamp}.${payload}`;
-    const signature = crypto
-      .createHmac('sha256', Buffer.from(secret, 'base64'))
-      .update(signedPayload)
-      .digest('base64');
+    const signature = crypto.createHmac('sha256', Buffer.from(secret, 'base64')).update(signedPayload).digest('base64');
 
     const headers = {
       'webhook-id': 'msg_test_' + Date.now(),
       'webhook-timestamp': timestamp.toString(),
-      'webhook-signature': `v1=${signature}`
+      'webhook-signature': `v1=${signature}`,
     };
 
     const verifier = new PolarWebhookVerifier(secret);

@@ -63,13 +63,16 @@ export class MCPClientManager {
     const transport = new StdioClientTransport({
       command: serverConfig.command,
       args: serverConfig.args,
-      env: serverConfig.env
+      env: serverConfig.env,
     });
 
-    const client = new Client({
-      name: `mcp-manager-${serverName}`,
-      version: '1.0.0'
-    }, { capabilities: {} });
+    const client = new Client(
+      {
+        name: `mcp-manager-${serverName}`,
+        version: '1.0.0',
+      },
+      { capabilities: {} },
+    );
 
     await client.connect(transport);
     this.clients.set(serverName, client);
@@ -107,7 +110,7 @@ export class MCPClientManager {
             name: tool.name,
             description: tool.description || '',
             inputSchema: tool.inputSchema,
-            outputSchema: (tool as any).outputSchema
+            outputSchema: (tool as any).outputSchema,
           });
         }
       } catch (error: any) {
@@ -132,7 +135,7 @@ export class MCPClientManager {
             serverName,
             name: prompt.name,
             description: prompt.description || '',
-            arguments: prompt.arguments
+            arguments: prompt.arguments,
           });
         }
       } catch (error: any) {
@@ -158,7 +161,7 @@ export class MCPClientManager {
             uri: resource.uri,
             name: resource.name,
             description: resource.description,
-            mimeType: resource.mimeType
+            mimeType: resource.mimeType,
           });
         }
       } catch (error: any) {
@@ -176,11 +179,7 @@ export class MCPClientManager {
   async callTool(serverName: string, toolName: string, args: any): Promise<any> {
     const client = this.clients.get(serverName);
     if (!client) throw new Error(`Not connected to server: ${serverName}`);
-    return await client.callTool(
-      { name: toolName, arguments: args },
-      undefined,
-      { timeout: 300000 }
-    );
+    return await client.callTool({ name: toolName, arguments: args }, undefined, { timeout: 300000 });
   }
 
   async getPrompt(serverName: string, promptName: string, args?: any): Promise<any> {
@@ -206,14 +205,11 @@ export class MCPClientManager {
           } catch (error) {
             console.warn(`Warning closing ${serverName}:`, error);
           }
-        })()
+        })(),
       );
     }
 
-    await Promise.race([
-      Promise.all(cleanupPromises),
-      new Promise<void>((resolve) => setTimeout(resolve, 5000))
-    ]);
+    await Promise.race([Promise.all(cleanupPromises), new Promise<void>((resolve) => setTimeout(resolve, 5000))]);
 
     // CRITICAL: Close transports to kill subprocesses
     for (const [serverName, transport] of this.transports.entries()) {

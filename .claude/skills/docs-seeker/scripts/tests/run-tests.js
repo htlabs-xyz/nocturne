@@ -7,11 +7,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-const tests = [
-  'test-detect-topic.js',
-  'test-fetch-docs.js',
-  'test-analyze-llms.js',
-];
+const tests = ['test-detect-topic.js', 'test-fetch-docs.js', 'test-analyze-llms.js'];
 
 let totalPassed = 0;
 let totalFailed = 0;

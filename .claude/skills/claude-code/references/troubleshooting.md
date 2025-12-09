@@ -7,6 +7,7 @@ Common issues, debugging, and solutions for Claude Code.
 ### API Key Not Recognized
 
 **Symptoms:**
+
 - "Invalid API key" errors
 - Authentication failures
 - 401 Unauthorized responses
@@ -190,16 +191,19 @@ ls -ld /path/to/allowed/directory
 ### Slow Responses
 
 **Check network latency:**
+
 ```bash
 ping api.anthropic.com
 ```
 
 **Use faster model:**
+
 ```bash
 claude --model haiku "simple task"
 ```
 
 **Reduce context:**
+
 ```json
 {
   "maxTokens": 4096,
@@ -210,6 +214,7 @@ claude --model haiku "simple task"
 ```
 
 **Enable caching:**
+
 ```json
 {
   "caching": {
@@ -253,6 +258,7 @@ claude "retry task"
 ### Bash Command Failures
 
 **Check sandboxing settings:**
+
 ```json
 {
   "sandboxing": {
@@ -263,6 +269,7 @@ claude "retry task"
 ```
 
 **Verify command permissions:**
+
 ```bash
 # Make script executable
 chmod +x script.sh

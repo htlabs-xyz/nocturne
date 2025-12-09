@@ -10,7 +10,9 @@
 - Provide clear acceptance criteria per task
 
 ### File Management
+
 List affected files with:
+
 - Full paths (not relative)
 - Action type (modify/create/delete)
 - Brief change description
@@ -29,6 +31,7 @@ List affected files with:
 ## Output Requirements
 
 ### What Planners Do
+
 - Create plans ONLY (no implementation)
 - Provide plan file path and summary
 - Self-contained plans with necessary context
@@ -37,7 +40,9 @@ List affected files with:
 - Fully respect the `./docs/development-rules.md` file.
 
 ### Writing Style
+
 **IMPORTANT:** Sacrifice grammar for concision
+
 - Focus clarity over eloquence
 - Use bullets and lists
 - Short sentences
@@ -45,7 +50,9 @@ List affected files with:
 - Prioritize actionable info
 
 ### Unresolved Questions
+
 **IMPORTANT:** List unresolved questions at end
+
 - Questions needing clarification
 - Technical decisions requiring input
 - Unknowns impacting implementation
@@ -54,12 +61,14 @@ List affected files with:
 ## Quality Standards
 
 ### Thoroughness
+
 - Thorough and specific in research/planning
 - Consider edge cases, failure modes
 - Think through entire user journey
 - Document all assumptions
 
 ### Maintainability
+
 - Consider long-term maintainability
 - Design for future modifications
 - Document decision rationale
@@ -67,18 +76,21 @@ List affected files with:
 - Fully respect the `./docs/development-rules.md` file.
 
 ### Research Depth
+
 - When uncertain, research more
 - Multiple options with clear trade-offs
 - Validate against best practices
 - Consider industry standards
 
 ### Security & Performance
+
 - Address all security concerns
 - Identify performance implications
 - Plan for scalability
 - Consider resource constraints
 
 ### Implementability
+
 - Detailed enough for junior developers
 - Validate against existing patterns
 - Ensure codebase standards consistency

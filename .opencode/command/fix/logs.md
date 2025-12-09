@@ -2,8 +2,8 @@
 description: Analyze logs and fix issues
 ---
 
-Use `debugger` agent to analyze the `./logs.txt` file, identify root causes of any errors or issues and respond with a report and solution.
-So the main agent can fix them.
+Use `debugger` agent to analyze the `./logs.txt` file, identify root causes of any errors or issues and respond with a
+report and solution. So the main agent can fix them.
 
 ## Rules
 
@@ -13,4 +13,3 @@ So the main agent can fix them.
 - Fix all identified problems systematically based on the report
 - Verify fixes by running appropriate commands
 - Re-analyze logs after fixes to ensure issues are resolved
-

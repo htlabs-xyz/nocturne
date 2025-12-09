@@ -33,8 +33,8 @@ loader.load(
     const mixer = new THREE.AnimationMixer(gltf.scene);
     gltf.animations.forEach((clip) => mixer.clipAction(clip).play());
   },
-  (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
-  (error) => console.error(error)
+  (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+  (error) => console.error(error),
 );
 ```
 
@@ -93,8 +93,8 @@ textureLoader.load(
     material.map = texture;
     material.needsUpdate = true;
   },
-  (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),
-  (error) => console.error(error)
+  (xhr) => console.log((xhr.loaded / xhr.total) * 100 + '% loaded'),
+  (error) => console.error(error),
 );
 ```
 
@@ -105,9 +105,12 @@ Load environment maps (skybox):
 ```javascript
 const cubeLoader = new THREE.CubeTextureLoader();
 const envMap = cubeLoader.load([
-  'px.jpg', 'nx.jpg',  // positive x, negative x
-  'py.jpg', 'ny.jpg',  // positive y, negative y
-  'pz.jpg', 'nz.jpg'   // positive z, negative z
+  'px.jpg',
+  'nx.jpg', // positive x, negative x
+  'py.jpg',
+  'ny.jpg', // positive y, negative y
+  'pz.jpg',
+  'nz.jpg', // positive z, negative z
 ]);
 
 scene.background = envMap;

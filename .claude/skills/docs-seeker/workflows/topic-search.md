@@ -2,9 +2,7 @@
 
 **Use when:** User asks about specific feature/component/concept
 
-**Speed:** ⚡ Fastest (10-15s)
-**Token usage:** 🟢 Minimal
-**Accuracy:** 🎯 Highly targeted
+**Speed:** ⚡ Fastest (10-15s) **Token usage:** 🟢 Minimal **Accuracy:** 🎯 Highly targeted
 
 ## Trigger Patterns
 
@@ -37,6 +35,7 @@ node scripts/fetch-docs.js "<user query>"
 ## Examples
 
 **shadcn date picker:**
+
 ```bash
 # Execute script (automatic URL construction)
 node scripts/detect-topic.js "How do I use date picker in shadcn?"
@@ -51,6 +50,7 @@ node scripts/fetch-docs.js "How do I use date picker in shadcn?"
 ```
 
 **Next.js caching:**
+
 ```bash
 # Execute scripts (no manual URL needed)
 node scripts/detect-topic.js "Next.js caching strategies"
@@ -66,12 +66,8 @@ node scripts/fetch-docs.js "Next.js caching strategies"
 
 ## Benefits
 
-✅ 10x faster than full docs
-✅ No filtering needed
-✅ Minimal context load
-✅ Best user experience
+✅ 10x faster than full docs ✅ No filtering needed ✅ Minimal context load ✅ Best user experience
 
 ## Fallback
 
-If topic URL returns 404:
-→ Fallback to [General Library Search](./library-search.md)
+If topic URL returns 404: → Fallback to [General Library Search](./library-search.md)

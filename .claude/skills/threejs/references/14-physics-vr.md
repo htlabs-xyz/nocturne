@@ -17,20 +17,14 @@ import { RapierPhysics } from 'three/addons/physics/RapierPhysics.js';
 const physics = await RapierPhysics();
 
 // Create physics body
-const box = new THREE.Mesh(
-  new THREE.BoxGeometry(),
-  new THREE.MeshStandardMaterial()
-);
+const box = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
 scene.add(box);
 
 // Add physics (mass > 0 = dynamic)
 physics.addMesh(box, 1); // mass = 1
 
 // Static ground
-const ground = new THREE.Mesh(
-  new THREE.BoxGeometry(10, 0.5, 10),
-  new THREE.MeshStandardMaterial()
-);
+const ground = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 10), new THREE.MeshStandardMaterial());
 ground.position.y = -2;
 scene.add(ground);
 physics.addMesh(ground); // no mass = static
@@ -230,11 +224,13 @@ renderer.setAnimationLoop(() => {
 
 ```javascript
 // Request room-scale experience
-navigator.xr.requestSession('immersive-vr', {
-  requiredFeatures: ['local-floor']
-}).then((session) => {
-  // Session setup
-});
+navigator.xr
+  .requestSession('immersive-vr', {
+    requiredFeatures: ['local-floor'],
+  })
+  .then((session) => {
+    // Session setup
+  });
 
 // Get play area bounds
 session.requestReferenceSpace('bounded-floor').then((space) => {
@@ -271,8 +267,8 @@ import { XRButton } from 'three/addons/webxr/XRButton.js';
 document.body.appendChild(
   XRButton.createButton(renderer, {
     requiredFeatures: ['hand-tracking', 'layers'],
-    optionalFeatures: ['local-floor', 'bounded-floor']
-  })
+    optionalFeatures: ['local-floor', 'bounded-floor'],
+  }),
 );
 
 // Passthrough mode (Quest Pro, etc.)

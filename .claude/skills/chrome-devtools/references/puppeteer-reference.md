@@ -37,7 +37,7 @@ import puppeteer from 'puppeteer';
 // Launch browser
 const browser = await puppeteer.launch({
   headless: true,
-  args: ['--no-sandbox']
+  args: ['--no-sandbox'],
 });
 
 // Open page
@@ -61,22 +61,22 @@ await browser.close();
 ```javascript
 const browser = await puppeteer.launch({
   // Visibility
-  headless: false,              // Show browser UI
-  headless: 'new',              // New headless mode (Chrome 112+)
+  headless: false, // Show browser UI
+  headless: 'new', // New headless mode (Chrome 112+)
 
   // Chrome location
   executablePath: '/path/to/chrome',
-  channel: 'chrome',            // or 'chrome-canary', 'chrome-beta'
+  channel: 'chrome', // or 'chrome-canary', 'chrome-beta'
 
   // Browser context
-  userDataDir: './user-data',   // Persistent profile
+  userDataDir: './user-data', // Persistent profile
 
   // Window size
   defaultViewport: {
     width: 1920,
     height: 1080,
     deviceScaleFactor: 1,
-    isMobile: false
+    isMobile: false,
   },
 
   // Advanced options
@@ -87,17 +87,17 @@ const browser = await puppeteer.launch({
     '--disable-web-security',
     '--disable-features=IsolateOrigins',
     '--disable-site-isolation-trials',
-    '--start-maximized'
+    '--start-maximized',
   ],
 
   // Debugging
-  devtools: true,               // Open DevTools automatically
-  slowMo: 250,                  // Slow down by 250ms per action
+  devtools: true, // Open DevTools automatically
+  slowMo: 250, // Slow down by 250ms per action
 
   // Network
   proxy: {
-    server: 'http://proxy.com:8080'
-  }
+    server: 'http://proxy.com:8080',
+  },
 });
 ```
 
@@ -156,8 +156,8 @@ await page.goto('https://example.com');
 
 // Navigate with options
 await page.goto('https://example.com', {
-  waitUntil: 'networkidle2',    // or 'load', 'domcontentloaded', 'networkidle0'
-  timeout: 30000                 // Max wait time (ms)
+  waitUntil: 'networkidle2', // or 'load', 'domcontentloaded', 'networkidle0'
+  timeout: 30000, // Max wait time (ms)
 });
 
 // Reload page
@@ -169,7 +169,7 @@ await page.goForward();
 
 // Wait for navigation
 await page.waitForNavigation({
-  waitUntil: 'networkidle2'
+  waitUntil: 'networkidle2',
 });
 ```
 
@@ -208,9 +208,9 @@ await page.click('.button');
 
 // Click with options
 await page.click('.button', {
-  button: 'left',           // or 'right', 'middle'
-  clickCount: 1,            // 2 for double-click
-  delay: 100                // Delay between mousedown and mouseup
+  button: 'left', // or 'right', 'middle'
+  clickCount: 1, // 2 for double-click
+  delay: 100, // Delay between mousedown and mouseup
 });
 
 // ElementHandle click
@@ -228,7 +228,7 @@ await page.type('#search', 'query text');
 await page.type('#search', 'slow typing', { delay: 100 });
 
 // Clear and type
-await page.$eval('#search', el => el.value = '');
+await page.$eval('#search', (el) => (el.value = ''));
 await page.type('#search', 'new text');
 ```
 
@@ -240,8 +240,8 @@ await page.type('#username', 'john@example.com');
 await page.type('#password', 'secret123');
 
 // Select dropdown option
-await page.select('#country', 'US');           // By value
-await page.select('#country', 'USA', 'UK');    // Multiple
+await page.select('#country', 'US'); // By value
+await page.select('#country', 'USA', 'UK'); // Multiple
 
 // Check/uncheck checkbox
 await page.click('input[type="checkbox"]');
@@ -268,7 +268,7 @@ await page.hover('.menu-item');
 await page.focus('#input');
 
 // Blur
-await page.$eval('#input', el => el.blur());
+await page.$eval('#input', (el) => el.blur());
 ```
 
 ### Drag & Drop
@@ -292,50 +292,47 @@ await source.drop(target);
 const title = await page.evaluate(() => document.title);
 
 // With arguments
-const text = await page.evaluate(
-  (selector) => document.querySelector(selector).textContent,
-  '.heading'
-);
+const text = await page.evaluate((selector) => document.querySelector(selector).textContent, '.heading');
 
 // Return complex data
 const data = await page.evaluate(() => ({
   title: document.title,
   url: location.href,
-  cookies: document.cookie
+  cookies: document.cookie,
 }));
 
 // With ElementHandle
 const element = await page.$('.button');
-const text = await page.evaluate(el => el.textContent, element);
+const text = await page.evaluate((el) => el.textContent, element);
 ```
 
 ### Query & Modify DOM
 
 ```javascript
 // Get element property
-const value = await page.$eval('#input', el => el.value);
+const value = await page.$eval('#input', (el) => el.value);
 
 // Get multiple elements
-const items = await page.$$eval('.item', elements =>
-  elements.map(el => el.textContent)
-);
+const items = await page.$$eval('.item', (elements) => elements.map((el) => el.textContent));
 
 // Modify element
-await page.$eval('#input', (el, value) => {
-  el.value = value;
-}, 'new value');
+await page.$eval(
+  '#input',
+  (el, value) => {
+    el.value = value;
+  },
+  'new value',
+);
 
 // Add class
-await page.$eval('.element', el => el.classList.add('active'));
+await page.$eval('.element', (el) => el.classList.add('active'));
 ```
 
 ### Expose Functions
 
 ```javascript
 // Expose Node.js function to page
-await page.exposeFunction('md5', (text) =>
-  crypto.createHash('md5').update(text).digest('hex')
-);
+await page.exposeFunction('md5', (text) => crypto.createHash('md5').update(text).digest('hex'));
 
 // Call from page context
 const hash = await page.evaluate(async () => {
@@ -353,33 +350,34 @@ const hash = await page.evaluate(async () => {
 // Full page screenshot
 await page.screenshot({
   path: 'screenshot.png',
-  fullPage: true
+  fullPage: true,
 });
 
 // Viewport screenshot
 await page.screenshot({
   path: 'viewport.png',
-  fullPage: false
+  fullPage: false,
 });
 
 // Element screenshot
 const element = await page.$('.chart');
 await element.screenshot({
-  path: 'chart.png'
+  path: 'chart.png',
 });
 
 // Screenshot options
 await page.screenshot({
   path: 'page.png',
-  type: 'png',              // or 'jpeg', 'webp'
-  quality: 80,              // JPEG quality (0-100)
-  clip: {                   // Crop region
+  type: 'png', // or 'jpeg', 'webp'
+  quality: 80, // JPEG quality (0-100)
+  clip: {
+    // Crop region
     x: 0,
     y: 0,
     width: 500,
-    height: 500
+    height: 500,
   },
-  omitBackground: true      // Transparent background
+  omitBackground: true, // Transparent background
 });
 
 // Screenshot to buffer
@@ -392,14 +390,14 @@ const buffer = await page.screenshot();
 // Generate PDF
 await page.pdf({
   path: 'page.pdf',
-  format: 'A4',             // or 'Letter', 'Legal', etc.
+  format: 'A4', // or 'Letter', 'Legal', etc.
   printBackground: true,
   margin: {
     top: '1cm',
     right: '1cm',
     bottom: '1cm',
-    left: '1cm'
-  }
+    left: '1cm',
+  },
 });
 
 // Custom page size
@@ -407,7 +405,7 @@ await page.pdf({
   path: 'custom.pdf',
   width: '8.5in',
   height: '11in',
-  landscape: true
+  landscape: true,
 });
 
 // Header and footer
@@ -415,7 +413,7 @@ await page.pdf({
   path: 'report.pdf',
   displayHeaderFooter: true,
   headerTemplate: '<div style="font-size:10px;">Header</div>',
-  footerTemplate: '<div style="font-size:10px;">Page <span class="pageNumber"></span></div>'
+  footerTemplate: '<div style="font-size:10px;">Page <span class="pageNumber"></span></div>',
 });
 ```
 
@@ -444,8 +442,8 @@ page.on('request', (request) => {
     request.continue({
       headers: {
         ...request.headers(),
-        'Authorization': 'Bearer token'
-      }
+        Authorization: 'Bearer token',
+      },
     });
   }
   // Continue normally
@@ -467,8 +465,8 @@ page.on('request', (request) => {
       contentType: 'application/json',
       body: JSON.stringify({
         id: 1,
-        name: 'Mock User'
-      })
+        name: 'Mock User',
+      }),
     });
   } else {
     request.continue();
@@ -535,9 +533,9 @@ await page.emulate({
     deviceScaleFactor: 3,
     isMobile: true,
     hasTouch: true,
-    isLandscape: false
+    isLandscape: false,
   },
-  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)...'
+  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)...',
 });
 ```
 
@@ -547,7 +545,7 @@ await page.emulate({
 await page.setViewport({
   width: 1920,
   height: 1080,
-  deviceScaleFactor: 1
+  deviceScaleFactor: 1,
 });
 ```
 
@@ -558,7 +556,7 @@ await page.setViewport({
 await page.setGeolocation({
   latitude: 37.7749,
   longitude: -122.4194,
-  accuracy: 100
+  accuracy: 100,
 });
 
 // Grant permissions
@@ -576,7 +574,7 @@ await page.emulateTimezone('America/New_York');
 await page.emulateMediaType('screen');
 await page.evaluateOnNewDocument(() => {
   Object.defineProperty(navigator, 'language', {
-    get: () => 'en-US'
+    get: () => 'en-US',
   });
 });
 ```
@@ -595,22 +593,20 @@ await client.send('Emulation.setCPUThrottlingRate', { rate: 4 });
 // Network throttling
 await page.emulateNetworkConditions({
   offline: false,
-  downloadThroughput: 1.5 * 1024 * 1024 / 8, // 1.5 Mbps
-  uploadThroughput: 750 * 1024 / 8,           // 750 Kbps
-  latency: 40                                  // 40ms RTT
+  downloadThroughput: (1.5 * 1024 * 1024) / 8, // 1.5 Mbps
+  uploadThroughput: (750 * 1024) / 8, // 750 Kbps
+  latency: 40, // 40ms RTT
 });
 
 // Predefined profiles
-await page.emulateNetworkConditions(
-  puppeteer.networkConditions['Fast 3G']
-);
+await page.emulateNetworkConditions(puppeteer.networkConditions['Fast 3G']);
 
 // Disable throttling
 await page.emulateNetworkConditions({
   offline: false,
   downloadThroughput: -1,
   uploadThroughput: -1,
-  latency: 0
+  latency: 0,
 });
 ```
 
@@ -635,10 +631,7 @@ console.log(metrics);
 // Start tracing
 await page.tracing.start({
   path: 'trace.json',
-  categories: [
-    'devtools.timeline',
-    'disabled-by-default-devtools.timeline'
-  ]
+  categories: ['devtools.timeline', 'disabled-by-default-devtools.timeline'],
 });
 
 // Navigate
@@ -676,7 +669,7 @@ for (const entry of [...jsCoverage, ...cssCoverage]) {
   }
 }
 
-console.log(`Used: ${usedBytes / totalBytes * 100}%`);
+console.log(`Used: ${(usedBytes / totalBytes) * 100}%`);
 ```
 
 ---
@@ -689,17 +682,14 @@ console.log(`Used: ${usedBytes / totalBytes * 100}%`);
 // Wait for selector
 await page.waitForSelector('.element', {
   visible: true,
-  timeout: 5000
+  timeout: 5000,
 });
 
 // Wait for XPath
 await page.waitForXPath('//button[text()="Submit"]');
 
 // Wait for function
-await page.waitForFunction(
-  () => document.querySelector('.loading') === null,
-  { timeout: 10000 }
-);
+await page.waitForFunction(() => document.querySelector('.loading') === null, { timeout: 10000 });
 
 // Wait for timeout
 await page.waitForTimeout(2000);
@@ -728,7 +718,7 @@ page.on('dialog', async (dialog) => {
 const client = await page.createCDPSession();
 await client.send('Page.setDownloadBehavior', {
   behavior: 'allow',
-  downloadPath: '/path/to/downloads'
+  downloadPath: '/path/to/downloads',
 });
 
 // Trigger download
@@ -748,8 +738,8 @@ browser.on('targetcreated', async (target) => {
 
 // Click link that opens new tab
 const [newPage] = await Promise.all([
-  new Promise(resolve => browser.once('targetcreated', target => resolve(target.page()))),
-  page.click('a[target="_blank"]')
+  new Promise((resolve) => browser.once('targetcreated', (target) => resolve(target.page()))),
+  page.click('a[target="_blank"]'),
 ]);
 
 console.log('New page URL:', newPage.url());
@@ -762,10 +752,10 @@ console.log('New page URL:', newPage.url());
 const frames = page.frames();
 
 // Find frame by name
-const frame = page.frames().find(f => f.name() === 'myframe');
+const frame = page.frames().find((f) => f.name() === 'myframe');
 
 // Find frame by URL
-const frame = page.frames().find(f => f.url().includes('example.com'));
+const frame = page.frames().find((f) => f.url().includes('example.com'));
 
 // Main frame
 const mainFrame = page.mainFrame();
@@ -814,7 +804,7 @@ await page.setCookie({
   path: '/',
   httpOnly: true,
   secure: true,
-  sameSite: 'Strict'
+  sameSite: 'Strict',
 });
 
 // Delete cookies
@@ -844,7 +834,7 @@ await page.evaluate(() => localStorage.clear());
 try {
   await page.goto('https://example.com', {
     waitUntil: 'networkidle2',
-    timeout: 30000
+    timeout: 30000,
   });
 } catch (error) {
   if (error.name === 'TimeoutError') {
@@ -865,26 +855,23 @@ try {
 await page.evaluateOnNewDocument(() => {
   // Override navigator.webdriver
   Object.defineProperty(navigator, 'webdriver', {
-    get: () => false
+    get: () => false,
   });
 
   // Mock chrome object
   window.chrome = {
-    runtime: {}
+    runtime: {},
   };
 
   // Mock permissions
   const originalQuery = window.navigator.permissions.query;
-  window.navigator.permissions.query = (parameters) => (
-    parameters.name === 'notifications' ?
-      Promise.resolve({ state: 'granted' }) :
-      originalQuery(parameters)
-  );
+  window.navigator.permissions.query = (parameters) =>
+    parameters.name === 'notifications' ? Promise.resolve({ state: 'granted' }) : originalQuery(parameters);
 });
 
 // Set realistic user agent
 await page.setUserAgent(
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 );
 ```
 
@@ -914,7 +901,7 @@ page.on('console', (msg) => {
 
 ```javascript
 const browser = await puppeteer.launch({
-  slowMo: 250  // 250ms delay between actions
+  slowMo: 250, // 250ms delay between actions
 });
 ```
 

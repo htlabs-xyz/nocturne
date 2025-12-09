@@ -17,6 +17,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 ### Imagen 4 (Recommended)
 
 **imagen-4.0-generate-001** - Standard quality, balanced performance
+
 - Best for: General use, prototyping, iterative workflows
 - Quality: High
 - Speed: Medium (~5-10s per image)
@@ -26,6 +27,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 - Updated: June 2025
 
 **imagen-4.0-ultra-generate-001** - Maximum quality
+
 - Best for: Final production, marketing assets, detailed artwork
 - Quality: Ultra (highest available)
 - Speed: Slow (~15-25s per image)
@@ -35,6 +37,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 - Updated: June 2025
 
 **imagen-4.0-fast-generate-001** - Fastest generation
+
 - Best for: Rapid iteration, bulk generation, real-time use
 - Quality: Good
 - Speed: Fast (~2-5s per image)
@@ -46,6 +49,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 ### Gemini 3 Pro Image (Alternative)
 
 **gemini-3-pro-image-preview** - Conversational image generation
+
 - Best for: Iterative refinement with natural language editing
 - Quality: High
 - Context: 65k input / 32k output tokens
@@ -56,6 +60,7 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 ### Legacy Models
 
 **gemini-2.5-flash-image** - Legacy image generation
+
 - Status: Deprecated (use Imagen 4 instead)
 - Still functional for backward compatibility
 - Input: 65,536 tokens
@@ -64,15 +69,16 @@ Comprehensive guide for image creation, editing, and composition using Imagen 4 
 
 ## Model Comparison
 
-| Model | Quality | Speed | Cost | Best For |
-|-------|---------|-------|------|----------|
-| imagen-4.0-ultra | ⭐⭐⭐⭐⭐ | 🐢 Slow | 💰💰 High | Production assets |
-| imagen-4.0-standard | ⭐⭐⭐⭐ | ⚡ Medium | 💰 Medium | General use |
-| imagen-4.0-fast | ⭐⭐⭐ | 🚀 Fast | 💵 Low | Rapid iteration |
-| gemini-3-pro-image | ⭐⭐⭐⭐ | ⚡ Medium | 💰 Medium | Text rendering |
-| gemini-2.5-flash-image | ⭐⭐⭐ | ⚡ Medium | 💵 Low | Legacy (deprecated) |
+| Model                  | Quality    | Speed     | Cost      | Best For            |
+| ---------------------- | ---------- | --------- | --------- | ------------------- |
+| imagen-4.0-ultra       | ⭐⭐⭐⭐⭐ | 🐢 Slow   | 💰💰 High | Production assets   |
+| imagen-4.0-standard    | ⭐⭐⭐⭐   | ⚡ Medium | 💰 Medium | General use         |
+| imagen-4.0-fast        | ⭐⭐⭐     | 🚀 Fast   | 💵 Low    | Rapid iteration     |
+| gemini-3-pro-image     | ⭐⭐⭐⭐   | ⚡ Medium | 💰 Medium | Text rendering      |
+| gemini-2.5-flash-image | ⭐⭐⭐     | ⚡ Medium | 💵 Low    | Legacy (deprecated) |
 
 **Selection Guide**:
+
 - **Marketing/Production**: Use `imagen-4.0-ultra` for final deliverables
 - **General Development**: Use `imagen-4.0-generate-001` for balanced workflow
 - **Prototyping/Iteration**: Use `imagen-4.0-fast` for quick feedback
@@ -158,6 +164,7 @@ for i, part in enumerate(response.candidates[0].content.parts):
 ### Imagen 4 vs Flash Image
 
 **Imagen 4** uses `generate_images()`:
+
 ```python
 response = client.models.generate_images(
     model='imagen-4.0-generate-001',
@@ -172,6 +179,7 @@ response = client.models.generate_images(
 ```
 
 **Flash Image** uses `generate_content()`:
+
 ```python
 response = client.models.generate_content(
     model='gemini-2.5-flash-image',
@@ -185,6 +193,7 @@ response = client.models.generate_content(
 ```
 
 **Key Differences**:
+
 1. Different method: `generate_images()` vs `generate_content()`
 2. Different config: `GenerateImagesConfig` (camelCase params) vs `GenerateContentConfig`
 3. Parameter names: `prompt` vs `contents`, `numberOfImages` (camelCase) vs `number_of_images` (snake_case)
@@ -193,13 +202,13 @@ response = client.models.generate_content(
 
 ## Aspect Ratios
 
-| Ratio | Resolution | Use Case | Token Cost |
-|-------|-----------|----------|------------|
-| 1:1 | 1024×1024 | Social media, avatars | 1290 |
-| 16:9 | 1344×768 | Landscapes, banners | 1290 |
-| 9:16 | 768×1344 | Mobile, portraits | 1290 |
-| 4:3 | 1152×896 | Traditional media | 1290 |
-| 3:4 | 896×1152 | Vertical posters | 1290 |
+| Ratio | Resolution | Use Case              | Token Cost |
+| ----- | ---------- | --------------------- | ---------- |
+| 1:1   | 1024×1024  | Social media, avatars | 1290       |
+| 16:9  | 1344×768   | Landscapes, banners   | 1290       |
+| 9:16  | 768×1344   | Mobile, portraits     | 1290       |
+| 4:3   | 1152×896   | Traditional media     | 1290       |
+| 3:4   | 896×1152   | Vertical posters      | 1290       |
 
 All ratios cost the same: 1,290 tokens per image.
 
@@ -324,6 +333,7 @@ response = client.models.generate_content(
 ### Effective Prompt Structure
 
 **Three key elements**:
+
 1. **Subject**: What to generate
 2. **Context**: Environmental setting
 3. **Style**: Artistic treatment
@@ -333,6 +343,7 @@ response = client.models.generate_content(
 ### Quality Modifiers
 
 **Technical terms**:
+
 - "4K", "8K", "high resolution"
 - "HDR", "high dynamic range"
 - "professional photography"
@@ -340,6 +351,7 @@ response = client.models.generate_content(
 - "ultra detailed"
 
 **Camera settings**:
+
 - "35mm lens", "50mm lens"
 - "shallow depth of field"
 - "wide angle shot"
@@ -349,6 +361,7 @@ response = client.models.generate_content(
 ### Style Keywords
 
 **Art styles**:
+
 - "oil painting", "watercolor", "sketch"
 - "digital art", "concept art"
 - "photorealistic", "hyperrealistic"
@@ -356,6 +369,7 @@ response = client.models.generate_content(
 - "cyberpunk", "steampunk", "fantasy"
 
 **Mood and atmosphere**:
+
 - "dramatic lighting", "soft lighting"
 - "moody", "bright and cheerful"
 - "mysterious", "whimsical"
@@ -364,20 +378,24 @@ response = client.models.generate_content(
 ### Subject Description
 
 **Be specific**:
+
 - ❌ "A cat"
 - ✅ "A fluffy orange tabby cat with green eyes"
 
 **Add context**:
+
 - ❌ "A building"
 - ✅ "A modern glass skyscraper reflecting sunset clouds"
 
 **Include details**:
+
 - ❌ "A person"
 - ✅ "A young woman in a red dress holding an umbrella"
 
 ### Composition and Framing
 
 **Camera angles**:
+
 - "bird's eye view", "aerial shot"
 - "low angle", "high angle"
 - "close-up", "wide shot"
@@ -385,6 +403,7 @@ response = client.models.generate_content(
 - "rule of thirds"
 
 **Perspective**:
+
 - "first person view"
 - "third person perspective"
 - "isometric view"
@@ -393,11 +412,13 @@ response = client.models.generate_content(
 ### Text in Images
 
 **Limitations**:
+
 - Maximum 25 characters total
 - Up to 3 distinct text phrases
 - Works best with simple text
 
 **Best practices**:
+
 ```python
 response = client.models.generate_content(
     model='gemini-2.5-flash-image',
@@ -406,6 +427,7 @@ response = client.models.generate_content(
 ```
 
 **Font control**:
+
 - "bold sans-serif title"
 - "handwritten script"
 - "vintage letterpress"
@@ -621,11 +643,13 @@ with open(filename, 'wb') as f:
 ### Cost Optimization
 
 **Token costs**:
+
 - 1 image: 1,290 tokens = $0.00129 (Flash Image at $1/1M)
 - 10 images: 12,900 tokens = $0.0129
 - 100 images: 129,000 tokens = $0.129
 
 **Strategies**:
+
 - Generate fewer iterations
 - Use text modality first to validate concept
 - Batch similar requests
@@ -660,6 +684,7 @@ if len(prompt) > 1000:
 ## Limitations
 
 ### Imagen 4 Constraints
+
 - **Language**: English prompts only
 - **Prompt length**: Maximum 480 tokens
 - **Output**: 1-4 images per request
@@ -670,6 +695,7 @@ if len(prompt) > 1000:
 - **Cannot replicate**: Specific people or copyrighted characters
 
 ### General Limitations
+
 - Maximum 3 input images for composition
 - No video or animation generation
 - No real-time generation
@@ -680,9 +706,11 @@ if len(prompt) > 1000:
 
 **Error**: `Extra inputs are not permitted [type=extra_forbidden, input_value='1:1', input_type=str]`
 
-**Cause**: The `aspect_ratio` parameter must be nested inside an `image_config` object, not passed directly to `GenerateContentConfig`.
+**Cause**: The `aspect_ratio` parameter must be nested inside an `image_config` object, not passed directly to
+`GenerateContentConfig`.
 
 **Incorrect Usage**:
+
 ```python
 # ❌ This will fail
 config = types.GenerateContentConfig(
@@ -692,6 +720,7 @@ config = types.GenerateContentConfig(
 ```
 
 **Correct Usage**:
+
 ```python
 # ✅ Correct implementation
 config = types.GenerateContentConfig(
@@ -705,6 +734,7 @@ config = types.GenerateContentConfig(
 ### Response Modality Case Sensitivity
 
 The `response_modalities` parameter expects capital case values:
+
 - ✅ Correct: `['Image']`, `['Text']`, `['Image', 'Text']`
 - ❌ Wrong: `['image']`, `['text']`
 
@@ -715,6 +745,7 @@ The `response_modalities` parameter expects capital case values:
 **Current**: Image Generation
 
 **Related Capabilities**:
+
 - [Image Understanding](./vision-understanding.md) - Analyzing and editing reference images
 - [Video Generation](./video-generation.md) - Creating animated video content
 - [Audio Processing](./audio-processing.md) - Text-to-speech for multimedia

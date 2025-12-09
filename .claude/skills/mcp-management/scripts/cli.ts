@@ -151,12 +151,7 @@ async function listResources(manager: MCPClientManager) {
   }
 }
 
-async function callTool(
-  manager: MCPClientManager,
-  serverName: string,
-  toolName: string,
-  argsJson: string
-) {
+async function callTool(manager: MCPClientManager, serverName: string, toolName: string, argsJson: string) {
   if (!serverName || !toolName || !argsJson) {
     console.error('Usage: cli.ts call-tool <server> <tool> <json-args>');
     process.exit(1);

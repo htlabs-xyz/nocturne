@@ -19,6 +19,7 @@ Thought 7/7 [FINAL]: Robust solution or clear info requirement
 **Use for**: Decisions under uncertainty, incomplete requirements.
 
 **Strategies**:
+
 - Find solution robust to uncertainty
 - Identify minimal info needed to resolve
 - Make safe assumptions with clear documentation
@@ -56,8 +57,7 @@ Thought 8/9: Now can proceed with informed decision
 Thought 9/9: [Resume productive path]
 ```
 
-**Use when**: Stuck, circling, or unproductive pattern noticed.
-**Action**: Pause, identify issue, adjust strategy.
+**Use when**: Stuck, circling, or unproductive pattern noticed. **Action**: Pause, identify issue, adjust strategy.
 
 ## Parallel Constraint Satisfaction
 
@@ -75,5 +75,5 @@ Thought 9/10: Decision on constraint relaxation if needed
 Thought 10/10 [FINAL]: Optimal solution given constraints
 ```
 
-**Use for**: Optimization problems, multi-criteria decisions.
-**Pattern**: Analyze independently → Find intersection → Verify feasibility.
+**Use for**: Optimization problems, multi-criteria decisions. **Pattern**: Analyze independently → Find intersection →
+Verify feasibility.

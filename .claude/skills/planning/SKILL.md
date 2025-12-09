@@ -6,11 +6,13 @@ license: MIT
 
 # Planning
 
-Create detailed technical implementation plans through research, codebase analysis, solution design, and comprehensive documentation.
+Create detailed technical implementation plans through research, codebase analysis, solution design, and comprehensive
+documentation.
 
 ## When to Use
 
 Use this skill when:
+
 - Planning new feature implementations
 - Architecting system designs
 - Evaluating technical approaches
@@ -20,24 +22,27 @@ Use this skill when:
 
 ## Core Responsibilities & Rules
 
-Always honoring **YAGNI**, **KISS**, and **DRY** principles.
-**Be honest, be brutal, straight to the point, and be concise.**
+Always honoring **YAGNI**, **KISS**, and **DRY** principles. **Be honest, be brutal, straight to the point, and be
+concise.**
 
 ### 1. Research & Analysis
-Load: `references/research-phase.md`
-**Skip if:** Provided with researcher reports
+
+Load: `references/research-phase.md` **Skip if:** Provided with researcher reports
 
 ### 2. Codebase Understanding
-Load: `references/codebase-understanding.md`
-**Skip if:** Provided with scout reports
+
+Load: `references/codebase-understanding.md` **Skip if:** Provided with scout reports
 
 ### 3. Solution Design
+
 Load: `references/solution-design.md`
 
 ### 4. Plan Creation & Organization
+
 Load: `references/plan-organization.md`
 
 ### 5. Task Breakdown & Output Standards
+
 Load: `references/output-standards.md`
 
 ## Workflow Process
@@ -59,6 +64,7 @@ Load: `references/output-standards.md`
 - Fully respect the `./docs/development-rules.md` file.
 
 **Plan Directory Structure**
+
 ```
 plans/
 └── YYYYMMDD-HHmm-plan-name/
@@ -81,11 +87,13 @@ plans/
 Prevents version proliferation by tracking current working plan.
 
 ### State File
+
 `<WORKING-DIR>/.claude/active-plan` - Single line containing path to current plan folder.
 
 `<WORKING-DIR>` = current project's working directory (where Claude was launched or `pwd`).
 
 **Example content:**
+
 ```
 plans/20251128-1654-fix-agent-coordination
 ```
@@ -103,6 +111,7 @@ plans/20251128-1654-fix-agent-coordination
 ### Report Output Location
 
 All agents writing reports MUST:
+
 1. Read `<WORKING-DIR>/.claude/active-plan` to get current plan path
 2. Write reports to `{plan-path}/reports/`
 3. Use naming: `{agent}-{YYMMDD}-{slug}.md`

@@ -30,10 +30,10 @@ const testCases = [
       tool_name: 'Write',
       tool_input: {
         file_path: testFilePath,
-        content: longContent
-      }
+        content: longContent,
+      },
     },
-    expectSuggestion: true
+    expectSuggestion: true,
   },
   {
     name: 'Edit tool with file exceeding LOC threshold',
@@ -42,10 +42,10 @@ const testCases = [
       tool_input: {
         file_path: testFilePath,
         old_string: '// Test line',
-        new_string: '// Modified line'
-      }
+        new_string: '// Modified line',
+      },
     },
-    expectSuggestion: true
+    expectSuggestion: true,
   },
   {
     name: 'Write tool with short file (under threshold)',
@@ -53,10 +53,10 @@ const testCases = [
       tool_name: 'Write',
       tool_input: {
         file_path: shortFilePath,
-        content: shortContent
-      }
+        content: shortContent,
+      },
     },
-    expectSuggestion: false
+    expectSuggestion: false,
   },
   {
     name: 'Write tool with non-existent file',
@@ -64,11 +64,11 @@ const testCases = [
       tool_name: 'Write',
       tool_input: {
         file_path: '/tmp/non-existent-file.js',
-        content: 'test'
-      }
+        content: 'test',
+      },
     },
-    expectSuggestion: false
-  }
+    expectSuggestion: false,
+  },
 ];
 
 console.log('Testing modularization-hook.js...\n');
@@ -84,7 +84,7 @@ for (const test of testCases) {
       input,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, MODULARIZATION_HOOK_DEBUG: 'false' }
+      env: { ...process.env, MODULARIZATION_HOOK_DEBUG: 'false' },
     });
 
     let hasSuggestion = false;
@@ -103,7 +103,9 @@ for (const test of testCases) {
       console.log(`✓ ${test.name}: ${hasSuggestion ? 'suggestion shown' : 'no suggestion'}`);
       passed++;
     } else {
-      console.log(`✗ ${test.name}: expected ${test.expectSuggestion ? 'suggestion' : 'no suggestion'}, got ${hasSuggestion ? 'suggestion' : 'no suggestion'}`);
+      console.log(
+        `✗ ${test.name}: expected ${test.expectSuggestion ? 'suggestion' : 'no suggestion'}, got ${hasSuggestion ? 'suggestion' : 'no suggestion'}`,
+      );
       if (result) {
         console.log(`  Output: ${result.trim()}`);
       }

@@ -54,10 +54,10 @@ function normalizeTopic(topic) {
   return topic
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, '')  // Remove special chars
-    .replace(/\s+/g, '-')          // Replace spaces with hyphens
-    .split('-')[0]                 // Take first word for multi-word topics
-    .slice(0, 20);                 // Limit length
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .split('-')[0] // Take first word for multi-word topics
+    .slice(0, 20); // Limit length
 }
 
 /**

@@ -11,17 +11,20 @@ Proper file and directory structure for maintainable, scalable frontend code in 
 **Purpose**: Domain-specific features with their own logic, API, and components
 
 **When to use:**
+
 - Feature has multiple related components
 - Feature has its own API endpoints
 - Feature has domain-specific logic
 - Feature has custom hooks/utilities
 
 **Examples:**
+
 - `features/posts/` - Project catalog/post management
 - `features/blogs/` - Blog builder and rendering
 - `features/auth/` - Authentication flows
 
 **Structure:**
+
 ```
 features/
   my-feature/
@@ -45,17 +48,20 @@ features/
 **Purpose**: Truly reusable components used across multiple features
 
 **When to use:**
+
 - Component is used in 3+ places
 - Component is generic (no feature-specific logic)
 - Component is a UI primitive or pattern
 
 **Examples:**
+
 - `components/SuspenseLoader/` - Loading wrapper
 - `components/CustomAppBar/` - Application header
 - `components/ErrorBoundary/` - Error handling
 - `components/LoadingOverlay/` - Loading overlay
 
 **Structure:**
+
 ```
 components/
   SuspenseLoader/
@@ -125,22 +131,24 @@ features/
 **Purpose**: Centralized API calls for the feature
 
 **Files:**
+
 - `{feature}Api.ts` - Main API service
 
 **Pattern:**
+
 ```typescript
 // features/my-feature/api/myFeatureApi.ts
 import apiClient from '@/lib/apiClient';
 
 export const myFeatureApi = {
-    getItem: async (id: number) => {
-        const { data } = await apiClient.get(`/blog/items/${id}`);
-        return data;
-    },
-    createItem: async (payload) => {
-        const { data } = await apiClient.post('/blog/items', payload);
-        return data;
-    },
+  getItem: async (id: number) => {
+    const { data } = await apiClient.get(`/blog/items/${id}`);
+    return data;
+  },
+  createItem: async (payload) => {
+    const { data } = await apiClient.post('/blog/items', payload);
+    return data;
+  },
 };
 ```
 
@@ -149,10 +157,12 @@ export const myFeatureApi = {
 **Purpose**: Feature-specific components
 
 **Organization:**
+
 - Flat structure if <5 components
 - Subdirectories by responsibility if >5 components
 
 **Examples:**
+
 ```
 components/
   MyFeatureMain.tsx           # Main component
@@ -173,10 +183,12 @@ components/
 **Purpose**: Custom hooks for the feature
 
 **Naming:**
+
 - `use` prefix (camelCase)
 - Descriptive of what they do
 
 **Examples:**
+
 ```
 hooks/
   useMyFeature.ts               # Main hook
@@ -190,6 +202,7 @@ hooks/
 **Purpose**: Utility functions specific to the feature
 
 **Examples:**
+
 ```
 helpers/
   myFeatureHelpers.ts           # General utilities
@@ -203,6 +216,7 @@ helpers/
 **Purpose**: TypeScript types and interfaces
 
 **Files:**
+
 ```
 types/
   index.ts                      # Main types, exported
@@ -217,12 +231,12 @@ types/
 
 From `vite.config.ts` lines 180-185:
 
-| Alias | Resolves To | Use For |
-|-------|-------------|---------|
-| `@/` | `src/` | Absolute imports from src root |
-| `~types` | `src/types` | Shared TypeScript types |
-| `~components` | `src/components` | Reusable components |
-| `~features` | `src/features` | Feature imports |
+| Alias         | Resolves To      | Use For                        |
+| ------------- | ---------------- | ------------------------------ |
+| `@/`          | `src/`           | Absolute imports from src root |
+| `~types`      | `src/types`      | Shared TypeScript types        |
+| `~components` | `src/components` | Reusable components            |
+| `~features`   | `src/features`   | Feature imports                |
 
 ### Usage Examples
 
@@ -241,18 +255,21 @@ import { SuspenseLoader } from '../../../components/SuspenseLoader';
 ### When to Use Which Alias
 
 **@/ (General)**:
+
 - Lib utilities: `@/lib/apiClient`
 - Hooks: `@/hooks/useAuth`
 - Config: `@/config/theme`
 - Shared services: `@/services/authService`
 
 **~types (Type Imports)**:
+
 ```typescript
 import type { Post } from '~types/post';
 import type { User, UserRole } from '~types/user';
 ```
 
 **~components (Reusable Components)**:
+
 ```typescript
 import { SuspenseLoader } from '~components/SuspenseLoader';
 import { CustomAppBar } from '~components/CustomAppBar';
@@ -260,6 +277,7 @@ import { ErrorBoundary } from '~components/ErrorBoundary';
 ```
 
 **~features (Feature Imports)**:
+
 ```typescript
 import { postApi } from '~features/posts/api/postApi';
 import { useAuth } from '~features/auth/hooks/useAuth';
@@ -280,6 +298,7 @@ CustomAppBar.tsx
 ```
 
 **Avoid:**
+
 - camelCase: `myComponent.tsx` ❌
 - kebab-case: `my-component.tsx` ❌
 - All caps: `MYCOMPONENT.tsx` ❌
@@ -339,6 +358,7 @@ types/user.ts
 - Reused across multiple routes
 
 **Example:** `features/posts/`
+
 - 20+ components
 - Own API service
 - Complex state management
@@ -425,6 +445,7 @@ export type { MyFeatureData, MyFeatureConfig } from './types';
 ```
 
 **Usage:**
+
 ```typescript
 // ✅ Clean import from feature index
 import { MyFeatureMain, useMyFeature } from '~features/my-feature';
@@ -489,6 +510,7 @@ src/
 ## Summary
 
 **Key Principles:**
+
 1. **features/** for domain-specific code
 2. **components/** for truly reusable UI
 3. Use subdirectories: api/, components/, hooks/, helpers/, types/
@@ -497,6 +519,7 @@ src/
 6. Export public API from feature index.ts
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Component structure
 - [data-fetching.md](data-fetching.md) - API service patterns
 - [complete-examples.md](complete-examples.md) - Full feature example

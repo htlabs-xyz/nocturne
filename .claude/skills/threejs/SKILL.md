@@ -1,6 +1,12 @@
 ---
 name: threejs
-description: Build immersive 3D web experiences with Three.js - WebGL/WebGPU library for scenes, cameras, geometries, materials, lights, animations, loaders, post-processing, shaders (including node-based TSL), compute, physics, VR/XR, and advanced rendering. Use when creating 3D visualizations, games, interactive graphics, data viz, product configurators, architectural walkthroughs, or WebGL/WebGPU applications. Covers OrbitControls, GLTF/FBX loading, PBR materials, shadow mapping, post-processing effects (bloom, SSAO, SSR), custom shaders, instancing, LOD, animation systems, and WebXR.
+description:
+  Build immersive 3D web experiences with Three.js - WebGL/WebGPU library for scenes, cameras, geometries, materials,
+  lights, animations, loaders, post-processing, shaders (including node-based TSL), compute, physics, VR/XR, and
+  advanced rendering. Use when creating 3D visualizations, games, interactive graphics, data viz, product configurators,
+  architectural walkthroughs, or WebGL/WebGPU applications. Covers OrbitControls, GLTF/FBX loading, PBR materials,
+  shadow mapping, post-processing effects (bloom, SSAO, SSR), custom shaders, instancing, LOD, animation systems, and
+  WebXR.
 license: MIT
 version: 1.0.0
 ---
@@ -12,6 +18,7 @@ Build high-performance 3D web applications using Three.js - a cross-browser WebG
 ## When to Use This Skill
 
 Use when working with:
+
 - 3D scenes, models, animations, or visualizations
 - WebGL/WebGPU rendering and graphics programming
 - Interactive 3D experiences (games, configurators, data viz)
@@ -24,9 +31,11 @@ Use when working with:
 ## Progressive Learning Path
 
 ### Level 1: Getting Started
+
 Load `references/01-getting-started.md` - Scene setup, basic geometries, materials, lights, rendering loop
 
 ### Level 2: Common Tasks
+
 - **Asset Loading**: `references/02-loaders.md` - GLTF, FBX, OBJ, texture loaders
 - **Textures**: `references/03-textures.md` - Types, mapping, wrapping, filtering
 - **Cameras**: `references/04-cameras.md` - Perspective, orthographic, controls
@@ -35,16 +44,19 @@ Load `references/01-getting-started.md` - Scene setup, basic geometries, materia
 - **Math**: `references/07-math.md` - Vectors, matrices, quaternions, curves
 
 ### Level 3: Interactive & Effects
+
 - **Interaction**: `references/08-interaction.md` - Raycasting, picking, transforms
 - **Post-Processing**: `references/09-postprocessing.md` - Passes, bloom, SSAO, SSR
 - **Controls (Addons)**: `references/10-controls.md` - Orbit, transform, first-person
 
 ### Level 4: Advanced Rendering
+
 - **Materials Advanced**: `references/11-materials-advanced.md` - PBR, custom shaders
 - **Performance**: `references/12-performance.md` - Instancing, LOD, batching, culling
 - **Node Materials (TSL)**: `references/13-node-materials.md` - Shader graphs, compute
 
 ### Level 5: Specialized
+
 - **Physics**: `references/14-physics-vr.md` - Ammo, Rapier, Jolt, VR/XR
 - **Advanced Loaders**: `references/15-specialized-loaders.md` - SVG, VRML, domain-specific
 - **WebGPU**: `references/16-webgpu.md` - Modern backend, compute shaders
@@ -54,7 +66,7 @@ Load `references/01-getting-started.md` - Scene setup, basic geometries, materia
 ```javascript
 // 1. Scene, Camera, Renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);

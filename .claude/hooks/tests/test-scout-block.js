@@ -13,72 +13,72 @@ const testCases = [
   {
     name: 'Bash: ls node_modules',
     input: { tool_name: 'Bash', tool_input: { command: 'ls node_modules' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
   {
     name: 'Bash: cd build',
     input: { tool_name: 'Bash', tool_input: { command: 'cd build' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
   {
     name: 'Bash: cat dist/bundle.js',
     input: { tool_name: 'Bash', tool_input: { command: 'cat dist/bundle.js' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
   {
     name: 'Grep with node_modules path',
     input: { tool_name: 'Grep', tool_input: { pattern: 'test', path: 'node_modules' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
   {
     name: 'Glob with node_modules pattern',
     input: { tool_name: 'Glob', tool_input: { pattern: '**/node_modules/**' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
   {
     name: 'Read with node_modules file_path',
     input: { tool_name: 'Read', tool_input: { file_path: 'node_modules/package.json' } },
-    expected: 'BLOCKED'
+    expected: 'BLOCKED',
   },
 
   // Build commands - should be ALLOWED
   {
     name: 'Bash: npm build',
     input: { tool_name: 'Bash', tool_input: { command: 'npm build' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
   {
     name: 'Bash: pnpm build',
     input: { tool_name: 'Bash', tool_input: { command: 'pnpm build' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
   {
     name: 'Bash: yarn build',
     input: { tool_name: 'Bash', tool_input: { command: 'yarn build' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
   {
     name: 'Bash: npm run build',
     input: { tool_name: 'Bash', tool_input: { command: 'npm run build' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
   {
     name: 'Bash: pnpm --filter web run build',
     input: { tool_name: 'Bash', tool_input: { command: 'pnpm --filter web run build 2>&1 | tail -100' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
 
   // Safe operations - should be ALLOWED
   {
     name: 'Grep with safe path',
     input: { tool_name: 'Grep', tool_input: { pattern: 'test', path: 'src' } },
-    expected: 'ALLOWED'
+    expected: 'ALLOWED',
   },
   {
     name: 'Read with safe file_path',
     input: { tool_name: 'Read', tool_input: { file_path: 'src/index.js' } },
-    expected: 'ALLOWED'
-  }
+    expected: 'ALLOWED',
+  },
 ];
 
 console.log('Testing scout-block.sh hook...\n');
@@ -93,7 +93,7 @@ for (const test of testCases) {
     const result = execSync(`bash "${scriptPath}"`, {
       input,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     const actual = 'ALLOWED';

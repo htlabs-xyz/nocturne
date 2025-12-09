@@ -32,11 +32,19 @@ class CheckoutHelper {
       errorUrl,
       cancelUrl,
       orderDescription,
-      operation = 'PURCHASE'
+      operation = 'PURCHASE',
     } = config;
 
     // Validate required fields
-    const required = ['merchantId', 'secretKey', 'orderInvoiceNumber', 'orderAmount', 'successUrl', 'errorUrl', 'cancelUrl'];
+    const required = [
+      'merchantId',
+      'secretKey',
+      'orderInvoiceNumber',
+      'orderAmount',
+      'successUrl',
+      'errorUrl',
+      'cancelUrl',
+    ];
     for (const field of required) {
       if (!config[field]) {
         throw new Error(`Missing required field: ${field}`);
@@ -54,30 +62,26 @@ class CheckoutHelper {
       error_url: errorUrl,
       cancel_url: cancelUrl,
       order_description: orderDescription || `Order ${orderInvoiceNumber}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Generate HMAC SHA256 signature
     const signatureData = Object.keys(fields)
       .sort()
-      .map(key => `${key}=${fields[key]}`)
+      .map((key) => `${key}=${fields[key]}`)
       .join('&');
 
-    const signature = crypto
-      .createHmac('sha256', secretKey)
-      .update(signatureData)
-      .digest('hex');
+    const signature = crypto.createHmac('sha256', secretKey).update(signatureData).digest('hex');
 
     fields.signature = signature;
 
     return {
       fields,
-      formUrl: config.env === 'production'
-        ? 'https://pay.sepay.vn/v1/init'
-        : 'https://sandbox.pay.sepay.vn/v1/init',
-      htmlForm: this.generateHTMLForm(fields, config.env === 'production'
-        ? 'https://pay.sepay.vn/v1/init'
-        : 'https://sandbox.pay.sepay.vn/v1/init')
+      formUrl: config.env === 'production' ? 'https://pay.sepay.vn/v1/init' : 'https://sandbox.pay.sepay.vn/v1/init',
+      htmlForm: this.generateHTMLForm(
+        fields,
+        config.env === 'production' ? 'https://pay.sepay.vn/v1/init' : 'https://sandbox.pay.sepay.vn/v1/init',
+      ),
     };
   }
 
@@ -93,7 +97,7 @@ class CheckoutHelper {
       customerName,
       discountId,
       metadata,
-      embedOrigin
+      embedOrigin,
     } = config;
 
     // Validate required fields
@@ -111,7 +115,7 @@ class CheckoutHelper {
 
     const checkoutConfig = {
       product_price_id: productPriceId,
-      success_url: successUrl
+      success_url: successUrl,
     };
 
     // Add optional fields
@@ -124,10 +128,9 @@ class CheckoutHelper {
 
     return {
       config: checkoutConfig,
-      apiEndpoint: config.server === 'sandbox'
-        ? 'https://sandbox-api.polar.sh/v1/checkouts'
-        : 'https://api.polar.sh/v1/checkouts',
-      curlCommand: this.generatePolarCurl(checkoutConfig, config.accessToken, config.server)
+      apiEndpoint:
+        config.server === 'sandbox' ? 'https://sandbox-api.polar.sh/v1/checkouts' : 'https://api.polar.sh/v1/checkouts',
+      curlCommand: this.generatePolarCurl(checkoutConfig, config.accessToken, config.server),
     };
   }
 
@@ -136,7 +139,7 @@ class CheckoutHelper {
    */
   static generateHTMLForm(fields, actionUrl) {
     const inputs = Object.keys(fields)
-      .map(key => `    <input type="hidden" name="${key}" value="${fields[key]}" />`)
+      .map((key) => `    <input type="hidden" name="${key}" value="${fields[key]}" />`)
       .join('\n');
 
     return `
@@ -165,9 +168,8 @@ ${inputs}
    * Generate cURL command for Polar
    */
   static generatePolarCurl(config, accessToken, server = 'production') {
-    const endpoint = server === 'sandbox'
-      ? 'https://sandbox-api.polar.sh/v1/checkouts'
-      : 'https://api.polar.sh/v1/checkouts';
+    const endpoint =
+      server === 'sandbox' ? 'https://sandbox-api.polar.sh/v1/checkouts' : 'https://api.polar.sh/v1/checkouts';
 
     return `curl -X POST ${endpoint} \\
   -H "Authorization: Bearer ${accessToken}" \\
@@ -187,9 +189,13 @@ if (require.main === module) {
     console.log('  polar  - Polar checkout session configuration');
     console.log('\nExamples:');
     console.log('\nSePay:');
-    console.log('  node checkout-helper.js sepay \'{"orderInvoiceNumber":"ORD001","orderAmount":100000,"successUrl":"https://example.com/success","errorUrl":"https://example.com/error","cancelUrl":"https://example.com/cancel"}\'');
+    console.log(
+      '  node checkout-helper.js sepay \'{"orderInvoiceNumber":"ORD001","orderAmount":100000,"successUrl":"https://example.com/success","errorUrl":"https://example.com/error","cancelUrl":"https://example.com/cancel"}\'',
+    );
     console.log('\nPolar:');
-    console.log('  node checkout-helper.js polar \'{"productPriceId":"price_xxx","successUrl":"https://example.com/success","externalCustomerId":"user_123"}\'');
+    console.log(
+      '  node checkout-helper.js polar \'{"productPriceId":"price_xxx","successUrl":"https://example.com/success","externalCustomerId":"user_123"}\'',
+    );
     process.exit(1);
   }
 

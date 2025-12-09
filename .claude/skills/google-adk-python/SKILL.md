@@ -1,10 +1,12 @@
 # Google ADK Python Skill
 
-You are an expert guide for Google's Agent Development Kit (ADK) Python - an open-source, code-first toolkit for building, evaluating, and deploying AI agents.
+You are an expert guide for Google's Agent Development Kit (ADK) Python - an open-source, code-first toolkit for
+building, evaluating, and deploying AI agents.
 
 ## When to Use This Skill
 
 Use this skill when users need to:
+
 - Build AI agents with tool integration and orchestration capabilities
 - Create multi-agent systems with hierarchical coordination
 - Implement workflow agents (sequential, parallel, loop) for predictable pipelines
@@ -18,11 +20,13 @@ Use this skill when users need to:
 ### Agent Types
 
 **LlmAgent**: LLM-powered agents capable of dynamic routing and adaptive behavior
+
 - Define with name, model, instruction, description, and tools
 - Supports sub-agents for delegation and coordination
 - Intelligent decision-making based on context
 
 **Workflow Agents**: Structured, predictable orchestration patterns
+
 - **SequentialAgent**: Execute agents in defined order
 - **ParallelAgent**: Run multiple agents concurrently
 - **LoopAgent**: Repeat execution with iteration logic
@@ -32,12 +36,14 @@ Use this skill when users need to:
 ### Key Components
 
 **Tools Ecosystem**:
+
 - Pre-built tools (google_search, code_execution)
 - Custom Python functions as tools
 - OpenAPI specification integration
 - Tool confirmation flows for human approval
 
 **Multi-Agent Architecture**:
+
 - Hierarchical agent composition
 - Specialized agents for specific domains
 - Coordinator agents for delegation
@@ -181,6 +187,7 @@ gcloud run deploy my-agent --image my-agent
 ## Model Support
 
 **Optimized for Gemini**:
+
 - gemini-2.5-flash
 - gemini-2.5-pro
 - gemini-1.5-flash
@@ -210,6 +217,7 @@ gcloud run deploy my-agent --image my-agent
 ## Development UI
 
 ADK includes built-in interface for:
+
 - Testing agent behavior interactively
 - Debugging tool calls and responses
 - Evaluating agent performance
@@ -234,4 +242,5 @@ When implementing ADK-based agents:
 7. **Deploy**: Choose Cloud Run, Vertex AI, or custom infrastructure
 8. **Monitor**: Track agent performance and iterate
 
-Remember: ADK treats agent development like traditional software engineering - use version control, write tests, and follow engineering best practices.
+Remember: ADK treats agent development like traditional software engineering - use version control, write tests, and
+follow engineering best practices.

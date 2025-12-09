@@ -1,17 +1,24 @@
 ---
 name: devops
-description: Deploy and manage cloud infrastructure on Cloudflare (Workers, R2, D1, KV, Pages, Durable Objects, Browser Rendering), Docker containers, and Google Cloud Platform (Compute Engine, GKE, Cloud Run, App Engine, Cloud Storage). Use when deploying serverless functions to the edge, configuring edge computing solutions, managing Docker containers and images, setting up CI/CD pipelines, optimizing cloud infrastructure costs, implementing global caching strategies, working with cloud databases, or building cloud-native applications.
+description:
+  Deploy and manage cloud infrastructure on Cloudflare (Workers, R2, D1, KV, Pages, Durable Objects, Browser Rendering),
+  Docker containers, and Google Cloud Platform (Compute Engine, GKE, Cloud Run, App Engine, Cloud Storage). Use when
+  deploying serverless functions to the edge, configuring edge computing solutions, managing Docker containers and
+  images, setting up CI/CD pipelines, optimizing cloud infrastructure costs, implementing global caching strategies,
+  working with cloud databases, or building cloud-native applications.
 license: MIT
 version: 1.0.0
 ---
 
 # DevOps Skill
 
-Comprehensive guide for deploying and managing cloud infrastructure across Cloudflare edge platform, Docker containerization, and Google Cloud Platform.
+Comprehensive guide for deploying and managing cloud infrastructure across Cloudflare edge platform, Docker
+containerization, and Google Cloud Platform.
 
 ## When to Use This Skill
 
 Use this skill when:
+
 - Deploying serverless applications to Cloudflare Workers
 - Containerizing applications with Docker
 - Managing Google Cloud infrastructure with gcloud CLI
@@ -28,6 +35,7 @@ Use this skill when:
 ### When to Use Cloudflare
 
 **Best For:**
+
 - Edge-first applications with global distribution
 - Ultra-low latency requirements (<50ms)
 - Static sites with serverless functions
@@ -36,6 +44,7 @@ Use this skill when:
 - AI/ML at the edge (Workers AI)
 
 **Key Products:**
+
 - Workers (serverless functions)
 - R2 (object storage, S3-compatible)
 - D1 (SQLite database with global replication)
@@ -49,6 +58,7 @@ Use this skill when:
 ### When to Use Docker
 
 **Best For:**
+
 - Local development consistency
 - Microservices architectures
 - Multi-language stack applications
@@ -58,6 +68,7 @@ Use this skill when:
 - Database containerization (dev/test)
 
 **Key Capabilities:**
+
 - Application isolation and portability
 - Multi-stage builds for optimization
 - Docker Compose for multi-container apps
@@ -70,6 +81,7 @@ Use this skill when:
 ### When to Use Google Cloud
 
 **Best For:**
+
 - Enterprise-scale applications
 - Data analytics and ML pipelines (BigQuery, Vertex AI)
 - Hybrid/multi-cloud deployments
@@ -78,6 +90,7 @@ Use this skill when:
 - Complex IAM and compliance requirements
 
 **Key Services:**
+
 - Compute Engine (VMs)
 - GKE (managed Kubernetes)
 - Cloud Run (containerized serverless)
@@ -143,6 +156,7 @@ See: `references/gcloud-platform.md`
 ## Reference Navigation
 
 ### Cloudflare Platform
+
 - `cloudflare-platform.md` - Edge computing overview, key components
 - `cloudflare-workers-basics.md` - Getting started, handler types, basic patterns
 - `cloudflare-workers-advanced.md` - Advanced patterns, performance, optimization
@@ -152,14 +166,17 @@ See: `references/gcloud-platform.md`
 - `browser-rendering.md` - Puppeteer/Playwright automation on Cloudflare
 
 ### Docker Containerization
+
 - `docker-basics.md` - Core concepts, Dockerfile, images, containers
 - `docker-compose.md` - Multi-container apps, networking, volumes
 
 ### Google Cloud Platform
+
 - `gcloud-platform.md` - GCP overview, gcloud CLI, authentication
 - `gcloud-services.md` - Compute Engine, GKE, Cloud Run, App Engine
 
 ### Python Utilities
+
 - `scripts/cloudflare-deploy.py` - Automate Cloudflare Worker deployments
 - `scripts/docker-optimize.py` - Analyze and optimize Dockerfiles
 
@@ -211,6 +228,7 @@ CMD ["node", "dist/server.js"]
 ## Best Practices
 
 ### Security
+
 - Run containers as non-root user
 - Use service account impersonation (GCP)
 - Store secrets in environment variables, not code
@@ -218,6 +236,7 @@ CMD ["node", "dist/server.js"]
 - Use API tokens with minimal permissions
 
 ### Performance
+
 - Multi-stage Docker builds to reduce image size
 - Edge caching with Cloudflare KV
 - Use R2 for zero egress cost storage
@@ -225,6 +244,7 @@ CMD ["node", "dist/server.js"]
 - Set appropriate timeouts and resource limits
 
 ### Cost Optimization
+
 - Use Cloudflare R2 instead of S3 for large egress
 - Implement caching strategies (edge + KV)
 - Right-size container resources
@@ -232,6 +252,7 @@ CMD ["node", "dist/server.js"]
 - Monitor usage with cloud provider dashboards
 
 ### Development
+
 - Use Docker Compose for local development
 - Wrangler dev for local Worker testing
 - Named gcloud configurations for multi-environment
@@ -240,18 +261,18 @@ CMD ["node", "dist/server.js"]
 
 ## Decision Matrix
 
-| Need | Choose |
-|------|--------|
-| Sub-50ms latency globally | Cloudflare Workers |
-| Large file storage (zero egress) | Cloudflare R2 |
-| SQL database (global reads) | Cloudflare D1 |
-| Containerized workloads | Docker + Cloud Run/GKE |
-| Enterprise Kubernetes | GKE |
-| Managed relational DB | Cloud SQL |
-| Static site + API | Cloudflare Pages |
-| WebSocket/real-time | Cloudflare Durable Objects |
-| ML/AI pipelines | GCP Vertex AI |
-| Browser automation | Cloudflare Browser Rendering |
+| Need                             | Choose                       |
+| -------------------------------- | ---------------------------- |
+| Sub-50ms latency globally        | Cloudflare Workers           |
+| Large file storage (zero egress) | Cloudflare R2                |
+| SQL database (global reads)      | Cloudflare D1                |
+| Containerized workloads          | Docker + Cloud Run/GKE       |
+| Enterprise Kubernetes            | GKE                          |
+| Managed relational DB            | Cloud SQL                    |
+| Static site + API                | Cloudflare Pages             |
+| WebSocket/real-time              | Cloudflare Durable Objects   |
+| ML/AI pipelines                  | GCP Vertex AI                |
+| Browser automation               | Cloudflare Browser Rendering |
 
 ## Resources
 
@@ -264,6 +285,7 @@ CMD ["node", "dist/server.js"]
 ## Implementation Checklist
 
 ### Cloudflare Workers
+
 - [ ] Install Wrangler CLI
 - [ ] Create Worker project
 - [ ] Configure wrangler.toml (bindings, routes)
@@ -271,6 +293,7 @@ CMD ["node", "dist/server.js"]
 - [ ] Deploy with `wrangler deploy`
 
 ### Docker
+
 - [ ] Write Dockerfile with multi-stage builds
 - [ ] Create .dockerignore file
 - [ ] Test build locally
@@ -278,6 +301,7 @@ CMD ["node", "dist/server.js"]
 - [ ] Deploy to target platform
 
 ### Google Cloud
+
 - [ ] Install gcloud CLI
 - [ ] Authenticate with service account
 - [ ] Create project and enable APIs

@@ -46,9 +46,9 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.5,  // strength
-  0.4,  // radius
-  0.85  // threshold (brightness trigger)
+  1.5, // strength
+  0.4, // radius
+  0.85, // threshold (brightness trigger)
 );
 composer.addPass(bloomPass);
 
@@ -84,7 +84,7 @@ const ssrPass = new SSRPass({
   scene,
   camera,
   width: window.innerWidth,
-  height: window.innerHeight
+  height: window.innerHeight,
 });
 
 ssrPass.opacity = 0.5;
@@ -100,9 +100,9 @@ Blur based on depth:
 import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 
 const bokehPass = new BokehPass(scene, camera, {
-  focus: 10.0,      // focal distance
-  aperture: 0.025,  // blur amount
-  maxblur: 0.01     // max blur size
+  focus: 10.0, // focal distance
+  aperture: 0.025, // blur amount
+  maxblur: 0.01, // max blur size
 });
 composer.addPass(bokehPass);
 ```
@@ -128,11 +128,7 @@ Highlight selected objects:
 ```javascript
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 
-const outlinePass = new OutlinePass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  scene,
-  camera
-);
+const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
 
 outlinePass.edgeStrength = 3;
 outlinePass.edgeGlow = 0.5;
@@ -154,10 +150,10 @@ Add film grain and scanlines:
 import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
 const filmPass = new FilmPass(
-  0.35,  // noise intensity
-  0.5,   // scanline intensity
-  648,   // scanline count
-  false  // grayscale
+  0.35, // noise intensity
+  0.5, // scanline intensity
+  648, // scanline count
+  false, // grayscale
 );
 composer.addPass(filmPass);
 ```
@@ -183,7 +179,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 const customShader = {
   uniforms: {
     tDiffuse: { value: null },
-    amount: { value: 1.0 }
+    amount: { value: 1.0 },
   },
   vertexShader: `
     varying vec2 vUv;
@@ -203,7 +199,7 @@ const customShader = {
       color.r *= amount;
       gl_FragColor = color;
     }
-  `
+  `,
 };
 
 const customPass = new ShaderPass(customShader);

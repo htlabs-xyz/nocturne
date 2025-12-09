@@ -4,26 +4,24 @@ Event-driven automation framework for Claude Code with deterministic shell comma
 
 ## Quick Reference
 
-**Hook Types**: Command-based (bash) | Prompt-based (LLM evaluation)
-**Configuration**: `.claude/settings.json` (4-tier hierarchy)
-**Events**: 10 lifecycle triggers
-**Matchers**: Exact, regex, wildcard patterns
-**Security**: User assumes full responsibility
+**Hook Types**: Command-based (bash) | Prompt-based (LLM evaluation) **Configuration**: `.claude/settings.json` (4-tier
+hierarchy) **Events**: 10 lifecycle triggers **Matchers**: Exact, regex, wildcard patterns **Security**: User assumes
+full responsibility
 
 ## Hook Events (10 Total)
 
-| Event | Trigger Point | Common Use Cases |
-|-------|---------------|------------------|
-| **PreToolUse** | Before tool processing | Validation, blocking operations |
-| **PermissionRequest** | Permission dialog display | Custom permission logic |
-| **PostToolUse** | After tool completion | Post-processing, auto-formatting, logging |
-| **Notification** | Notification sent | Desktop alerts, custom notifications |
-| **UserPromptSubmit** | User prompt submission | Input validation, filtering |
-| **Stop** | Main agent response complete | Session cleanup, logging |
-| **SubagentStop** | Subagent completion | Subagent monitoring |
-| **PreCompact** | Before compaction | Pre-compaction validation |
-| **SessionStart** | Session init/resume | Environment setup |
-| **SessionEnd** | Session termination | Cleanup operations |
+| Event                 | Trigger Point                | Common Use Cases                          |
+| --------------------- | ---------------------------- | ----------------------------------------- |
+| **PreToolUse**        | Before tool processing       | Validation, blocking operations           |
+| **PermissionRequest** | Permission dialog display    | Custom permission logic                   |
+| **PostToolUse**       | After tool completion        | Post-processing, auto-formatting, logging |
+| **Notification**      | Notification sent            | Desktop alerts, custom notifications      |
+| **UserPromptSubmit**  | User prompt submission       | Input validation, filtering               |
+| **Stop**              | Main agent response complete | Session cleanup, logging                  |
+| **SubagentStop**      | Subagent completion          | Subagent monitoring                       |
+| **PreCompact**        | Before compaction            | Pre-compaction validation                 |
+| **SessionStart**      | Session init/resume          | Environment setup                         |
+| **SessionEnd**        | Session termination          | Cleanup operations                        |
 
 ## Configuration Structure
 
@@ -57,21 +55,25 @@ Event-driven automation framework for Claude Code with deterministic shell comma
 ## Tool Matchers
 
 **Exact matching**:
+
 ```json
 "matcher": "Bash"
 ```
 
 **Regex patterns**:
+
 ```json
 "matcher": "Edit|Write"
 ```
 
 **Wildcard (all tools)**:
+
 ```json
 "matcher": "*"
 ```
 
 **MCP tools**:
+
 ```json
 "matcher": "mcp__servername__toolname"
 ```
@@ -85,6 +87,7 @@ Event-driven automation framework for Claude Code with deterministic shell comma
 Execute bash scripts with full shell capabilities.
 
 **Configuration**:
+
 ```json
 {
   "type": "command",
@@ -93,6 +96,7 @@ Execute bash scripts with full shell capabilities.
 ```
 
 **Input**: JSON via stdin with fields:
+
 - `session_id`: Current session identifier
 - `transcript_path`: Path to session transcript
 - `cwd`: Current working directory
@@ -101,6 +105,7 @@ Execute bash scripts with full shell capabilities.
 - Event-specific fields (varies by hook)
 
 **Output Control**:
+
 - Exit code 0: Success, continue execution
 - Exit code 2: Blocking error, halt execution
 - Optional JSON output:
@@ -119,6 +124,7 @@ Leverage LLM evaluation for context-aware decisions.
 **Supported Events**: Stop, SubagentStop only
 
 **Configuration**:
+
 ```json
 {
   "type": "prompt",
@@ -154,6 +160,7 @@ Automatically format code after edits.
 ```
 
 **Script version** (`scripts/format-code.sh`):
+
 ```bash
 #!/bin/bash
 FILE=$(jq -r '.tool_parameters.file_path')
@@ -241,7 +248,7 @@ Track bash commands for compliance.
 
 Auto-detect code block languages.
 
-```bash
+````bash
 #!/usr/bin/env python3
 # scripts/enhance-markdown.py
 import json, sys, re
@@ -265,9 +272,10 @@ enhanced = re.sub(
 
 with open(file_path, 'w') as f:
     f.write(enhanced)
-```
+````
 
 **Configuration**:
+
 ```json
 {
   "hooks": {
@@ -289,10 +297,12 @@ with open(file_path, 'w') as f:
 ## Environment Variables
 
 **Available in all hooks**:
+
 - `$CLAUDE_PROJECT_DIR`: Project root path
 - `${CLAUDE_PLUGIN_ROOT}`: Plugin directory path
 
 **SessionStart only**:
+
 - `CLAUDE_ENV_FILE`: Persist environment variables across session
 
 **Hook input via stdin**: All data passed as JSON (parse with `jq`)
@@ -308,6 +318,7 @@ with open(file_path, 'w') as f:
 ### Best Practices
 
 **Input Validation**:
+
 ```bash
 # Validate file paths
 FILE=$(jq -r '.tool_parameters.file_path')
@@ -317,6 +328,7 @@ fi
 ```
 
 **Proper Quoting**:
+
 ```bash
 # Always quote variables
 FILE=$(jq -r '.tool_parameters.file_path')
@@ -325,6 +337,7 @@ prettier --write $FILE    # Wrong - vulnerable to injection
 ```
 
 **Path Traversal Prevention**:
+
 ```bash
 # Use absolute paths and validate
 REALPATH=$(realpath "$FILE")
@@ -334,6 +347,7 @@ fi
 ```
 
 **Command Whitelisting**:
+
 ```bash
 # Whitelist allowed commands
 COMMAND=$(jq -r '.tool_parameters.command')
@@ -384,11 +398,13 @@ echo '{"session_id":"test","tool_parameters":{"command":"ls"}}' | bash scripts/t
 ### Debugging
 
 **Check logs**:
+
 ```bash
 cat .claude/logs/hooks.log
 ```
 
 **Common issues**:
+
 - Verify script permissions: `chmod +x scripts/*.sh`
 - Check JSON syntax in settings
 - Validate script paths (relative to project root)
@@ -399,6 +415,7 @@ cat .claude/logs/hooks.log
 Hooks can be bundled in plugins for distribution.
 
 **Plugin structure**:
+
 ```
 my-plugin/
 ├── plugin.json
@@ -409,6 +426,7 @@ my-plugin/
 ```
 
 **plugin.json**:
+
 ```json
 {
   "name": "my-plugin",
@@ -419,6 +437,7 @@ my-plugin/
 ```
 
 **hooks/settings.json**:
+
 ```json
 {
   "hooks": {
@@ -504,6 +523,7 @@ prettier --write "$FILE" || {
 **Keep hooks fast**: <100ms execution time ideal
 
 **Async operations**:
+
 ```bash
 #!/bin/bash
 # Run in background for long operations
@@ -514,6 +534,7 @@ prettier --write "$FILE" || {
 ```
 
 **Caching**:
+
 ```bash
 #!/bin/bash
 CACHE_FILE=".claude/cache/format-cache"

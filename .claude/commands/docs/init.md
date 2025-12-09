@@ -14,6 +14,7 @@ description: ⚡⚡⚡⚡ Analyze the codebase and create initial documentation
 ## Phase 2: Documentation Creation (docs-manager Agent)
 
 Pass the gathered file list to `docs-manager` agent to create initial documentation:
+
 - `docs/project-overview-pdr.md`: Project overview and PDR (Product Development Requirements)
 - `docs/codebase-summary.md`: Codebase summary
 - `docs/code-standards.md`: Codebase structure and code standards

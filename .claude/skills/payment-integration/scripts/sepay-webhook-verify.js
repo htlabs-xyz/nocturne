@@ -79,7 +79,7 @@ class SePayWebhookVerifier {
       'accountNumber',
       'transferType',
       'transferAmount',
-      'referenceCode'
+      'referenceCode',
     ];
 
     for (const field of required) {
@@ -124,19 +124,19 @@ class SePayWebhookVerifier {
         transferAmount: payload.transferAmount,
         accumulated: payload.accumulated || 0,
         subAccount: payload.subAccount || null,
-        referenceCode: payload.referenceCode
+        referenceCode: payload.referenceCode,
       };
 
       return {
         success: true,
         transaction,
         isIncoming: transaction.transferType === 'in',
-        isOutgoing: transaction.transferType === 'out'
+        isOutgoing: transaction.transferType === 'out',
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }

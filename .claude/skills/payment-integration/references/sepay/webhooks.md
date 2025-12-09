@@ -34,6 +34,7 @@ Real-time payment notifications from SePay to your server.
 ```
 
 **Fields:**
+
 - `id` - Unique transaction ID (use for deduplication)
 - `gateway` - Bank name
 - `transactionDate` - Transaction timestamp
@@ -49,20 +50,20 @@ Real-time payment notifications from SePay to your server.
 ## Authentication
 
 **API Key:**
+
 ```
 Authorization: Apikey YOUR_KEY
 Content-Type: application/json
 ```
 
-**OAuth 2.0:**
-Provide token endpoint, client ID, and client secret in dashboard.
+**OAuth 2.0:** Provide token endpoint, client ID, and client secret in dashboard.
 
-**No Authentication:**
-Available but not recommended for production. Consider IP whitelisting.
+**No Authentication:** Available but not recommended for production. Consider IP whitelisting.
 
 ## Response Requirements
 
 **Success Response:**
+
 ```json
 HTTP/1.1 200 OK
 {
@@ -70,16 +71,17 @@ HTTP/1.1 200 OK
 }
 ```
 
-**Accepted:** Any 2xx status code (200-201)
-**Timeout:** Respond within 5 seconds
+**Accepted:** Any 2xx status code (200-201) **Timeout:** Respond within 5 seconds
 
 ## Auto-Retry Mechanism
 
 **Policy:**
+
 - Retries up to 7 times over ~5 hours
 - Fibonacci sequence intervals (1, 1, 2, 3, 5, 8, 13... minutes)
 
 **Duplicate Prevention:**
+
 ```javascript
 // Primary: Use transaction ID
 const exists = await db.transactions.findOne({ sepay_id: data.id });
@@ -92,6 +94,7 @@ const key = `${data.referenceCode}-${data.transferType}-${data.transferAmount}`;
 ## Implementation Examples
 
 ### Node.js/Express
+
 ```javascript
 app.post('/webhook/sepay', async (req, res) => {
   const transaction = req.body;
@@ -106,7 +109,7 @@ app.post('/webhook/sepay', async (req, res) => {
     await processPayment({
       amount: transaction.transferAmount,
       content: transaction.content,
-      referenceCode: transaction.referenceCode
+      referenceCode: transaction.referenceCode,
     });
   }
 
@@ -118,6 +121,7 @@ app.post('/webhook/sepay', async (req, res) => {
 ```
 
 ### PHP
+
 ```php
 <?php
 $data = json_decode(file_get_contents('php://input'), true);
@@ -159,12 +163,14 @@ echo json_encode(['success' => true]);
 ## Monitoring
 
 **Dashboard Features:**
+
 - View webhook attempts
 - Check response status
 - Review retry history
 - Manual retry option
 
 **Application Monitoring:**
+
 - Log all webhook receipts
 - Track processing time
 - Alert on failures
@@ -175,16 +181,19 @@ echo json_encode(['success' => true]);
 **Available Scopes:** `webhook:read`, `webhook:write`, `webhook:delete`
 
 **List Webhooks:**
+
 ```
 GET /api/v1/webhooks
 ```
 
 **Get Details:**
+
 ```
 GET /api/v1/webhooks/{id}
 ```
 
 **Create:**
+
 ```
 POST /api/v1/webhooks
 {
@@ -198,11 +207,13 @@ POST /api/v1/webhooks
 ```
 
 **Update:**
+
 ```
 PATCH /api/v1/webhooks/{id}
 ```
 
 **Delete:**
+
 ```
 DELETE /api/v1/webhooks/{id}
 ```

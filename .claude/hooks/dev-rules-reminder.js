@@ -28,10 +28,9 @@ function wasRecentlyInjected(transcriptPath) {
 
     // Check last 50 lines for reminder marker
     const recentLines = lines.slice(-50);
-    const wasInjected = recentLines.some(line => line.includes('**[IMPORTANT]** Consider Modularization'));
+    const wasInjected = recentLines.some((line) => line.includes('**[IMPORTANT]** Consider Modularization'));
 
     return wasInjected;
-
   } catch (error) {
     // If we can't read transcript, assume not injected (fail-open)
     return false;
@@ -104,7 +103,6 @@ async function main() {
 
     console.log(reminder);
     process.exit(0);
-
   } catch (error) {
     // Fail-open: log error but allow operation to continue
     console.error(`Dev rules hook error: ${error.message}`);

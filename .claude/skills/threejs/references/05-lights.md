@@ -72,9 +72,9 @@ scene.add(light.target);
 
 // Cone parameters
 light.angle = Math.PI / 6; // cone angle
-light.penumbra = 0.1;      // edge softness (0-1)
-light.decay = 2;           // light falloff
-light.distance = 100;      // max range (0 = infinite)
+light.penumbra = 0.1; // edge softness (0-1)
+light.decay = 2; // light falloff
+light.distance = 100; // max range (0 = infinite)
 
 // With shadows
 light.castShadow = true;
@@ -90,7 +90,7 @@ Sky/ground two-color lighting:
 const light = new THREE.HemisphereLight(
   0x0000ff, // sky color (blue)
   0x00ff00, // ground color (green)
-  0.6       // intensity
+  0.6, // intensity
 );
 scene.add(light);
 
@@ -129,7 +129,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // soft shadows
 // THREE.VSMShadowMap - variance shadow maps
 
 // Objects must opt-in to shadows
-mesh.castShadow = true;    // object casts shadows
+mesh.castShadow = true; // object casts shadows
 mesh.receiveShadow = true; // object receives shadows
 ```
 

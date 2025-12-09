@@ -22,26 +22,28 @@ const API_KEY = env.CONTEXT7_API_KEY;
 function httpsGet(url) {
   return new Promise((resolve, reject) => {
     const options = {
-      headers: API_KEY ? { 'Authorization': `Bearer ${API_KEY}` } : {},
+      headers: API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {},
     };
 
-    https.get(url, options, (res) => {
-      let data = '';
+    https
+      .get(url, options, (res) => {
+        let data = '';
 
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
 
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          resolve(data);
-        } else if (res.statusCode === 404) {
-          resolve(null);
-        } else {
-          reject(new Error(`HTTP ${res.statusCode}: ${data}`));
-        }
-      });
-    }).on('error', reject);
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            resolve(data);
+          } else if (res.statusCode === 404) {
+            resolve(null);
+          } else {
+            reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+          }
+        });
+      })
+      .on('error', reject);
   });
 }
 
@@ -86,10 +88,10 @@ async function getUrlVariations(library, topic = null) {
   // Known repo mappings
   const knownRepos = {
     'next.js': 'vercel/next.js',
-    'nextjs': 'vercel/next.js',
-    'remix': 'remix-run/remix',
-    'astro': 'withastro/astro',
-    'shadcn': 'shadcn-ui/ui',
+    nextjs: 'vercel/next.js',
+    remix: 'remix-run/remix',
+    astro: 'withastro/astro',
+    shadcn: 'shadcn-ui/ui',
     'shadcn/ui': 'shadcn-ui/ui',
     'better-auth': 'better-auth/better-auth',
   };

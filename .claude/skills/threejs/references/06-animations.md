@@ -61,13 +61,13 @@ action.pause();
 action.reset();
 
 // Loop modes
-action.setLoop(THREE.LoopRepeat, Infinity);    // loop forever
-action.setLoop(THREE.LoopOnce, 1);             // play once, stop at end
-action.setLoop(THREE.LoopPingPong, Infinity);  // reverse on each loop
+action.setLoop(THREE.LoopRepeat, Infinity); // loop forever
+action.setLoop(THREE.LoopOnce, 1); // play once, stop at end
+action.setLoop(THREE.LoopPingPong, Infinity); // reverse on each loop
 
 // Speed control
 action.timeScale = 1.5; // 1.5x speed
-action.timeScale = -1;  // reverse
+action.timeScale = -1; // reverse
 
 // Weight (for blending)
 action.setEffectiveWeight(0.5); // 50% influence
@@ -96,12 +96,12 @@ Using KeyframeTracks:
 ```javascript
 // Position animation
 const times = [0, 1, 2]; // keyframe times in seconds
-const values = [0, 0, 0,  10, 0, 0,  0, 0, 0]; // x,y,z for each time
+const values = [0, 0, 0, 10, 0, 0, 0, 0, 0]; // x,y,z for each time
 
 const positionKF = new THREE.VectorKeyframeTrack(
   '.position', // property path
   times,
-  values
+  values,
 );
 
 // Rotation animation (quaternions)
@@ -111,9 +111,15 @@ const rotationKF = new THREE.QuaternionKeyframeTrack(
   '.quaternion',
   [0, 1],
   [
-    quaternion1.x, quaternion1.y, quaternion1.z, quaternion1.w,
-    quaternion2.x, quaternion2.y, quaternion2.z, quaternion2.w
-  ]
+    quaternion1.x,
+    quaternion1.y,
+    quaternion1.z,
+    quaternion1.w,
+    quaternion2.x,
+    quaternion2.y,
+    quaternion2.z,
+    quaternion2.w,
+  ],
 );
 
 // Create clip from tracks
@@ -141,7 +147,7 @@ For rigged characters:
 
 ```javascript
 // Object must be SkinnedMesh with skeleton
-const mesh = gltf.scene.children.find(child => child.isSkinnedMesh);
+const mesh = gltf.scene.children.find((child) => child.isSkinnedMesh);
 
 // Access bones
 const skeleton = mesh.skeleton;
@@ -167,11 +173,7 @@ const mesh = new THREE.Mesh(geometry, material);
 mesh.morphTargetInfluences[0] = 0.5; // 50% of first morph target
 
 // Create animation clip for morphs
-const track = new THREE.NumberKeyframeTrack(
-  '.morphTargetInfluences[0]',
-  [0, 1, 2],
-  [0, 1, 0]
-);
+const track = new THREE.NumberKeyframeTrack('.morphTargetInfluences[0]', [0, 1, 2], [0, 1, 0]);
 const clip = new THREE.AnimationClip('morph', 2, [track]);
 ```
 
@@ -209,6 +211,6 @@ For complex easing (use with external lib like GSAP):
 gsap.to(object.position, {
   duration: 1,
   x: 10,
-  ease: "power2.inOut"
+  ease: 'power2.inOut',
 });
 ```

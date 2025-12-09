@@ -1,6 +1,12 @@
 ---
 name: payment-integration
-description: Implement payment integrations with SePay (Vietnamese payment gateway with VietQR, bank transfers, cards) and Polar (global SaaS monetization platform with subscriptions, usage-based billing, automated benefits). Use when integrating payment processing, implementing checkout flows, managing subscriptions, handling webhooks, processing bank transfers, generating QR codes, automating benefit delivery, or building billing systems. Supports authentication (API keys, OAuth2), product management, customer portals, tax compliance (Polar as MoR), and comprehensive SDK integrations (Node.js, PHP, Python, Go, Laravel, Next.js).
+description:
+  Implement payment integrations with SePay (Vietnamese payment gateway with VietQR, bank transfers, cards) and Polar
+  (global SaaS monetization platform with subscriptions, usage-based billing, automated benefits). Use when integrating
+  payment processing, implementing checkout flows, managing subscriptions, handling webhooks, processing bank transfers,
+  generating QR codes, automating benefit delivery, or building billing systems. Supports authentication (API keys,
+  OAuth2), product management, customer portals, tax compliance (Polar as MoR), and comprehensive SDK integrations
+  (Node.js, PHP, Python, Go, Laravel, Next.js).
 version: 1.0.0
 license: MIT
 ---
@@ -12,6 +18,7 @@ Implement payment processing with SePay (Vietnamese payments) and Polar (global 
 ## When to Use
 
 Use when implementing:
+
 - Payment gateway integration (checkout, processing)
 - Subscription management (trials, upgrades, billing)
 - Webhook handling (payment notifications)
@@ -25,6 +32,7 @@ Use when implementing:
 ## Platform Selection
 
 **Choose SePay for:**
+
 - Vietnamese market (VND currency)
 - Bank transfer automation
 - VietQR/NAPAS payments
@@ -32,6 +40,7 @@ Use when implementing:
 - Direct bank account monitoring
 
 **Choose Polar for:**
+
 - Global SaaS products
 - Subscription management
 - Usage-based billing
@@ -42,6 +51,7 @@ Use when implementing:
 ## Quick Reference
 
 ### SePay Integration
+
 - **Overview & Auth**: `references/sepay/overview.md` - Platform capabilities, API/OAuth2 auth, supported banks
 - **API Reference**: `references/sepay/api.md` - Endpoints, transactions, bank accounts, virtual accounts
 - **Webhooks**: `references/sepay/webhooks.md` - Setup, payload structure, verification, retry logic
@@ -50,6 +60,7 @@ Use when implementing:
 - **Best Practices**: `references/sepay/best-practices.md` - Security, patterns, monitoring
 
 ### Polar Integration
+
 - **Overview & Auth**: `references/polar/overview.md` - Platform capabilities, authentication methods, MoR concept
 - **Products & Pricing**: `references/polar/products.md` - Product types, pricing models, usage-based billing
 - **Checkouts**: `references/polar/checkouts.md` - Checkout flows, embedded checkout, links
@@ -60,6 +71,7 @@ Use when implementing:
 - **Best Practices**: `references/polar/best-practices.md` - Security, patterns, monitoring
 
 ### Integration Scripts
+
 - **SePay Webhook Verification**: `scripts/sepay-webhook-verify.js` - Verify SePay webhook authenticity
 - **Polar Webhook Verification**: `scripts/polar-webhook-verify.js` - Verify Polar webhook signatures
 - **Checkout Helper**: `scripts/checkout-helper.js` - Generate checkout sessions for both platforms
@@ -67,6 +79,7 @@ Use when implementing:
 ## Implementation Workflow
 
 ### SePay Implementation
+
 1. Load `references/sepay/overview.md` for auth setup
 2. Load `references/sepay/api.md` or `references/sepay/sdk.md` for integration
 3. Load `references/sepay/webhooks.md` for payment notifications
@@ -74,6 +87,7 @@ Use when implementing:
 5. Load `references/sepay/best-practices.md` for production readiness
 
 ### Polar Implementation
+
 1. Load `references/polar/overview.md` for auth and concepts
 2. Load `references/polar/products.md` for product setup
 3. Load `references/polar/checkouts.md` for payment flows
@@ -85,6 +99,7 @@ Use when implementing:
 ## Key Capabilities
 
 **SePay:**
+
 - Payment gateway (QR, bank transfer, cards)
 - Bank account monitoring with webhooks
 - Order-based virtual accounts
@@ -93,6 +108,7 @@ Use when implementing:
 - Rate limit: 2 calls/second
 
 **Polar:**
+
 - Merchant of Record (global tax compliance)
 - Subscription lifecycle management
 - Usage-based billing (events, meters)

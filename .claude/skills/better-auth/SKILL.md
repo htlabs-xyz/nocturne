@@ -1,13 +1,20 @@
 ---
 name: better-auth
-description: Implement authentication and authorization with Better Auth - a framework-agnostic TypeScript authentication framework. Features include email/password authentication with verification, OAuth providers (Google, GitHub, Discord, etc.), two-factor authentication (TOTP, SMS), passkeys/WebAuthn support, session management, role-based access control (RBAC), rate limiting, and database adapters. Use when adding authentication to applications, implementing OAuth flows, setting up 2FA/MFA, managing user sessions, configuring authorization rules, or building secure authentication systems for web applications.
+description:
+  Implement authentication and authorization with Better Auth - a framework-agnostic TypeScript authentication
+  framework. Features include email/password authentication with verification, OAuth providers (Google, GitHub, Discord,
+  etc.), two-factor authentication (TOTP, SMS), passkeys/WebAuthn support, session management, role-based access control
+  (RBAC), rate limiting, and database adapters. Use when adding authentication to applications, implementing OAuth
+  flows, setting up 2FA/MFA, managing user sessions, configuring authorization rules, or building secure authentication
+  systems for web applications.
 license: MIT
 version: 2.0.0
 ---
 
 # Better Auth Skill
 
-Better Auth is comprehensive, framework-agnostic authentication/authorization framework for TypeScript with built-in email/password, social OAuth, and powerful plugin ecosystem for advanced features.
+Better Auth is comprehensive, framework-agnostic authentication/authorization framework for TypeScript with built-in
+email/password, social OAuth, and powerful plugin ecosystem for advanced features.
 
 ## When to Use
 
@@ -30,6 +37,7 @@ npm install better-auth
 ### Environment Setup
 
 Create `.env`:
+
 ```env
 BETTER_AUTH_SECRET=<generated-secret-32-chars-min>
 BETTER_AUTH_URL=http://localhost:3000
@@ -40,7 +48,7 @@ BETTER_AUTH_URL=http://localhost:3000
 Create `auth.ts` (root, lib/, utils/, or under src/app/server/):
 
 ```ts
-import { betterAuth } from "better-auth";
+import { betterAuth } from 'better-auth';
 
 export const auth = betterAuth({
   database: {
@@ -48,14 +56,14 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true
+    autoSignIn: true,
   },
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -69,10 +77,11 @@ npx @better-auth/cli migrate   # Apply migrations (Kysely only)
 ### Mount API Handler
 
 **Next.js App Router:**
+
 ```ts
 // app/api/auth/[...all]/route.ts
-import { auth } from "@/lib/auth";
-import { toNextJsHandler } from "better-auth/next-js";
+import { auth } from '@/lib/auth';
+import { toNextJsHandler } from 'better-auth/next-js';
 
 export const { POST, GET } = toNextJsHandler(auth);
 ```
@@ -84,10 +93,10 @@ export const { POST, GET } = toNextJsHandler(auth);
 Create `auth-client.ts`:
 
 ```ts
-import { createAuthClient } from "better-auth/client";
+import { createAuthClient } from 'better-auth/client';
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000"
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
 });
 ```
 
@@ -96,19 +105,19 @@ export const authClient = createAuthClient({
 ```ts
 // Sign up
 await authClient.signUp.email({
-  email: "user@example.com",
-  password: "secure123",
-  name: "John Doe"
+  email: 'user@example.com',
+  password: 'secure123',
+  name: 'John Doe',
 });
 
 // Sign in
 await authClient.signIn.email({
-  email: "user@example.com",
-  password: "secure123"
+  email: 'user@example.com',
+  password: 'secure123',
 });
 
 // OAuth
-await authClient.signIn.social({ provider: "github" });
+await authClient.signIn.social({ provider: 'github' });
 
 // Session
 const { data: session } = authClient.useSession(); // React/Vue/Svelte
@@ -117,43 +126,48 @@ const { data: session } = await authClient.getSession(); // Vanilla JS
 
 ## Feature Selection Matrix
 
-| Feature | Plugin Required | Use Case | Reference |
-|---------|----------------|----------|-----------|
-| Email/Password | No (built-in) | Basic auth | [email-password-auth.md](./references/email-password-auth.md) |
-| OAuth (GitHub, Google, etc.) | No (built-in) | Social login | [oauth-providers.md](./references/oauth-providers.md) |
-| Email Verification | No (built-in) | Verify email addresses | [email-password-auth.md](./references/email-password-auth.md#email-verification) |
-| Password Reset | No (built-in) | Forgot password flow | [email-password-auth.md](./references/email-password-auth.md#password-reset) |
-| Two-Factor Auth (2FA/TOTP) | Yes (`twoFactor`) | Enhanced security | [advanced-features.md](./references/advanced-features.md#two-factor-authentication) |
-| Passkeys/WebAuthn | Yes (`passkey`) | Passwordless auth | [advanced-features.md](./references/advanced-features.md#passkeys-webauthn) |
-| Magic Link | Yes (`magicLink`) | Email-based login | [advanced-features.md](./references/advanced-features.md#magic-link) |
-| Username Auth | Yes (`username`) | Username login | [email-password-auth.md](./references/email-password-auth.md#username-authentication) |
-| Organizations/Multi-tenant | Yes (`organization`) | Team/org features | [advanced-features.md](./references/advanced-features.md#organizations) |
-| Rate Limiting | No (built-in) | Prevent abuse | [advanced-features.md](./references/advanced-features.md#rate-limiting) |
-| Session Management | No (built-in) | User sessions | [advanced-features.md](./references/advanced-features.md#session-management) |
+| Feature                      | Plugin Required      | Use Case               | Reference                                                                             |
+| ---------------------------- | -------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| Email/Password               | No (built-in)        | Basic auth             | [email-password-auth.md](./references/email-password-auth.md)                         |
+| OAuth (GitHub, Google, etc.) | No (built-in)        | Social login           | [oauth-providers.md](./references/oauth-providers.md)                                 |
+| Email Verification           | No (built-in)        | Verify email addresses | [email-password-auth.md](./references/email-password-auth.md#email-verification)      |
+| Password Reset               | No (built-in)        | Forgot password flow   | [email-password-auth.md](./references/email-password-auth.md#password-reset)          |
+| Two-Factor Auth (2FA/TOTP)   | Yes (`twoFactor`)    | Enhanced security      | [advanced-features.md](./references/advanced-features.md#two-factor-authentication)   |
+| Passkeys/WebAuthn            | Yes (`passkey`)      | Passwordless auth      | [advanced-features.md](./references/advanced-features.md#passkeys-webauthn)           |
+| Magic Link                   | Yes (`magicLink`)    | Email-based login      | [advanced-features.md](./references/advanced-features.md#magic-link)                  |
+| Username Auth                | Yes (`username`)     | Username login         | [email-password-auth.md](./references/email-password-auth.md#username-authentication) |
+| Organizations/Multi-tenant   | Yes (`organization`) | Team/org features      | [advanced-features.md](./references/advanced-features.md#organizations)               |
+| Rate Limiting                | No (built-in)        | Prevent abuse          | [advanced-features.md](./references/advanced-features.md#rate-limiting)               |
+| Session Management           | No (built-in)        | User sessions          | [advanced-features.md](./references/advanced-features.md#session-management)          |
 
 ## Auth Method Selection Guide
 
 **Choose Email/Password when:**
+
 - Building standard web app with traditional auth
 - Need full control over user credentials
 - Targeting users who prefer email-based accounts
 
 **Choose OAuth when:**
+
 - Want quick signup with minimal friction
 - Users already have social accounts
 - Need access to social profile data
 
 **Choose Passkeys when:**
+
 - Want passwordless experience
 - Targeting modern browsers/devices
 - Security is top priority
 
 **Choose Magic Link when:**
+
 - Want passwordless without WebAuthn complexity
 - Targeting email-first users
 - Need temporary access links
 
 **Combine Multiple Methods when:**
+
 - Want flexibility for different user preferences
 - Building enterprise apps with various auth requirements
 - Need progressive enhancement (start simple, add more options)
@@ -161,6 +175,7 @@ const { data: session } = await authClient.getSession(); // Vanilla JS
 ## Core Architecture
 
 Better Auth uses client-server architecture:
+
 1. **Server** (`better-auth`): Handles auth logic, database ops, API routes
 2. **Client** (`better-auth/client`): Provides hooks/methods for frontend
 3. **Plugins**: Extend both server/client functionality
@@ -185,12 +200,16 @@ Better Auth uses client-server architecture:
 ## Reference Documentation
 
 ### Core Authentication
-- [Email/Password Authentication](./references/email-password-auth.md) - Email/password setup, verification, password reset, username auth
+
+- [Email/Password Authentication](./references/email-password-auth.md) - Email/password setup, verification, password
+  reset, username auth
 - [OAuth Providers](./references/oauth-providers.md) - Social login setup, provider configuration, token management
 - [Database Integration](./references/database-integration.md) - Database adapters, schema setup, migrations
 
 ### Advanced Features
-- [Advanced Features](./references/advanced-features.md) - 2FA/MFA, passkeys, magic links, organizations, rate limiting, session management
+
+- [Advanced Features](./references/advanced-features.md) - 2FA/MFA, passkeys, magic links, organizations, rate limiting,
+  session management
 
 ## Scripts
 

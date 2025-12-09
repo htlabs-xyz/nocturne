@@ -20,17 +20,9 @@ const quaternion = new THREE.Quaternion();
 const scale = new THREE.Vector3(1, 1, 1);
 
 for (let i = 0; i < 10000; i++) {
-  position.set(
-    Math.random() * 100 - 50,
-    Math.random() * 100 - 50,
-    Math.random() * 100 - 50
-  );
+  position.set(Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 100 - 50);
 
-  rotation.set(
-    Math.random() * Math.PI,
-    Math.random() * Math.PI,
-    Math.random() * Math.PI
-  );
+  rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
 
   quaternion.setFromEuler(rotation);
   matrix.compose(position, quaternion, scale);
@@ -41,10 +33,7 @@ mesh.instanceMatrix.needsUpdate = true;
 scene.add(mesh);
 
 // Per-instance colors
-mesh.instanceColor = new THREE.InstancedBufferAttribute(
-  new Float32Array(10000 * 3),
-  3
-);
+mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(10000 * 3), 3);
 
 for (let i = 0; i < 10000; i++) {
   mesh.setColorAt(i, new THREE.Color(Math.random(), Math.random(), Math.random()));
@@ -94,10 +83,7 @@ object.frustumCulled = false;
 // Manually test if in view
 const frustum = new THREE.Frustum();
 const cameraViewProjectionMatrix = new THREE.Matrix4();
-cameraViewProjectionMatrix.multiplyMatrices(
-  camera.projectionMatrix,
-  camera.matrixWorldInverse
-);
+cameraViewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
 frustum.setFromProjectionMatrix(cameraViewProjectionMatrix);
 
 if (frustum.intersectsObject(object)) {
@@ -116,7 +102,7 @@ const mergedGeometry = mergeGeometries(geometries);
 const mesh = new THREE.Mesh(mergedGeometry, material);
 
 // Dispose old geometries
-geometries.forEach(g => g.dispose());
+geometries.forEach((g) => g.dispose());
 
 // Simplify geometry
 import { SimplifyModifier } from 'three/addons/modifiers/SimplifyModifier.js';
@@ -163,12 +149,12 @@ const mesh3 = new THREE.Mesh(geometry3, sharedMaterial);
 
 ```javascript
 // Reduce shadow map resolution
-light.shadow.mapSize.width = 1024;  // instead of 2048
+light.shadow.mapSize.width = 1024; // instead of 2048
 light.shadow.mapSize.height = 1024;
 
 // Limit shadow camera frustum
 light.shadow.camera.near = 0.5;
-light.shadow.camera.far = 50;  // only cast shadows within this range
+light.shadow.camera.far = 50; // only cast shadows within this range
 light.shadow.camera.left = -10;
 light.shadow.camera.right = 10;
 
@@ -185,8 +171,8 @@ renderer.shadowMap.type = THREE.PCFShadowMap; // instead of PCFSoftShadowMap
 ```javascript
 // Lower resolution for post-processing
 const renderTarget = new THREE.WebGLRenderTarget(
-  window.innerWidth * 0.5,  // half resolution
-  window.innerHeight * 0.5
+  window.innerWidth * 0.5, // half resolution
+  window.innerHeight * 0.5,
 );
 
 // Appropriate pixel format

@@ -7,35 +7,35 @@ Better Auth plugins extend functionality beyond basic authentication.
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { twoFactor } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { twoFactor } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
     twoFactor({
-      issuer: "YourAppName", // TOTP issuer name
+      issuer: 'YourAppName', // TOTP issuer name
       otpOptions: {
         period: 30, // OTP validity period (seconds)
         digits: 6, // OTP length
-      }
-    })
-  ]
+      },
+    }),
+  ],
 });
 ```
 
 ### Client Setup
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { twoFactorClient } from "better-auth/client/plugins";
+import { createAuthClient } from 'better-auth/client';
+import { twoFactorClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
   plugins: [
     twoFactorClient({
-      twoFactorPage: "/two-factor", // Redirect to 2FA verification page
-      redirect: true // Auto-redirect if 2FA required
-    })
-  ]
+      twoFactorPage: '/two-factor', // Redirect to 2FA verification page
+      redirect: true, // Auto-redirect if 2FA required
+    }),
+  ],
 });
 ```
 
@@ -44,7 +44,7 @@ export const authClient = createAuthClient({
 ```ts
 // Enable TOTP
 const { data } = await authClient.twoFactor.enable({
-  password: "userPassword" // Verify user identity
+  password: 'userPassword', // Verify user identity
 });
 
 // data contains QR code URI for authenticator app
@@ -56,8 +56,8 @@ const backupCodes = data.backupCodes; // Save these securely
 
 ```ts
 await authClient.twoFactor.verifyTOTP({
-  code: "123456",
-  trustDevice: true // Skip 2FA on this device for 30 days
+  code: '123456',
+  trustDevice: true, // Skip 2FA on this device for 30 days
 });
 ```
 
@@ -65,7 +65,7 @@ await authClient.twoFactor.verifyTOTP({
 
 ```ts
 await authClient.twoFactor.disable({
-  password: "userPassword"
+  password: 'userPassword',
 });
 ```
 
@@ -74,12 +74,12 @@ await authClient.twoFactor.disable({
 ```ts
 // Generate new backup codes
 const { data } = await authClient.twoFactor.generateBackupCodes({
-  password: "userPassword"
+  password: 'userPassword',
 });
 
 // Use backup code instead of TOTP
 await authClient.twoFactor.verifyBackupCode({
-  code: "backup-code-123"
+  code: 'backup-code-123',
 });
 ```
 
@@ -88,27 +88,27 @@ await authClient.twoFactor.verifyBackupCode({
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { passkey } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { passkey } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
     passkey({
-      rpName: "YourApp", // Relying Party name
-      rpID: "yourdomain.com" // Your domain
-    })
-  ]
+      rpName: 'YourApp', // Relying Party name
+      rpID: 'yourdomain.com', // Your domain
+    }),
+  ],
 });
 ```
 
 ### Client Setup
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { passkeyClient } from "better-auth/client/plugins";
+import { createAuthClient } from 'better-auth/client';
+import { passkeyClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
-  plugins: [passkeyClient()]
+  plugins: [passkeyClient()],
 });
 ```
 
@@ -117,7 +117,7 @@ export const authClient = createAuthClient({
 ```ts
 // User must be authenticated first
 await authClient.passkey.register({
-  name: "My Laptop" // Optional: name for this passkey
+  name: 'My Laptop', // Optional: name for this passkey
 });
 ```
 
@@ -138,7 +138,7 @@ const { data } = await authClient.passkey.list();
 
 ```ts
 await authClient.passkey.delete({
-  id: "passkey-id"
+  id: 'passkey-id',
 });
 ```
 
@@ -147,8 +147,8 @@ await authClient.passkey.delete({
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { magicLink } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { magicLink } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
@@ -156,24 +156,24 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, url, token }) => {
         await sendEmail({
           to: email,
-          subject: "Sign in to YourApp",
-          html: `Click <a href="${url}">here</a> to sign in.`
+          subject: 'Sign in to YourApp',
+          html: `Click <a href="${url}">here</a> to sign in.`,
         });
       },
       expiresIn: 300, // Link expires in 5 minutes (seconds)
-    })
-  ]
+    }),
+  ],
 });
 ```
 
 ### Client Setup
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { magicLinkClient } from "better-auth/client/plugins";
+import { createAuthClient } from 'better-auth/client';
+import { magicLinkClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
-  plugins: [magicLinkClient()]
+  plugins: [magicLinkClient()],
 });
 ```
 
@@ -181,8 +181,8 @@ export const authClient = createAuthClient({
 
 ```ts
 await authClient.magicLink.sendMagicLink({
-  email: "user@example.com",
-  callbackURL: "/dashboard"
+  email: 'user@example.com',
+  callbackURL: '/dashboard',
 });
 ```
 
@@ -192,7 +192,7 @@ await authClient.magicLink.sendMagicLink({
 // Called automatically when user clicks link
 // Token in URL query params handled by Better Auth
 await authClient.magicLink.verify({
-  token: "token-from-url"
+  token: 'token-from-url',
 });
 ```
 
@@ -201,28 +201,28 @@ await authClient.magicLink.verify({
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { organization } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { organization } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
     organization({
       allowUserToCreateOrganization: true,
       organizationLimit: 5, // Max orgs per user
-      creatorRole: "owner" // Role for org creator
-    })
-  ]
+      creatorRole: 'owner', // Role for org creator
+    }),
+  ],
 });
 ```
 
 ### Client Setup
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { organizationClient } from "better-auth/client/plugins";
+import { createAuthClient } from 'better-auth/client';
+import { organizationClient } from 'better-auth/client/plugins';
 
 export const authClient = createAuthClient({
-  plugins: [organizationClient()]
+  plugins: [organizationClient()],
 });
 ```
 
@@ -230,11 +230,11 @@ export const authClient = createAuthClient({
 
 ```ts
 await authClient.organization.create({
-  name: "Acme Corp",
-  slug: "acme", // Unique slug
+  name: 'Acme Corp',
+  slug: 'acme', // Unique slug
   metadata: {
-    industry: "Technology"
-  }
+    industry: 'Technology',
+  },
 });
 ```
 
@@ -242,10 +242,10 @@ await authClient.organization.create({
 
 ```ts
 await authClient.organization.inviteMember({
-  organizationId: "org-id",
-  email: "user@example.com",
-  role: "member", // owner, admin, member
-  message: "Join our team!" // Optional
+  organizationId: 'org-id',
+  email: 'user@example.com',
+  role: 'member', // owner, admin, member
+  message: 'Join our team!', // Optional
 });
 ```
 
@@ -253,7 +253,7 @@ await authClient.organization.inviteMember({
 
 ```ts
 await authClient.organization.acceptInvitation({
-  invitationId: "invitation-id"
+  invitationId: 'invitation-id',
 });
 ```
 
@@ -268,9 +268,9 @@ const { data } = await authClient.organization.list();
 
 ```ts
 await authClient.organization.updateMemberRole({
-  organizationId: "org-id",
-  userId: "user-id",
-  role: "admin"
+  organizationId: 'org-id',
+  userId: 'user-id',
+  role: 'admin',
 });
 ```
 
@@ -278,8 +278,8 @@ await authClient.organization.updateMemberRole({
 
 ```ts
 await authClient.organization.removeMember({
-  organizationId: "org-id",
-  userId: "user-id"
+  organizationId: 'org-id',
+  userId: 'user-id',
 });
 ```
 
@@ -287,7 +287,7 @@ await authClient.organization.removeMember({
 
 ```ts
 await authClient.organization.delete({
-  organizationId: "org-id"
+  organizationId: 'org-id',
 });
 ```
 
@@ -302,9 +302,9 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // Update session every 24 hours
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60 // Cache for 5 minutes
-    }
-  }
+      maxAge: 5 * 60, // Cache for 5 minutes
+    },
+  },
 });
 ```
 
@@ -312,11 +312,11 @@ export const auth = betterAuth({
 
 ```ts
 // Next.js
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { auth } from '@/lib/auth';
+import { headers } from 'next/headers';
 
 const session = await auth.api.getSession({
-  headers: await headers()
+  headers: await headers(),
 });
 
 if (!session) {
@@ -328,7 +328,7 @@ if (!session) {
 
 ```tsx
 // React
-import { authClient } from "@/lib/auth-client";
+import { authClient } from '@/lib/auth-client';
 
 function UserProfile() {
   const { data: session, isPending, error } = authClient.useSession();
@@ -352,7 +352,7 @@ const { data: sessions } = await authClient.listSessions();
 
 ```ts
 await authClient.revokeSession({
-  sessionId: "session-id"
+  sessionId: 'session-id',
 });
 ```
 
@@ -372,32 +372,32 @@ export const auth = betterAuth({
     enabled: true,
     window: 60, // Time window in seconds
     max: 10, // Max requests per window
-    storage: "memory", // "memory" or "database"
+    storage: 'memory', // "memory" or "database"
     customRules: {
-      "/api/auth/sign-in": {
+      '/api/auth/sign-in': {
         window: 60,
-        max: 5 // Stricter limit for sign-in
+        max: 5, // Stricter limit for sign-in
       },
-      "/api/auth/sign-up": {
+      '/api/auth/sign-up': {
         window: 3600,
-        max: 3 // 3 signups per hour
-      }
-    }
-  }
+        max: 3, // 3 signups per hour
+      },
+    },
+  },
 });
 ```
 
 ### Custom Rate Limiter
 
 ```ts
-import { betterAuth } from "better-auth";
+import { betterAuth } from 'better-auth';
 
 export const auth = betterAuth({
   rateLimit: {
     enabled: true,
     customLimiter: async ({ request, limit }) => {
       // Custom rate limiting logic
-      const ip = request.headers.get("x-forwarded-for");
+      const ip = request.headers.get('x-forwarded-for');
       const key = `ratelimit:${ip}`;
 
       // Use Redis, etc.
@@ -407,10 +407,10 @@ export const auth = betterAuth({
       }
 
       if (count > limit.max) {
-        throw new Error("Rate limit exceeded");
+        throw new Error('Rate limit exceeded');
       }
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -421,11 +421,11 @@ Track users before they sign up.
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { anonymous } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { anonymous } from 'better-auth/plugins';
 
 export const auth = betterAuth({
-  plugins: [anonymous()]
+  plugins: [anonymous()],
 });
 ```
 
@@ -437,9 +437,9 @@ const { data } = await authClient.signIn.anonymous();
 
 // Convert to full account
 await authClient.signUp.email({
-  email: "user@example.com",
-  password: "password123",
-  linkAnonymousSession: true // Link anonymous data
+  email: 'user@example.com',
+  password: 'password123',
+  linkAnonymousSession: true, // Link anonymous data
 });
 ```
 
@@ -450,8 +450,8 @@ One-time password via email (passwordless).
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { emailOTP } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { emailOTP } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
@@ -459,14 +459,14 @@ export const auth = betterAuth({
       sendVerificationOTP: async ({ email, otp }) => {
         await sendEmail({
           to: email,
-          subject: "Your verification code",
-          text: `Your code is: ${otp}`
+          subject: 'Your verification code',
+          text: `Your code is: ${otp}`,
         });
       },
       expiresIn: 300, // 5 minutes
-      length: 6 // OTP length
-    })
-  ]
+      length: 6, // OTP length
+    }),
+  ],
 });
 ```
 
@@ -475,13 +475,13 @@ export const auth = betterAuth({
 ```ts
 // Send OTP to email
 await authClient.emailOTP.sendOTP({
-  email: "user@example.com"
+  email: 'user@example.com',
 });
 
 // Verify OTP
 await authClient.emailOTP.verifyOTP({
-  email: "user@example.com",
-  otp: "123456"
+  email: 'user@example.com',
+  otp: '123456',
 });
 ```
 
@@ -492,8 +492,8 @@ Requires phone number plugin.
 ### Server Setup
 
 ```ts
-import { betterAuth } from "better-auth";
-import { phoneNumber } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { phoneNumber } from 'better-auth/plugins';
 
 export const auth = betterAuth({
   plugins: [
@@ -501,9 +501,9 @@ export const auth = betterAuth({
       sendOTP: async ({ phoneNumber, otp }) => {
         // Use Twilio, AWS SNS, etc.
         await sendSMS(phoneNumber, `Your code: ${otp}`);
-      }
-    })
-  ]
+      },
+    }),
+  ],
 });
 ```
 
@@ -512,19 +512,19 @@ export const auth = betterAuth({
 ```ts
 // Sign up with phone
 await authClient.signUp.phoneNumber({
-  phoneNumber: "+1234567890",
-  password: "password123"
+  phoneNumber: '+1234567890',
+  password: 'password123',
 });
 
 // Send OTP
 await authClient.phoneNumber.sendOTP({
-  phoneNumber: "+1234567890"
+  phoneNumber: '+1234567890',
 });
 
 // Verify OTP
 await authClient.phoneNumber.verifyOTP({
-  phoneNumber: "+1234567890",
-  otp: "123456"
+  phoneNumber: '+1234567890',
+  otp: '123456',
 });
 ```
 

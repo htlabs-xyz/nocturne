@@ -16,8 +16,7 @@ Thought 6/7: Integration reveals edge case
 Thought 7/7: Final design addressing all constraints
 ```
 
-**Use for**: Complex systems where constraints emerge iteratively.
-**Key**: Each return is refinement, not restart.
+**Use for**: Complex systems where constraints emerge iteratively. **Key**: Each return is refinement, not restart.
 
 ## Hypothesis-Driven Investigation
 
@@ -32,8 +31,7 @@ Thought 5/6 [VERIFICATION]: Test Y—confirmed
 Thought 6/6 [FINAL]: Solution based on verified Y
 ```
 
-**Use for**: Debugging, root cause analysis, diagnostics.
-**Pattern**: Generate → Test → Refine → Re-test loop.
+**Use for**: Debugging, root cause analysis, diagnostics. **Pattern**: Generate → Test → Refine → Re-test loop.
 
 ## Multi-Branch Convergence
 
@@ -49,8 +47,8 @@ Thought 7/8 [CONVERGENCE]: Hybrid combining A's X with B's Y
 Thought 8/8 [FINAL]: Hybrid superior to either alone
 ```
 
-**Use for**: Complex decisions where neither option clearly best.
-**Key**: Convergence often yields better solution than either branch.
+**Use for**: Complex decisions where neither option clearly best. **Key**: Convergence often yields better solution than
+either branch.
 
 ## Progressive Context Deepening
 
@@ -68,9 +66,10 @@ Thought 8/9: Verify complete system
 Thought 9/9 [FINAL]: Integrated solution
 ```
 
-**Use for**: System design, architecture, integration problems.
-**Pattern**: Abstract → Components → Details → Interactions → Integration.
+**Use for**: System design, architecture, integration problems. **Pattern**: Abstract → Components → Details →
+Interactions → Integration.
 
 ## Reference
 
-See `advanced-strategies.md` for: Uncertainty Management, Revision Cascade Management, Meta-Thinking Calibration, Parallel Constraint Satisfaction.
+See `advanced-strategies.md` for: Uncertainty Management, Revision Cascade Management, Meta-Thinking Calibration,
+Parallel Constraint Satisfaction.

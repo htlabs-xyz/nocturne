@@ -6,13 +6,15 @@ argument-hint: [github-actions-url]
 Activate `planning` skill.
 
 ## Github Actions URL
- $ARGUMENTS
 
-Use the `planner` subagent to read the github actions logs, analyze and find the root causes of the issues, then provide a detailed plan for implementing the fixes.
+$ARGUMENTS
 
-**Output:**
-Provide at least 2 implementation approaches with clear trade-offs, and explain the pros and cons of each approach, and provide a recommended approach.
+Use the `planner` subagent to read the github actions logs, analyze and find the root causes of the issues, then provide
+a detailed plan for implementing the fixes.
 
-**IMPORTANT:** Ask the user for confirmation before implementing.
-**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing outputs.
+**Output:** Provide at least 2 implementation approaches with clear trade-offs, and explain the pros and cons of each
+approach, and provide a recommended approach.
+
+**IMPORTANT:** Ask the user for confirmation before implementing. **IMPORTANT:** Analyze the skills catalog and activate
+the skills that are needed for the task during the process. **IMPORTANT:** Sacrifice grammar for the sake of concision
+when writing outputs.

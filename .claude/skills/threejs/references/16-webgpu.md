@@ -49,12 +49,7 @@ const positionBuffer = new StorageBufferAttribute(particleCount * 3, 3);
 
 // Fill initial positions
 for (let i = 0; i < particleCount; i++) {
-  positionBuffer.setXYZ(
-    i,
-    Math.random() * 10 - 5,
-    Math.random() * 10 - 5,
-    Math.random() * 10 - 5
-  );
+  positionBuffer.setXYZ(i, Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 10 - 5);
 }
 
 // Create compute shader
@@ -95,7 +90,7 @@ const particleData = storage(
   new THREE.StorageBufferAttribute(count * 7, 7), // 7 floats per particle
   'vec3', // position
   'vec3', // velocity
-  'float' // life
+  'float', // life
 );
 
 // Access in compute shader
@@ -163,7 +158,7 @@ import { WebGPURenderTarget } from 'three/addons/renderers/webgpu/WebGPURenderTa
 
 const renderTarget = new WebGPURenderTarget(width, height, {
   count: 3, // number of render targets
-  format: THREE.RGBAFormat
+  format: THREE.RGBAFormat,
 });
 
 // Access individual textures
@@ -213,12 +208,7 @@ timestampQuery.getResult().then((duration) => {
 
 ```javascript
 // BC7 compression (higher quality)
-const texture = new THREE.CompressedTexture(
-  mipmaps,
-  width,
-  height,
-  THREE.RGBA_BPTC_Format
-);
+const texture = new THREE.CompressedTexture(mipmaps, width, height, THREE.RGBA_BPTC_Format);
 ```
 
 ### Depth Textures
@@ -285,6 +275,7 @@ fn main(@builtin(global_invocation_id) global_id: vec3u) {
 ## Browser Support
 
 As of 2025:
+
 - ✅ Chrome 113+
 - ✅ Edge 113+
 - ✅ Safari 18+ (macOS/iOS)

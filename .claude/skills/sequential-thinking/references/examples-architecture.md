@@ -91,4 +91,5 @@ Trade-offs: Learning curve for React Query (but worthwhile)
 
 ## Impact of Revision
 
-Without Thought 3 revision, might have chosen Redux for all state—significant over-engineering. Revision led to more appropriate, simpler solution.
+Without Thought 3 revision, might have chosen Redux for all state—significant over-engineering. Revision led to more
+appropriate, simpler solution.

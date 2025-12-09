@@ -5,6 +5,7 @@ Headless browser automation with Puppeteer/Playwright on Cloudflare Workers.
 ## Setup
 
 **wrangler.toml:**
+
 ```toml
 name = "browser-worker"
 main = "src/index.ts"
@@ -29,9 +30,9 @@ export default {
     await browser.close();
 
     return new Response(screenshot, {
-      headers: { 'Content-Type': 'image/png' }
+      headers: { 'Content-Type': 'image/png' },
     });
-  }
+  },
 };
 ```
 
@@ -43,7 +44,7 @@ await browser.disconnect();
 
 // Retrieve and reconnect
 const sessions = await puppeteer.sessions(env.MYBROWSER);
-const freeSession = sessions.find(s => !s.connectionId);
+const freeSession = sessions.find((s) => !s.connectionId);
 
 if (freeSession) {
   const browser = await puppeteer.connect(env.MYBROWSER, freeSession.sessionId);
@@ -75,13 +76,13 @@ await page.setContent(`
 const pdf = await page.pdf({
   format: 'A4',
   printBackground: true,
-  margin: { top: '1cm', right: '1cm', bottom: '1cm', left: '1cm' }
+  margin: { top: '1cm', right: '1cm', bottom: '1cm', left: '1cm' },
 });
 
 await browser.close();
 
 return new Response(pdf, {
-  headers: { 'Content-Type': 'application/pdf' }
+  headers: { 'Content-Type': 'application/pdf' },
 });
 ```
 
@@ -113,7 +114,7 @@ export class Browser {
     await page.close();
 
     return new Response(screenshot, {
-      headers: { 'Content-Type': 'image/png' }
+      headers: { 'Content-Type': 'image/png' },
     });
   }
 
@@ -146,14 +147,14 @@ export default {
       messages: [
         {
           role: 'system',
-          content: 'Extract top 5 article titles and URLs as JSON'
+          content: 'Extract top 5 article titles and URLs as JSON',
         },
-        { role: 'user', content: content }
-      ]
+        { role: 'user', content: content },
+      ],
     });
 
     return Response.json(response);
-  }
+  },
 };
 ```
 
@@ -169,7 +170,7 @@ export default {
       await page.goto(message.body.url);
 
       const links = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('a')).map(a => a.href);
+        return Array.from(document.querySelectorAll('a')).map((a) => a.href);
       });
 
       for (const link of links) {
@@ -181,49 +182,56 @@ export default {
     }
 
     await browser.close();
-  }
+  },
 };
 ```
 
 ## Configuration
 
 ### Timeout
+
 ```typescript
 await page.goto(url, {
-  timeout: 60000,  // 60 seconds max
-  waitUntil: 'networkidle2'
+  timeout: 60000, // 60 seconds max
+  waitUntil: 'networkidle2',
 });
 
 await page.waitForSelector('.content', { timeout: 45000 });
 ```
 
 ### Viewport
+
 ```typescript
 await page.setViewport({ width: 1920, height: 1080 });
 ```
 
 ### Screenshot Options
+
 ```typescript
 const screenshot = await page.screenshot({
-  type: 'png',       // 'png' | 'jpeg' | 'webp'
-  quality: 90,       // JPEG/WebP only
-  fullPage: true,    // Full scrollable page
-  clip: {            // Crop
-    x: 0, y: 0,
+  type: 'png', // 'png' | 'jpeg' | 'webp'
+  quality: 90, // JPEG/WebP only
+  fullPage: true, // Full scrollable page
+  clip: {
+    // Crop
+    x: 0,
+    y: 0,
     width: 800,
-    height: 600
-  }
+    height: 600,
+  },
 });
 ```
 
 ## Limits & Pricing
 
 ### Free Plan
+
 - 10 minutes/day
 - 3 concurrent browsers
 - 3 new browsers/minute
 
 ### Paid Plan
+
 - 10 hours/month included
 - 30 concurrent browsers
 - 30 new browsers/minute
@@ -231,6 +239,7 @@ const screenshot = await page.screenshot({
 - $2.00/concurrent browser overage
 
 ### Cost Optimization
+
 1. Use `disconnect()` instead of `close()`
 2. Enable Keep-Alive (10 min max)
 3. Pool tabs with browser contexts
@@ -240,22 +249,26 @@ const screenshot = await page.screenshot({
 ## Best Practices
 
 ### Session Management
+
 - Always use `disconnect()` for reuse
 - Implement session pooling
 - Track session IDs and states
 
 ### Performance
+
 - Cache content in KV
 - Use browser contexts vs multiple browsers
 - Choose appropriate `waitUntil` strategy
 - Set realistic timeouts
 
 ### Error Handling
+
 - Handle timeout errors gracefully
 - Check session availability before connecting
 - Validate responses before caching
 
 ### Security
+
 - Validate user-provided URLs
 - Implement authentication
 - Sanitize extracted content
@@ -264,28 +277,31 @@ const screenshot = await page.screenshot({
 ## Troubleshooting
 
 **Timeout Errors:**
+
 ```typescript
 await page.goto(url, {
   timeout: 60000,
-  waitUntil: 'domcontentloaded'  // Faster than networkidle2
+  waitUntil: 'domcontentloaded', // Faster than networkidle2
 });
 ```
 
 **Memory Issues:**
+
 ```typescript
-await page.close();  // Close pages
-await browser.disconnect();  // Reuse session
+await page.close(); // Close pages
+await browser.disconnect(); // Reuse session
 ```
 
-**Font Rendering:**
-Use supported fonts (Noto Sans, Roboto, etc.) or inject custom:
+**Font Rendering:** Use supported fonts (Noto Sans, Roboto, etc.) or inject custom:
+
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet" />
 ```
 
 ## Key Methods
 
 ### Puppeteer
+
 - `puppeteer.launch(binding)` - Start browser
 - `puppeteer.connect(binding, sessionId)` - Reconnect
 - `puppeteer.sessions(binding)` - List sessions

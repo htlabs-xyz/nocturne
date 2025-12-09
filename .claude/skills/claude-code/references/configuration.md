@@ -14,7 +14,9 @@ Settings are applied in order of precedence:
 ## Settings File Format
 
 ### Global Settings
+
 `~/.claude/settings.json`:
+
 ```json
 {
   "model": "claude-sonnet-4-5-20250929",
@@ -33,7 +35,9 @@ Settings are applied in order of precedence:
 ```
 
 ### Project Settings
+
 `.claude/settings.json`:
+
 ```json
 {
   "model": "claude-sonnet-4-5-20250929",
@@ -54,11 +58,13 @@ Settings are applied in order of precedence:
 ### Model Configuration
 
 **model**: Claude model to use
+
 - `claude-sonnet-4-5-20250929` (default, latest Sonnet)
 - `claude-opus-4-20250514` (Opus for complex tasks)
 - `claude-haiku-4-20250408` (Haiku for speed)
 
 **Model aliases:**
+
 - `sonnet`: Latest Claude Sonnet
 - `opus`: Latest Claude Opus
 - `haiku`: Latest Claude Haiku
@@ -73,6 +79,7 @@ Settings are applied in order of precedence:
 ### Token Settings
 
 **maxTokens**: Maximum tokens in response
+
 - Default: 8192
 - Range: 1-200000
 
@@ -83,6 +90,7 @@ Settings are applied in order of precedence:
 ```
 
 **temperature**: Randomness in responses
+
 - Default: 1.0
 - Range: 0.0-1.0
 - Lower = more focused, higher = more creative
@@ -108,6 +116,7 @@ Settings are applied in order of precedence:
 ```
 
 **Options:**
+
 - `enabled`: Enable extended thinking
 - `budget`: Token budget for thinking (default: 10000)
 - `mode`: `auto` | `manual` | `disabled`
@@ -120,20 +129,15 @@ Filesystem and network isolation:
 {
   "sandboxing": {
     "enabled": true,
-    "allowedPaths": [
-      "/workspace",
-      "/home/user/projects"
-    ],
+    "allowedPaths": ["/workspace", "/home/user/projects"],
     "networkAccess": "restricted",
-    "allowedDomains": [
-      "api.example.com",
-      "*.trusted.com"
-    ]
+    "allowedDomains": ["api.example.com", "*.trusted.com"]
   }
 }
 ```
 
 **Options:**
+
 - `enabled`: Enable sandboxing
 - `allowedPaths`: Filesystem access paths
 - `networkAccess`: `full` | `restricted` | `none`
@@ -154,6 +158,7 @@ Control how Claude remembers context:
 ```
 
 **location options:**
+
 - `global`: Share memory across all projects
 - `project`: Project-specific memory
 - `none`: Disable memory
@@ -171,6 +176,7 @@ Customize Claude's behavior:
 ```
 
 **Built-in styles:**
+
 - `default`: Standard coding assistant
 - `technical-writer`: Documentation focus
 - `code-reviewer`: Review-focused
@@ -225,21 +231,25 @@ claude --model opusplan "plan authentication system"
 ### Model Selection Guide
 
 **Sonnet** (claude-sonnet-4-5-20250929):
+
 - Balanced performance and cost
 - Default choice for most tasks
 - Good for general development
 
 **Opus** (claude-opus-4-20250514):
+
 - Highest capability
 - Complex reasoning and planning
 - Use for architecture, design, complex debugging
 
 **Haiku** (claude-haiku-4-20250408):
+
 - Fastest, most cost-effective
 - Simple tasks (typos, formatting)
 - High-volume operations
 
 **opusplan**:
+
 - Opus + extended thinking
 - Deep planning and analysis
 - Architecture decisions
@@ -254,6 +264,7 @@ Create `~/.claude/output-styles/my-style.md`:
 You are a senior software architect focused on scalability.
 
 Guidelines:
+
 - Prioritize performance and scalability
 - Consider distributed systems patterns
 - Include monitoring and observability
@@ -268,6 +279,7 @@ claude --output-style my-style
 ```
 
 Or in settings:
+
 ```json
 {
   "outputStyle": "my-style"
@@ -277,10 +289,12 @@ Or in settings:
 ### Example Output Styles
 
 **technical-writer.md:**
+
 ```markdown
 You are a technical writer creating clear documentation.
 
 Guidelines:
+
 - Use simple, clear language
 - Provide examples
 - Structure with headings
@@ -289,10 +303,12 @@ Guidelines:
 ```
 
 **code-reviewer.md:**
+
 ```markdown
 You are a senior code reviewer.
 
 Guidelines:
+
 - Check for bugs and edge cases
 - Review security vulnerabilities
 - Assess performance implications
@@ -303,12 +319,14 @@ Guidelines:
 ## Environment Variables
 
 ### API Configuration
+
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-xxxxx
 export ANTHROPIC_BASE_URL=https://api.anthropic.com
 ```
 
 ### Proxy Configuration
+
 ```bash
 export HTTP_PROXY=http://proxy.company.com:8080
 export HTTPS_PROXY=http://proxy.company.com:8080
@@ -316,11 +334,13 @@ export NO_PROXY=localhost,127.0.0.1
 ```
 
 ### Custom CA Certificates
+
 ```bash
 export NODE_EXTRA_CA_CERTS=/path/to/ca-bundle.crt
 ```
 
 ### Debug Mode
+
 ```bash
 export CLAUDE_DEBUG=1
 export CLAUDE_LOG_LEVEL=debug
@@ -424,23 +444,27 @@ Prompt caching configuration:
 ## Best Practices
 
 ### Project Settings
+
 - Keep project-specific in `.claude/settings.json`
 - Commit to version control
 - Document custom settings
 - Share with team
 
 ### Global Settings
+
 - Personal preferences only
 - Don't override project settings unnecessarily
 - Use for API keys and auth
 
 ### Security
+
 - Never commit API keys
 - Use environment variables for secrets
 - Enable sandboxing in production
 - Restrict network access
 
 ### Performance
+
 - Use appropriate model for task
 - Set reasonable token limits
 - Enable caching
@@ -449,6 +473,7 @@ Prompt caching configuration:
 ## Troubleshooting
 
 ### Settings Not Applied
+
 ```bash
 # Check settings hierarchy
 claude config list --all
@@ -461,6 +486,7 @@ claude config reset
 ```
 
 ### Environment Variables Not Recognized
+
 ```bash
 # Verify export
 echo $ANTHROPIC_API_KEY

@@ -43,10 +43,14 @@ class ThoughtProcessor {
   saveHistory() {
     fs.writeFileSync(
       HISTORY_FILE,
-      JSON.stringify({
-        thoughtHistory: this.thoughtHistory,
-        branches: this.branches
-      }, null, 2)
+      JSON.stringify(
+        {
+          thoughtHistory: this.thoughtHistory,
+          branches: this.branches,
+        },
+        null,
+        2,
+      ),
     );
   }
 
@@ -86,7 +90,10 @@ class ThoughtProcessor {
       errors.push('Invalid revisesThought: must be a positive number');
     }
 
-    if (input.branchFromThought !== undefined && (typeof input.branchFromThought !== 'number' || input.branchFromThought < 1)) {
+    if (
+      input.branchFromThought !== undefined &&
+      (typeof input.branchFromThought !== 'number' || input.branchFromThought < 1)
+    ) {
       errors.push('Invalid branchFromThought: must be a positive number');
     }
 
@@ -108,7 +115,7 @@ class ThoughtProcessor {
       return {
         success: false,
         errors,
-        status: 'failed'
+        status: 'failed',
       };
     }
 
@@ -128,7 +135,7 @@ class ThoughtProcessor {
       branchFromThought: input.branchFromThought,
       branchId: input.branchId,
       needsMoreThoughts: input.needsMoreThoughts,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Add to history
@@ -152,7 +159,7 @@ class ThoughtProcessor {
       nextThoughtNeeded: thoughtData.nextThoughtNeeded,
       branches: Object.keys(this.branches),
       thoughtHistoryLength: this.thoughtHistory.length,
-      timestamp: thoughtData.timestamp
+      timestamp: thoughtData.timestamp,
     };
   }
 
@@ -160,7 +167,7 @@ class ThoughtProcessor {
     return {
       thoughts: this.thoughtHistory,
       branches: this.branches,
-      totalThoughts: this.thoughtHistory.length
+      totalThoughts: this.thoughtHistory.length,
     };
   }
 }
@@ -225,7 +232,7 @@ if (require.main === module) {
     revisesThought: input.revision,
     branchFromThought: input.branch,
     branchId: input.branchId,
-    needsMoreThoughts: input.needsMore
+    needsMoreThoughts: input.needsMore,
   };
 
   const result = processor.processThought(thoughtInput);

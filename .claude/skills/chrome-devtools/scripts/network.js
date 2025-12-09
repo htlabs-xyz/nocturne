@@ -16,13 +16,13 @@ async function monitorNetwork() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== 'false'
+      headless: args.headless !== 'false',
     });
 
     const page = await getPage(browser);
 
     const requests = [];
-    const filterTypes = args.types ? args.types.split(',').map(t => t.toLowerCase()) : null;
+    const filterTypes = args.types ? args.types.split(',').map((t) => t.toLowerCase()) : null;
 
     // Monitor requests
     page.on('request', (request) => {
@@ -36,7 +36,7 @@ async function monitorNetwork() {
           resourceType: resourceType,
           headers: request.headers(),
           postData: request.postData(),
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     });
@@ -54,7 +54,7 @@ async function monitorNetwork() {
             statusText: response.statusText(),
             headers: response.headers(),
             fromCache: response.fromCache(),
-            timing: response.timing()
+            timing: response.timing(),
           });
         } catch (e) {
           // Ignore errors for some response types
@@ -64,20 +64,20 @@ async function monitorNetwork() {
 
     // Navigate
     await page.goto(args.url, {
-      waitUntil: args['wait-until'] || 'networkidle2'
+      waitUntil: args['wait-until'] || 'networkidle2',
     });
 
     // Merge requests with responses
-    const combined = requests.map(req => ({
+    const combined = requests.map((req) => ({
       ...req,
-      response: responses.get(req.id) || responses.get(req.url) || null
+      response: responses.get(req.id) || responses.get(req.url) || null,
     }));
 
     const result = {
       success: true,
       url: page.url(),
       requestCount: combined.length,
-      requests: combined
+      requests: combined,
     };
 
     if (args.output) {
@@ -85,7 +85,7 @@ async function monitorNetwork() {
       outputJSON({
         success: true,
         output: args.output,
-        requestCount: combined.length
+        requestCount: combined.length,
       });
     } else {
       outputJSON(result);

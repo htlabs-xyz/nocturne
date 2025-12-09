@@ -16,7 +16,7 @@ async function measurePerformance() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== 'false'
+      headless: args.headless !== 'false',
     });
 
     const page = await getPage(browser);
@@ -28,14 +28,14 @@ async function measurePerformance() {
         categories: [
           'devtools.timeline',
           'disabled-by-default-devtools.timeline',
-          'disabled-by-default-devtools.timeline.frame'
-        ]
+          'disabled-by-default-devtools.timeline.frame',
+        ],
       });
     }
 
     // Navigate
     await page.goto(args.url, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'networkidle2',
     });
 
     // Stop tracing
@@ -54,7 +54,7 @@ async function measurePerformance() {
           FID: null,
           CLS: 0,
           FCP: null,
-          TTFB: null
+          TTFB: null,
         };
 
         // LCP
@@ -82,7 +82,7 @@ async function measurePerformance() {
         // FCP
         try {
           const paintEntries = performance.getEntriesByType('paint');
-          const fcpEntry = paintEntries.find(e => e.name === 'first-contentful-paint');
+          const fcpEntry = paintEntries.find((e) => e.name === 'first-contentful-paint');
           if (fcpEntry) {
             vitals.FCP = fcpEntry.startTime;
           }
@@ -103,12 +103,12 @@ async function measurePerformance() {
 
     // Get resource timing
     const resources = await page.evaluate(() => {
-      return performance.getEntriesByType('resource').map(r => ({
+      return performance.getEntriesByType('resource').map((r) => ({
         name: r.name,
         type: r.initiatorType,
         duration: r.duration,
         size: r.transferSize,
-        startTime: r.startTime
+        startTime: r.startTime,
       }));
     });
 
@@ -118,14 +118,14 @@ async function measurePerformance() {
       metrics: {
         ...metrics,
         JSHeapUsedSizeMB: (metrics.JSHeapUsedSize / 1024 / 1024).toFixed(2),
-        JSHeapTotalSizeMB: (metrics.JSHeapTotalSize / 1024 / 1024).toFixed(2)
+        JSHeapTotalSizeMB: (metrics.JSHeapTotalSize / 1024 / 1024).toFixed(2),
       },
       vitals: vitals,
       resources: {
         count: resources.length,
         totalDuration: resources.reduce((sum, r) => sum + r.duration, 0),
-        items: args.resources === 'true' ? resources : undefined
-      }
+        items: args.resources === 'true' ? resources : undefined,
+      },
     };
 
     if (args.trace) {

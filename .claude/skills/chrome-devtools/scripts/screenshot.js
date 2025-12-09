@@ -103,7 +103,7 @@ async function screenshot() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless !== 'false'
+      headless: args.headless !== 'false',
     });
 
     const page = await getPage(browser);
@@ -111,14 +111,14 @@ async function screenshot() {
     // Navigate if URL provided
     if (args.url) {
       await page.goto(args.url, {
-        waitUntil: args['wait-until'] || 'networkidle2'
+        waitUntil: args['wait-until'] || 'networkidle2',
       });
     }
 
     const screenshotOptions = {
       path: args.output,
       type: args.format || 'png',
-      fullPage: args['full-page'] === 'true'
+      fullPage: args['full-page'] === 'true',
     };
 
     if (args.quality) {
@@ -144,7 +144,7 @@ async function screenshot() {
       success: true,
       output: path.resolve(args.output),
       size: buffer.length,
-      url: page.url()
+      url: page.url(),
     };
 
     // Compress image if needed (unless --no-compress flag is set)
@@ -156,7 +156,8 @@ async function screenshot() {
         result.compressed = true;
         result.originalSize = compressionResult.originalSize;
         result.size = compressionResult.finalSize;
-        result.compressionRatio = ((1 - compressionResult.finalSize / compressionResult.originalSize) * 100).toFixed(2) + '%';
+        result.compressionRatio =
+          ((1 - compressionResult.finalSize / compressionResult.originalSize) * 100).toFixed(2) + '%';
       }
     }
 

@@ -1,5 +1,18 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { generateMnemonicWords, validateMnemonic, joinMnemonicWords } from '@midnight-ntwrk/wallet-sdk-hd';
+import {
+  generateMnemonicWords,
+  validateMnemonic,
+  joinMnemonicWords,
+  HDWallet,
+  Roles,
+} from '@midnight-ntwrk/wallet-sdk-hd';
+import {
+  ShieldedAddress,
+  ShieldedCoinPublicKey,
+  ShieldedEncryptionPublicKey,
+} from '@midnight-ntwrk/wallet-sdk-address-format';
+import { SecretKeys } from '@midnight-ntwrk/zswap';
+import { mnemonicToSeed } from '@scure/bip39';
 import { StorageManager } from './storage';
 import type { WalletState } from '@/shared/types/messages';
 
@@ -149,17 +162,27 @@ export class WalletManager {
       throw new Error('Invalid seed phrase length');
     }
 
-    const mockAddress = `mn_shield_${this.hashSeed(seed).substring(0, 16)}`;
-    return mockAddress;
-  }
+    const bip39Seed = await mnemonicToSeed(seed);
+    const generatedWallet = HDWallet.fromSeed(bip39Seed);
 
-  private hashSeed(seed: string): string {
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      const char = seed.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash;
+    if (generatedWallet.type !== 'seedOk') {
+      throw new Error('Error initializing HD Wallet');
     }
-    return Math.abs(hash).toString(16).padStart(16, '0');
+
+    const zswapKey = generatedWallet.hdWallet.selectAccount(0).selectRole(Roles.Zswap).deriveKeyAt(0);
+
+    if (zswapKey.type !== 'keyDerived') {
+      throw new Error('Error deriving key');
+    }
+
+    const walletSeed = zswapKey.key;
+    const secretKeys = SecretKeys.fromSeed(walletSeed);
+
+    const address = new ShieldedAddress(
+      new ShieldedCoinPublicKey(Buffer.from(secretKeys.coinPublicKey, 'hex')),
+      new ShieldedEncryptionPublicKey(Buffer.from(secretKeys.encryptionPublicKey, 'hex')),
+    );
+
+    return ShieldedAddress.codec.encode('test', address).asString();
   }
 }

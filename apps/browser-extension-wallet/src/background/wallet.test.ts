@@ -2,15 +2,62 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { WalletManager } from './wallet';
 import { clearMockStorage } from '@/test/setup';
 
+const TEST_SEED_WORDS = [
+  'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
+  'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
+  'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
+  'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'about',
+];
+
 vi.mock('@midnight-ntwrk/wallet-sdk-hd', () => ({
-  generateMnemonicWords: vi.fn(() => [
-    'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
-    'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
-    'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'abandon',
-    'abandon', 'abandon', 'abandon', 'abandon', 'abandon', 'about',
-  ]),
+  generateMnemonicWords: vi.fn(() => TEST_SEED_WORDS),
   validateMnemonic: vi.fn((seed: string) => seed.split(' ').length === 24),
   joinMnemonicWords: vi.fn((words: string[]) => words.join(' ')),
+  HDWallet: {
+    fromSeed: vi.fn(() => ({
+      type: 'seedOk',
+      hdWallet: {
+        selectAccount: vi.fn(() => ({
+          selectRole: vi.fn(() => ({
+            deriveKeyAt: vi.fn(() => ({
+              type: 'keyDerived',
+              key: new Uint8Array(32).fill(1),
+            })),
+          })),
+        })),
+      },
+    })),
+  },
+  Roles: { Zswap: 0 },
+}));
+
+vi.mock('@midnight-ntwrk/wallet-sdk-address-format', () => ({
+  ShieldedAddress: class MockShieldedAddress {
+    static codec = {
+      encode: vi.fn(() => ({ asString: () => 'testnet-02_shield_mock_address' })),
+    };
+  },
+  ShieldedCoinPublicKey: class MockShieldedCoinPublicKey {
+    constructor(_buf: Uint8Array) {}
+  },
+  ShieldedEncryptionPublicKey: class MockShieldedEncryptionPublicKey {
+    constructor(_buf: Uint8Array) {}
+  },
+}));
+
+vi.mock('@midnight-ntwrk/zswap', () => ({
+  SecretKeys: {
+    fromSeed: vi.fn(() => ({
+      coinPublicKey: '0'.repeat(64),
+      encryptionPublicKey: '0'.repeat(64),
+      coinSecretKey: '0'.repeat(64),
+      encryptionSecretKey: '0'.repeat(64),
+    })),
+  },
+}));
+
+vi.mock('@scure/bip39', () => ({
+  mnemonicToSeed: vi.fn(() => Promise.resolve(new Uint8Array(64).fill(0))),
 }));
 
 describe('WalletManager', () => {
@@ -31,7 +78,7 @@ describe('WalletManager', () => {
       expect(result.seed).toBeDefined();
       expect(result.seed.split(' ').length).toBe(24);
       expect(result.address).toBeDefined();
-      expect(result.address.startsWith('mn_shield_')).toBe(true);
+      expect(result.address).toBe('testnet-02_shield_mock_address');
     });
 
     it('should unlock wallet after creation', async () => {

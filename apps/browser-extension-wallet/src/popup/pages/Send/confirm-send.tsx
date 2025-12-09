@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Button, Card, TokenIcon, AddressDisplay } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
-import { mockTokens, mockWallet } from '../../stores/mock-data';
+import { useWalletStore } from '../../stores/wallet-store';
+import { mockTokens } from '../../stores/mock-data';
 
 export function ConfirmSend() {
   const { selectedToken, sendAmount, sendAddress, setRoute, resetSendFlow, goBack } = useUIStore();
+  const { address: walletAddress } = useWalletStore();
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -73,7 +75,7 @@ export function ConfirmSend() {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-text-muted text-sm">From</span>
-              <AddressDisplay address={mockWallet.address} className="text-text-secondary" />
+              <AddressDisplay address={walletAddress || ''} className="text-text-secondary" />
             </div>
             <div className="flex justify-between">
               <span className="text-text-muted text-sm">To</span>

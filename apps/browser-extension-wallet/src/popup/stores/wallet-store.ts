@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { createMessage } from '@/shared/types/messages';
-import type { WalletState } from '@/shared/types/messages';
+import type { WalletState, WalletBalance } from '@/shared/types/messages';
 
 interface WalletStoreState {
   hasWallet: boolean;
   isUnlocked: boolean;
   address: string | null;
+  balance: WalletBalance | null;
   isLoading: boolean;
   error: string | null;
 
@@ -51,6 +52,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
   hasWallet: false,
   isUnlocked: false,
   address: null,
+  balance: null,
   isLoading: true,
   error: null,
 
@@ -64,6 +66,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
         hasWallet: state.hasWallet,
         isUnlocked: state.isUnlocked,
         address: state.address,
+        balance: state.balance,
         isLoading: false,
       });
     } catch (error) {
@@ -131,6 +134,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
       set({
         isUnlocked: true,
         address: state.address,
+        balance: state.balance,
         isLoading: false,
       });
     } catch (error) {
@@ -149,6 +153,7 @@ export const useWalletStore = create<WalletStoreState>((set) => ({
       set({
         isUnlocked: false,
         address: null,
+        balance: null,
         isLoading: false,
       });
     } catch (error) {

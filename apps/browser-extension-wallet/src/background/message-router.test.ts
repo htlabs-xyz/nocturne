@@ -13,6 +13,51 @@ vi.mock('@midnight-ntwrk/wallet-sdk-hd', () => ({
   ]),
   validateMnemonic: vi.fn((seed: string) => seed.split(' ').length === 24),
   joinMnemonicWords: vi.fn((words: string[]) => words.join(' ')),
+  HDWallet: {
+    fromSeed: vi.fn(() => ({
+      type: 'seedOk',
+      hdWallet: {
+        selectAccount: vi.fn(() => ({
+          selectRole: vi.fn(() => ({
+            deriveKeyAt: vi.fn(() => ({
+              type: 'keyDerived',
+              key: new Uint8Array(32).fill(1),
+            })),
+          })),
+        })),
+      },
+    })),
+  },
+  Roles: { Zswap: 0 },
+}));
+
+vi.mock('@midnight-ntwrk/wallet-sdk-address-format', () => ({
+  ShieldedAddress: class MockShieldedAddress {
+    static codec = {
+      encode: vi.fn(() => ({ asString: () => 'testnet-02_shield_mock_address' })),
+    };
+  },
+  ShieldedCoinPublicKey: class MockShieldedCoinPublicKey {
+    constructor(_buf: Uint8Array) {}
+  },
+  ShieldedEncryptionPublicKey: class MockShieldedEncryptionPublicKey {
+    constructor(_buf: Uint8Array) {}
+  },
+}));
+
+vi.mock('@midnight-ntwrk/zswap', () => ({
+  SecretKeys: {
+    fromSeed: vi.fn(() => ({
+      coinPublicKey: '0'.repeat(64),
+      encryptionPublicKey: '0'.repeat(64),
+      coinSecretKey: '0'.repeat(64),
+      encryptionSecretKey: '0'.repeat(64),
+    })),
+  },
+}));
+
+vi.mock('@scure/bip39', () => ({
+  mnemonicToSeed: vi.fn(() => Promise.resolve(new Uint8Array(64).fill(0))),
 }));
 
 describe('MessageRouter', () => {

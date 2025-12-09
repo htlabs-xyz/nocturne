@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Button, Card, AddressDisplay } from '../../components';
 import { useUIStore } from '../../stores/ui-store';
-import { mockWallet } from '../../stores/mock-data';
+import { useWalletStore } from '../../stores/wallet-store';
 
 export function Receive() {
   const { goBack } = useUIStore();
+  const { address } = useWalletStore();
   const [copied, setCopied] = useState(false);
 
+  const displayAddress = address || 'No address available';
+
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(mockWallet.address);
+    if (!address) return;
+    await navigator.clipboard.writeText(address);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -60,7 +64,7 @@ export function Receive() {
 
           <div className="bg-midnight-700 rounded-xl p-3">
             <p className="text-text-muted text-xs mb-1">Your Address</p>
-            <p className="text-white text-sm font-mono break-all">{mockWallet.address}</p>
+            <p className="text-white text-sm font-mono break-all">{displayAddress}</p>
           </div>
         </Card>
 

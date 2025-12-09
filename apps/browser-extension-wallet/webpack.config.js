@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
@@ -30,17 +31,34 @@ export default (_env, argv) => ({
       },
       {
         test: /\.wasm$/,
-        type: 'asset/resource',
+        type: 'webassembly/async',
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.wasm'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+    fallback: {
+      assert: 'assert/',
+      buffer: 'buffer/',
+      process: 'process/browser',
+    },
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+      process: 'process/browser',
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(argv.mode || 'development'),
+      'process.env.NETWORK_ID': JSON.stringify(process.env.NETWORK_ID || ''),
+      'process.env.INDEXER_HTTP': JSON.stringify(process.env.INDEXER_HTTP || ''),
+      'process.env.INDEXER_WS': JSON.stringify(process.env.INDEXER_WS || ''),
+      'process.env.PROOF_SERVER': JSON.stringify(process.env.PROOF_SERVER || ''),
+      'process.env.NODE_URL': JSON.stringify(process.env.NODE_URL || ''),
+    }),
     new HtmlWebpackPlugin({
       template: './src/popup/popup.html',
       filename: 'popup.html',

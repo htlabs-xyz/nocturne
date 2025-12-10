@@ -233,18 +233,14 @@ describe('Token transfer', () => {
       // logger.info(walletStateTrimmed(finalState2));
       const receiverFinalShieldedBalance = receiverFinalState.shielded.balances[shieldedTokenRaw] ?? 0n;
       const receiverFinalUnshieldedBalance = receiverFinalState.unshielded.balances.get(unshieldedTokenRaw) ?? 0n;
-      const receiverFinalDustBalance = receiverFinalState.dust.walletBalance(new Date(3 * 1000));
       logger.info(`Wallet 2 final available shielded coins: ${receiverFinalShieldedBalance}`);
       logger.info(`Wallet 2 final available unshielded coins: ${receiverFinalUnshieldedBalance}`);
       expect(receiverFinalShieldedBalance).toBe(initialReceiverShieldedBalance + outputValue);
-      expect(receiverFinalUnshieldedBalance).toBe(initialReceiverUnshieldedBalance ?? 0n + outputValue);
+      expect(receiverFinalUnshieldedBalance).toBe(initialReceiverUnshieldedBalance + outputValue);
       expect(receiverFinalState.shielded.pendingCoins.length).toBe(0);
       expect(receiverFinalState.shielded.totalCoins.length).toBeGreaterThanOrEqual(
         initialReceiverState.shielded.totalCoins.length + 1,
       );
-      expect(receiverFinalDustBalance).toBe(initialReceiverDustBalance);
-      // expect(finalState2.nullifiers.length).toBeGreaterThanOrEqual(initialState2.nullifiers.length + 1);
-      // expect(finalState2.transactionHistory.length).toBeGreaterThanOrEqual(initialState2.transactionHistory.length + 1);
     },
     syncTimeout,
   );

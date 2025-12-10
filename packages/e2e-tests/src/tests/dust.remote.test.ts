@@ -7,6 +7,7 @@ import { logger } from './logger.js';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { createKeystore, UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { exit } from 'node:process';
+import { inspect } from 'node:util';
 
 describe('Dust tests', () => {
   if (process.env['SEED'] === undefined) {
@@ -45,7 +46,7 @@ describe('Dust tests', () => {
       logger.info(`Wallet: ${initialUnshieldedBalance} unshielded tokens`);
       logger.info(`wallet dust balance: ${initialDustBalance}`);
       logger.info(`Wallet total unshielded coins: ${initialState.unshielded.availableCoins.length}`);
-      logger.info(`output value: ${outputValue}`);
+      logger.info(inspect(initialState.unshielded.availableCoins, { depth: null }));
 
       const nightUtxos = initialState.unshielded.availableCoins.filter(
         (coin) => coin.registeredForDustGeneration === false,
@@ -70,7 +71,7 @@ describe('Dust tests', () => {
   );
 
   test(
-    'Able to deregister night tokens for dust decay',
+    'Able to deregister night tokens for dust decay @healhcheck',
     async () => {
       // allure.tag('smoke');
       // allure.tag('heanthcheck');

@@ -40,7 +40,7 @@ describe('Token transfer', () => {
   const initialFundedSecretKey = ledger.ZswapSecretKeys.fromSeed(utils.getShieldedSeed(fundedSeed));
   const receiverDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(receivingSeed));
   const fundedDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(fundedSeed));
-  const outputValue = 1n;
+  const outputValue = 10n;
   const expectedTokenHash = '02000000000000000000000000000000000000000000000000000000000000000001';
   const shieldedTokenRaw = '02000000000000000000000000000000000000000000000000000000000000000001';
   const unshieldedTokenRaw = '02000000000000000000000000000000000000000000000000000000000000000001';
@@ -137,18 +137,12 @@ describe('Token transfer', () => {
             {
               type: nativeToken1Raw,
               amount: outputValue,
-              receiverAddress: utils.getShieldedAddress(
-                NetworkId.NetworkId.Undeployed,
-                initialReceiverState.shielded.address,
-              ),
+              receiverAddress: utils.getShieldedAddress(networkId, initialReceiverState.shielded.address),
             },
             {
               type: nativeToken2Raw,
               amount: outputValue,
-              receiverAddress: utils.getShieldedAddress(
-                NetworkId.NetworkId.Undeployed,
-                initialReceiverState.shielded.address,
-              ),
+              receiverAddress: utils.getShieldedAddress(networkId, initialReceiverState.shielded.address),
             },
           ],
         },
@@ -160,17 +154,12 @@ describe('Token transfer', () => {
         outputsToCreate,
         new Date(Date.now() + 30 * 60 * 1000),
       );
-      // const signedTx = await sender.signTransaction(
-      //   txToProve.transaction,
-      //   async (payload) => await Promise.resolve(senderKeyStore.signData(payload)),
-      // );
       const provenTx = await sender.finalizeTransaction(txToProve);
       const txId = await sender.submitTransaction(provenTx);
       logger.info('txProcessing');
       logger.info('Transaction id: ' + txId);
 
       const pendingState = await utils.waitForFacadePending(sender);
-      // logger.info(utils.walletStateTrimmed(pendingState));
       expect(pendingState.shielded.balances[nativeToken1Raw] ?? 0n).toBeLessThanOrEqual(
         initialShieldedBalance - outputValue,
       );
@@ -183,9 +172,6 @@ describe('Token transfer', () => {
       expect(pendingState.shielded.pendingCoins.length).toBeGreaterThanOrEqual(1);
       expect(pendingState.unshielded.pendingCoins.length).toBe(0);
       expect(pendingState.dust.pendingCoins.length).toBeGreaterThanOrEqual(1);
-      // expect(pendingState.totalCoins.length).toBe(initialState.shielded.totalCoins.length);
-      // expect(pendingState.nullifiers.length).toBe(initialState.nullifiers.length);
-      // expect(pendingState.transactionHistory.length).toBe(initialState.transactionHistory.length);
 
       logger.info('waiting for tx in history');
       // await waitForTxInHistory(txId, sender);
@@ -215,8 +201,6 @@ describe('Token transfer', () => {
       );
       expect(finalState.unshielded.pendingCoins.length).toBe(0);
       expect(finalState.unshielded.totalCoins.length).toBeLessThanOrEqual(initialState.shielded.totalCoins.length);
-      // expect(finalState.nullifiers.length).toBeLessThanOrEqual(initialState.nullifiers.length);
-      // expect(finalState.transactionHistory.length).toBeGreaterThanOrEqual(initialState.transactionHistory.length + 1);
 
       // await waitForTxInHistory(txId, receiver);
       const finalState2 = await utils.waitForSyncFacade(receiver);
@@ -236,8 +220,6 @@ describe('Token transfer', () => {
         initialReceiverState.shielded.totalCoins.length + 1,
       );
       expect(receiverFinalDustBalance).toBe(initialReceiverDustBalance);
-      // expect(finalState2.nullifiers.length).toBeGreaterThanOrEqual(initialState2.nullifiers.length + 1);
-      // expect(finalState2.transactionHistory.length).toBeGreaterThanOrEqual(initialState2.transactionHistory.length + 1);
     },
     syncTimeout,
   );

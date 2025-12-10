@@ -56,3 +56,5 @@ GoogleService-Info.plist
 
 .mcp.json
 .gemini/*
+
+.venv

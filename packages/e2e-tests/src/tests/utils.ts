@@ -592,6 +592,10 @@ export const getDustSeed = (seed: string): Uint8Array<ArrayBufferLike> => {
   return derivationResult.key;
 };
 
+export const sleep = (secs: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, secs * 1000));
+};
+
 export const tNightAmount = (amount: bigint): bigint => amount * 10n ** 6n;
 
 export const isArrayUnique = (arr: any[]) => Array.isArray(arr) && new Set(arr).size === arr.length; // eslint-disable-line @typescript-eslint/no-explicit-any

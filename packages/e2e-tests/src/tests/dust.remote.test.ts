@@ -20,14 +20,13 @@ describe('Dust tests', () => {
   const walletDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(seed));
   const unshieldedTokenRaw = ledger.unshieldedToken().raw;
   const timeout = 240_000;
-  const outputValue = 100n * 10n ** 6n;
   let walletFacade: WalletFacade;
   let walletKeystore: UnshieldedKeystore;
 
   beforeAll(async () => {
     const fixture = getFixture();
     const networkId = fixture.getNetworkId();
-    walletFacade = await utils.buildWalletFacade(seed, fixture);
+    walletFacade = utils.buildWalletFacade(seed, fixture);
 
     walletKeystore = createKeystore(utils.getUnshieldedSeed(seed), networkId);
     await walletFacade.start(walletSecretKey, walletDustSecretKey);
@@ -37,11 +36,11 @@ describe('Dust tests', () => {
     await utils.closeWallet(walletFacade);
   }, 20_000);
 
-  test.only(
+  test(
     'Able to register Night tokens for Dust generation @healthcheck',
     async () => {
       const initialState = await utils.waitForSyncFacade(walletFacade);
-      const initialUnshieldedBalance = initialState.unshielded.balances.get(unshieldedTokenRaw);
+      const initialUnshieldedBalance = initialState.unshielded.balances[unshieldedTokenRaw];
       const initialDustBalance = initialState.dust.walletBalance(new Date());
       logger.info(`Wallet: ${initialUnshieldedBalance} unshielded tokens`);
       logger.info(`wallet dust balance: ${initialDustBalance}`);
@@ -49,7 +48,7 @@ describe('Dust tests', () => {
       logger.info(inspect(initialState.unshielded.availableCoins, { depth: null }));
 
       const nightUtxos = initialState.unshielded.availableCoins.filter(
-        (coin) => coin.registeredForDustGeneration === false,
+        (coin) => coin.meta.registeredForDustGeneration === false,
       );
       expect(nightUtxos.length).toBeGreaterThan(0);
       logger.info(`utxo length: ${nightUtxos.length}`);
@@ -85,12 +84,13 @@ describe('Dust tests', () => {
         walletFacade.state().pipe(
           rx.tap((s) => {
             const registeredTokens = s.unshielded.availableCoins.filter(
-              (coin) => coin.registeredForDustGeneration === true,
+              (coin) => coin.meta.registeredForDustGeneration === true,
             );
             logger.info(`registered tokens: ${registeredTokens.length}`);
           }),
           rx.filter(
-            (s) => s.unshielded.availableCoins.filter((coin) => coin.registeredForDustGeneration === true).length > 0,
+            (s) =>
+              s.unshielded.availableCoins.filter((coin) => coin.meta.registeredForDustGeneration === true).length > 0,
           ),
         ),
       );
@@ -98,7 +98,7 @@ describe('Dust tests', () => {
       logger.info(`Initial Dust Balance: ${initialDustBalance}`);
 
       const registerdNightUtxos = initialWalletState.unshielded.availableCoins.filter(
-        (coin) => coin.registeredForDustGeneration === true,
+        (coin) => coin.meta.registeredForDustGeneration === true,
       );
       expect(registerdNightUtxos.length).toBeGreaterThan(0);
 

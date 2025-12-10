@@ -135,7 +135,7 @@ describe('Token transfer', () => {
       logger.info(inspect(senderInitialState.shielded.availableCoins, { depth: null }));
       logger.info(`Wallet 1 available unshielded coins: ${senderInitialState.unshielded.availableCoins.length}`);
       logger.info(inspect(senderInitialState.unshielded.availableCoins, { depth: null }));
-      logger.info(`Wallet 1 address: ${senderInitialState.unshielded.address}`);
+      logger.info(`Wallet 1 address: ${utils.getUnshieldedAddress(networkId, senderInitialState.unshielded.address)}`);
 
       const initialReceiverState = await firstValueFrom(receiver.state());
       const initialReceiverShieldedBalance = initialReceiverState.shielded.balances[shieldedTokenRaw] ?? 0n;
@@ -143,7 +143,9 @@ describe('Token transfer', () => {
       const initialReceiverDustBalance = initialReceiverState.dust.walletBalance(new Date());
       logger.info(`Wallet 2: ${initialReceiverShieldedBalance} shielded tokens`);
       logger.info(`Wallet 2: ${initialReceiverUnshieldedBalance} unshielded tokens`);
-      logger.info(`Wallet 2 address: ${initialReceiverState.unshielded.address}`);
+      logger.info(
+        `Wallet 2 address: ${utils.getUnshieldedAddress(networkId, initialReceiverState.unshielded.address)}`,
+      );
 
       const outputsToCreate: CombinedTokenTransfer[] = [
         {

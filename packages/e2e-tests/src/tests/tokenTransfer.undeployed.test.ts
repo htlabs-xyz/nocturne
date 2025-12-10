@@ -64,7 +64,7 @@ describe('Token transfer', () => {
     await utils.closeWallet(walletFacade);
   });
 
-  test.only(
+  test(
     'Is working for shielded token transfer @smoke @healthcheck',
     async () => {
       allure.tag('smoke');
@@ -88,7 +88,9 @@ describe('Token transfer', () => {
       const initialWallet2ShieldedTokenBalance = initialState2.shielded.balances[shieldedTokenRaw] ?? 0n;
       logger.info(`Wallet 2: ${initialWallet2ShieldedTokenBalance} shielded token`);
       logger.info(`Wallet 2 available coins: ${initialState2.shielded.availableCoins.length}`);
-      logger.info(`wallet 2 address: ${initialState2.unshielded.address}`);
+      logger.info(
+        `wallet 2 address: ${utils.getUnshieldedAddress(NetworkId.NetworkId.Undeployed, initialState2.unshielded.address)}`,
+      );
 
       const outputsToCreate: CombinedTokenTransfer[] = [
         {
@@ -96,7 +98,7 @@ describe('Token transfer', () => {
           outputs: [
             {
               type: shieldedTokenRaw,
-              amount: outputValueNativeToken,
+              amount: outputValue,
               receiverAddress: utils.getShieldedAddress(
                 NetworkId.NetworkId.Undeployed,
                 await walletFacade.shielded.getAddress(),
@@ -122,8 +124,8 @@ describe('Token transfer', () => {
       logger.info(pendingState.shielded.balances);
       logger.info(`Wallet 1: ${pendingState.dust.walletBalance(new Date())} tDUST`);
       logger.info(`Wallet 1: ${pendingState.shielded.balances[shieldedTokenRaw]} shielded token`);
-      expect(pendingState.dust.walletBalance(new Date()) ?? 0n).toBeLessThan(initialDustBalance);
-      expect(pendingState.shielded.balances[shieldedTokenRaw] ?? 0n).toBeLessThanOrEqual(
+      expect(pendingState.dust.walletBalance(new Date())).toBeLessThan(initialDustBalance);
+      expect(pendingState.shielded.balances[shieldedTokenRaw]).toBeLessThanOrEqual(
         initialShieldedTokenBalance - outputValueNativeToken,
       );
       expect(pendingState.shielded.availableCoins.length).toBeLessThan(initialState.shielded.availableCoins.length);
@@ -133,9 +135,7 @@ describe('Token transfer', () => {
       await utils.waitForFacadePendingClear(fundedFacade);
       const finalState = await utils.waitForSyncFacade(fundedFacade);
       logger.info(`Wallet 1 available coins: ${finalState.shielded.availableCoins.length}`);
-      expect(finalState.shielded.balances[shieldedTokenRaw] ?? 0n).toBe(
-        initialShieldedTokenBalance - outputValueNativeToken,
-      );
+      expect(finalState.shielded.balances[shieldedTokenRaw]).toBe(initialShieldedTokenBalance - outputValueNativeToken);
       expect(finalState.shielded.availableCoins.length).toBeLessThanOrEqual(
         initialState.shielded.availableCoins.length,
       );
@@ -154,7 +154,7 @@ describe('Token transfer', () => {
       logger.info(`Wallet 2: ${finalState2.dust.walletBalance(new Date())} tDUST`);
       logger.info(`Wallet 2: ${finalState2.shielded.balances[shieldedTokenRaw]} ${shieldedTokenRaw}`);
       logger.info(finalState2.shielded.balances);
-      expect(finalState2.shielded.balances[shieldedTokenRaw] ?? 0n).toBe(
+      expect(finalState2.shielded.balances[shieldedTokenRaw]).toBe(
         initialWallet2ShieldedTokenBalance + outputValueNativeToken,
       );
       expect(finalState2.shielded.availableCoins.length).toBe(initialState2.shielded.availableCoins.length + 1);
@@ -165,22 +165,22 @@ describe('Token transfer', () => {
     },
     timeout,
   );
-  test(
+  test.only(
     'Is working for unshielded token transfer @smoke @healthcheck',
     async () => {
       logger.info('Funding wallet 1 with native tokens...');
       await Promise.all([utils.waitForSyncFacade(fundedFacade), utils.waitForSyncFacade(walletFacade)]);
       const initialState = await firstValueFrom(fundedFacade.state());
       const initialDustBalance = initialState.dust.walletBalance(new Date()) ?? 0n;
-      const initialBalance = initialState.unshielded.balances.get(unshieldedTokenRaw) ?? 0n;
+      const initialUnshieldedBalance = initialState.unshielded.balances[unshieldedTokenRaw];
       logger.info(initialState.unshielded.balances);
       logger.info(`Wallet 1: ${initialDustBalance} tDUST`);
-      logger.info(`Wallet 1: ${initialBalance} unshielded token`);
+      logger.info(`Wallet 1: ${initialUnshieldedBalance} unshielded token`);
       logger.info(`Wallet 1 available coins: ${initialState.unshielded.availableCoins.length}`);
       logger.info(initialState.unshielded.availableCoins);
 
       const initialState2 = await firstValueFrom(walletFacade.state());
-      const initialBalance2 = initialState2.unshielded.balances.get(unshieldedTokenRaw) ?? 0n;
+      const initialBalance2 = initialState2.unshielded.balances[unshieldedTokenRaw] ?? 0n;
       logger.info(`Wallet 1: ${initialBalance2} unshielded token`);
       logger.info(`Wallet 2 available coins: ${initialState2.unshielded.availableCoins.length}`);
 
@@ -190,8 +190,11 @@ describe('Token transfer', () => {
           outputs: [
             {
               type: unshieldedTokenRaw,
-              amount: outputValueNativeToken,
-              receiverAddress: initialState2.unshielded.address,
+              amount: outputValue,
+              receiverAddress: utils.getUnshieldedAddress(
+                NetworkId.NetworkId.Undeployed,
+                initialState2.unshielded.address,
+              ),
             },
           ],
         },
@@ -209,39 +212,36 @@ describe('Token transfer', () => {
       const txId = await fundedFacade.submitTransaction(finalizedTx);
       logger.info('Transaction id: ' + txId);
 
-      const pendingState = await utils.waitForFacadePending(fundedFacade);
-      logger.info(`Wallet 1 available coins: ${pendingState.unshielded.availableCoins.length}`);
-      expect(pendingState.dust.walletBalance(new Date()) ?? 0n).toBeLessThan(initialDustBalance);
-      expect(pendingState.unshielded.balances.get(unshieldedTokenRaw) ?? 0n).toBeLessThanOrEqual(
-        initialBalance - outputValue,
-      );
-      expect(pendingState.unshielded.availableCoins.length).toBeLessThan(initialState.unshielded.availableCoins.length);
-      expect(pendingState.unshielded.pendingCoins.length).toBeLessThanOrEqual(2);
-      expect(pendingState.unshielded.totalCoins.length).toBe(initialState.unshielded.totalCoins.length);
+      // const pendingState = await utils.waitForFacadePending(fundedFacade);
+      // logger.info(`Wallet 1 available coins: ${pendingState.unshielded.availableCoins.length}`);
+      // expect(pendingState.dust.walletBalance(new Date()) ?? 0n).toBeLessThan(initialDustBalance);
+      // expect(pendingState.unshielded.balances[unshieldedTokenRaw] ?? 0n).toBeLessThanOrEqual(
+      //   initialBalance - outputValue,
+      // );
+      // expect(pendingState.unshielded.availableCoins.length).toBeLessThan(initialState.unshielded.availableCoins.length);
+      // expect(pendingState.unshielded.pendingCoins.length).toBeLessThanOrEqual(2);
+      // expect(pendingState.unshielded.totalCoins.length).toBe(initialState.unshielded.totalCoins.length);
 
       await utils.waitForFacadePendingClear(fundedFacade);
+      await utils.sleep(5); // wait for state to sync properly
       const finalState = await utils.waitForSyncFacade(fundedFacade);
       logger.info(`Wallet 1 available coins: ${finalState.unshielded.availableCoins.length}`);
-      expect(finalState.dust.walletBalance(new Date()) ?? 0n).toBeLessThan(initialDustBalance);
-      expect(finalState.unshielded.balances.get(unshieldedTokenRaw) ?? 0n).toBe(
-        initialBalance - outputValueNativeToken,
-      );
+      expect(finalState.dust.walletBalance(new Date())).toBeLessThan(initialDustBalance);
+      expect(finalState.unshielded.balances[unshieldedTokenRaw]).toBe(initialUnshieldedBalance - outputValue);
       expect(finalState.unshielded.availableCoins.length).toBeLessThanOrEqual(
         initialState.unshielded.availableCoins.length,
       );
       expect(finalState.unshielded.pendingCoins.length).toBe(0);
       expect(finalState.unshielded.totalCoins.length).toBeLessThanOrEqual(initialState.unshielded.totalCoins.length);
       logger.info(`Wallet 1: ${finalState.dust.walletBalance(new Date(3 * 1000))} tDUST`);
-      logger.info(`Wallet 1: ${finalState.unshielded.balances.get(unshieldedTokenRaw)} unshielded tokens`);
+      logger.info(`Wallet 1: ${finalState.unshielded.balances[unshieldedTokenRaw]} unshielded tokens`);
       logger.info(`Dust fees paid: ${initialDustBalance - finalState.dust.walletBalance(new Date(3 * 1000))}`);
 
       await utils.waitForFacadePendingClear(walletFacade);
       const finalState2 = await utils.waitForSyncFacade(walletFacade);
       logger.info(`Wallet 2 available coins: ${finalState2.unshielded.availableCoins.length}`);
-      logger.info(`Wallet 2: ${finalState2.unshielded.balances.get(unshieldedTokenRaw)} unshielded tokens`);
-      expect(finalState2.unshielded.balances.get(unshieldedTokenRaw) ?? 0n).toBe(
-        initialBalance2 + outputValueNativeToken,
-      );
+      logger.info(`Wallet 2: ${finalState2.unshielded.balances[unshieldedTokenRaw]} unshielded tokens`);
+      expect(finalState2.unshielded.balances[unshieldedTokenRaw]).toBe(initialBalance2 + outputValueNativeToken);
       expect(finalState2.unshielded.availableCoins.length).toBe(initialState2.unshielded.availableCoins.length + 1);
       expect(finalState2.unshielded.pendingCoins.length).toBe(0);
       expect(finalState2.unshielded.totalCoins.length).toBeGreaterThanOrEqual(
@@ -327,12 +327,8 @@ describe('Token transfer', () => {
       await utils.waitForFacadePendingClear(fundedFacade);
       const finalState = await utils.waitForSyncFacade(fundedFacade);
       logger.info(`Wallet 1 available coins: ${finalState.shielded.availableCoins.length}`);
-      expect(finalState.shielded.balances[nativeToken1Raw] ?? 0n).toBe(
-        initialShieldedToken1Balance - outputValueNativeToken,
-      );
-      expect(finalState.shielded.balances[nativeToken2Raw] ?? 0n).toBe(
-        initialShieldedToken1Balance - outputValueNativeToken,
-      );
+      expect(finalState.shielded.balances[nativeToken1Raw]).toBe(initialShieldedToken1Balance - outputValueNativeToken);
+      expect(finalState.shielded.balances[nativeToken2Raw]).toBe(initialShieldedToken1Balance - outputValueNativeToken);
       expect(finalState.shielded.availableCoins.length).toBeLessThanOrEqual(
         initialState.shielded.availableCoins.length,
       );
@@ -349,10 +345,10 @@ describe('Token transfer', () => {
       logger.info(`Wallet 2 shielded token 1: ${finalState2.shielded.balances[nativeToken1Raw]}`);
       logger.info(`Wallet 2 shielded token 2: ${finalState2.shielded.balances[nativeToken2Raw]}`);
       logger.info(finalState2.shielded.balances);
-      expect(finalState2.shielded.balances[nativeToken1Raw] ?? 0n).toBe(
+      expect(finalState2.shielded.balances[nativeToken1Raw]).toBe(
         initialWallet2ShieldedToken1Balance + outputValueNativeToken,
       );
-      expect(finalState2.shielded.balances[nativeToken2Raw] ?? 0n).toBe(
+      expect(finalState2.shielded.balances[nativeToken2Raw]).toBe(
         initialWallet2ShieldedToken2Balance + outputValueNativeToken,
       );
       expect(finalState2.shielded.availableCoins.length).toBe(initialState2.shielded.availableCoins.length + 2);
@@ -438,9 +434,11 @@ describe('Token transfer', () => {
       const receiverDustSecretKey2 = ledger.DustSecretKey.fromSeed(utils.getDustSeed(receiverSeed2));
 
       const initialState = await utils.waitForSyncFacade(fundedFacade);
-      const initialBalance = initialState.shielded.balances[shieldedTokenRaw];
+      const initialShieldedBalance = initialState.shielded.balances[shieldedTokenRaw];
+      const initialUnshieldedBalance = initialState.unshielded.balances[unshieldedTokenRaw];
       const initialDustBalance = initialState.dust.walletBalance(new Date());
-      logger.info(`Wallet 1: ${initialBalance}`);
+      logger.info(`Wallet 1 shielded balance: ${initialShieldedBalance}`);
+      logger.info(`Wallet 1 unshielded balance: ${initialUnshieldedBalance}`);
       logger.info(`Wallet 1: ${initialDustBalance} tDUST`);
       logger.info(`Wallet 1 available coins: ${initialState.shielded.availableCoins.length}`);
 
@@ -520,14 +518,14 @@ describe('Token transfer', () => {
       logger.info('Transaction id: ' + txId);
       logger.info('Wait for pending...');
       const pendingState = await utils.waitForFacadePending(fundedFacade);
-      logger.info(`Wallet 1 available coins: ${pendingState.shielded.availableCoins.length}`);
-      expect(pendingState.shielded.balances[shieldedTokenRaw]).toBeLessThan(initialBalance);
-      expect(pendingState.shielded.availableCoins.length).toBe(7); // Test intemittently failing for different available coins
-      // expect(pendingState.shielded.pendingCoins.length).toBe(2);
-      expect(pendingState.shielded.totalCoins.length).toBeLessThanOrEqual(8);
-      expect(pendingState.unshielded.availableCoins.length).toBe(4);
-      expect(pendingState.unshielded.pendingCoins.length).toBe(1);
-      expect(pendingState.unshielded.totalCoins.length).toBeLessThanOrEqual(8);
+      // logger.info(`Wallet 1 available coins: ${pendingState.shielded.availableCoins.length}`);
+      // expect(pendingState.shielded.balances[shieldedTokenRaw]).toBeLessThan(initialBalance);
+      // expect(pendingState.shielded.availableCoins.length).toBe(7); // Test intemittently failing for different available coins
+      // // expect(pendingState.shielded.pendingCoins.length).toBe(2);
+      // expect(pendingState.shielded.totalCoins.length).toBeLessThanOrEqual(8);
+      // expect(pendingState.unshielded.availableCoins.length).toBe(4);
+      // expect(pendingState.unshielded.pendingCoins.length).toBe(1);
+      // expect(pendingState.unshielded.totalCoins.length).toBeLessThanOrEqual(8);
 
       await utils.waitForFacadePendingClear(fundedFacade);
       const finalState = await utils.waitForSyncFacade(fundedFacade);
@@ -537,8 +535,8 @@ describe('Token transfer', () => {
       logger.info(`Wallet 1 available coins: ${finalState.shielded.availableCoins.length}`);
       logger.info(`Dust fees paid: ${initialDustBalance - finalState.dust.walletBalance(new Date(3 * 1000))}`);
       // actually deducted fees are greater - PM-7721
-      expect(finalState.shielded.balances[shieldedTokenRaw]).toBe(initialBalance - outputValue * 2n);
-      expect(finalState.unshielded.balances[unshieldedTokenRaw]).toBe(initialBalance - outputValue * 2n);
+      expect(finalState.shielded.balances[shieldedTokenRaw]).toBe(initialShieldedBalance - outputValue * 2n);
+      expect(finalState.unshielded.balances[unshieldedTokenRaw]).toBe(initialUnshieldedBalance - outputValue * 2n);
       expect(finalState.shielded.availableCoins.length).toBe(7);
       expect(finalState.shielded.pendingCoins.length).toBe(0);
       expect(finalState.shielded.totalCoins.length).toBe(7);

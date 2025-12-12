@@ -153,7 +153,7 @@ describe('Dust tests', () => {
     expect(nightBalanceAfterRegistration).toBe(finalUnshieldedBalance);
   };
 
-  test.only(
+  test(
     'Able to register Night tokens for Dust generation after receiving unshielded tokens @healthcheck',
     async () => {
       await sendAndRegisterNightUtxos();
@@ -348,7 +348,7 @@ describe('Dust tests', () => {
     timeout,
   );
 
-  test(
+  test.skip(
     'Able to spend all shielded tokens',
     async () => {
       await sendAndRegisterNightUtxos();

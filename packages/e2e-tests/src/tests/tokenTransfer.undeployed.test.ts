@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, tap } from 'rxjs';
 import { TestContainersFixture, useTestContainersFixture } from './test-fixture.js';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
@@ -222,9 +222,17 @@ describe('Token transfer', () => {
       // expect(pendingState.unshielded.pendingCoins.length).toBeLessThanOrEqual(2);
       // expect(pendingState.unshielded.totalCoins.length).toBe(initialState.unshielded.totalCoins.length);
 
-      await utils.waitForFacadePendingClear(fundedFacade);
-      await utils.sleep(5); // wait for state to sync properly
-      const finalState = await utils.waitForSyncFacade(fundedFacade);
+      // await utils.waitForFacadePendingClear(fundedFacade);
+      // const finalState = await utils.waitForSyncFacade(fundedFacade);
+      const finalState = await firstValueFrom(
+        fundedFacade.state().pipe(
+          tap((state) => {
+            const walletBalance = state.unshielded.balances[unshieldedTokenRaw];
+            logger.info(`Wallet 1 unshielded token balance: ${walletBalance}, waiting for finalized balance...`);
+          }),
+          filter((state) => state.unshielded.balances[unshieldedTokenRaw] < initialUnshieldedBalance),
+        ),
+      );
       logger.info(`Wallet 1 available coins: ${finalState.unshielded.availableCoins.length}`);
       expect(finalState.dust.walletBalance(new Date())).toBeLessThan(initialDustBalance);
       expect(finalState.unshielded.balances[unshieldedTokenRaw]).toBe(initialUnshieldedBalance - outputValue);
@@ -237,11 +245,10 @@ describe('Token transfer', () => {
       logger.info(`Wallet 1: ${finalState.unshielded.balances[unshieldedTokenRaw]} unshielded tokens`);
       logger.info(`Dust fees paid: ${initialDustBalance - finalState.dust.walletBalance(new Date(3 * 1000))}`);
 
-      await utils.waitForFacadePendingClear(walletFacade);
-      const finalState2 = await utils.waitForSyncFacade(walletFacade);
+      const finalState2 = await utils.waitForUnshieldedCoinUpdate(walletFacade, 0);
       logger.info(`Wallet 2 available coins: ${finalState2.unshielded.availableCoins.length}`);
       logger.info(`Wallet 2: ${finalState2.unshielded.balances[unshieldedTokenRaw]} unshielded tokens`);
-      expect(finalState2.unshielded.balances[unshieldedTokenRaw]).toBe(initialBalance2 + outputValueNativeToken);
+      expect(finalState2.unshielded.balances[unshieldedTokenRaw]).toBe(initialBalance2 + outputValue);
       expect(finalState2.unshielded.availableCoins.length).toBe(initialState2.unshielded.availableCoins.length + 1);
       expect(finalState2.unshielded.pendingCoins.length).toBe(0);
       expect(finalState2.unshielded.totalCoins.length).toBeGreaterThanOrEqual(
@@ -379,7 +386,7 @@ describe('Token transfer', () => {
 
       const outputsToCreate: CombinedTokenTransfer[] = [
         {
-          type: 'shielded' as const,
+          type: 'shielded',
           outputs: [
             {
               type: shieldedTokenRaw,

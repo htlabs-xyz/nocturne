@@ -41,9 +41,8 @@ describe('Token transfer', () => {
   const receiverDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(receivingSeed));
   const fundedDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(fundedSeed));
   const outputValue = 10n;
-  const expectedTokenHash = '02000000000000000000000000000000000000000000000000000000000000000001';
-  const shieldedTokenRaw = '02000000000000000000000000000000000000000000000000000000000000000001';
-  const unshieldedTokenRaw = '02000000000000000000000000000000000000000000000000000000000000000001';
+  const shieldedTokenRaw = ledger.shieldedToken().raw;
+  const unshieldedTokenRaw = ledger.unshieldedToken().raw;
   const nativeToken1Raw = '0000000000000000000000000000000000000000000000000000000000000001';
   const nativeToken2Raw = '0000000000000000000000000000000000000000000000000000000000000002';
 
@@ -74,7 +73,7 @@ describe('Token transfer', () => {
     await wallet2.start(initialReceiverSecretKey, receiverDustSecretKey);
 
     const initialState = await utils.waitForSyncFacade(wallet);
-    const initialNativeBalance = initialState.shielded.balances[expectedTokenHash] ?? 0n;
+    const initialNativeBalance = initialState.shielded.balances[nativeToken1Raw];
     logger.info(`initial balance: ${initialNativeBalance}`);
 
     if (initialNativeBalance === 0n) {
@@ -112,10 +111,12 @@ describe('Token transfer', () => {
       allure.story('Valid transfer transaction using bech32m address');
       await Promise.all([utils.waitForSyncFacade(sender), utils.waitForSyncFacade(receiver)]);
       const initialState = await firstValueFrom(sender.state());
-      const initialShieldedBalance = initialState.shielded.balances[shieldedTokenRaw];
+      const initialNative1Balance = initialState.shielded.balances[nativeToken1Raw];
+      const initialNative2Balance = initialState.shielded.balances[nativeToken2Raw];
       const initialUnshieldedBalance = initialState.unshielded.balances[unshieldedTokenRaw];
       const initialDustBalance = initialState.dust.walletBalance(new Date());
-      logger.info(`Wallet 1: ${initialShieldedBalance} shielded tokens`);
+      logger.info(`Wallet 1: ${initialNative1Balance} native 1 tokens`);
+      logger.info(`Wallet 1: ${initialNative2Balance} native 2 tokens`);
       logger.info(`Wallet 1: ${initialUnshieldedBalance} shielded tokens`);
       logger.info(`Wallet 1 available dust: ${initialDustBalance}`);
       logger.info(`Wallet 1 available shielded coins: ${initialState.shielded.availableCoins.length}`);
@@ -161,10 +162,10 @@ describe('Token transfer', () => {
 
       const pendingState = await utils.waitForFacadePending(sender);
       expect(pendingState.shielded.balances[nativeToken1Raw] ?? 0n).toBeLessThanOrEqual(
-        initialShieldedBalance - outputValue,
+        initialNative1Balance - outputValue,
       );
       expect(pendingState.shielded.balances[nativeToken2Raw] ?? 0n).toBeLessThanOrEqual(
-        initialShieldedBalance - outputValue,
+        initialNative2Balance - outputValue,
       );
       expect(pendingState.shielded.availableCoins.length).toBeLessThanOrEqual(
         initialState.shielded.availableCoins.length,

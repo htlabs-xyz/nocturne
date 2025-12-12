@@ -69,8 +69,6 @@ describe('Token transfer', () => {
     await sender.start(initialFundedShieldedSecretKey, initialFundedDustSecretKey);
     await receiver.start(initialReceiverShieldedSecretKey, initialReceiverDustSecretKey);
     logger.info('Two wallets started');
-    logger.info(`shielded token type: ${shieldedTokenRaw}`);
-    logger.info(`unshielded token type: ${unshieldedTokenRaw}`);
   }, syncTimeout);
 
   afterAll(async () => {
@@ -178,12 +176,12 @@ describe('Token transfer', () => {
       logger.info(`Wallet 1 available unshielded coins: ${initialState.unshielded.availableCoins.length}`);
 
       const initialReceiverState = await firstValueFrom(stableWallet.state());
-      const initialReceiverShieldedBalance = initialReceiverState.shielded.balances[shieldedTokenRaw];
-      const initialReceiverUnshieldedBalance = initialReceiverState.unshielded.balances[unshieldedTokenRaw];
+      const initialReceiverNativeToken1Balance = initialReceiverState.shielded.balances[nativeToken1Raw];
+      const initialReceiverNativeToken2Balance = initialReceiverState.shielded.balances[nativeToken2Raw];
       const receiverShieldedAddress = utils.getShieldedAddress(networkId, initialReceiverState.shielded.address);
       logger.info(`Receiver shielded address: ${receiverShieldedAddress}`);
-      logger.info(`Wallet 2: ${initialReceiverShieldedBalance} shielded tokens`);
-      logger.info(`Wallet 2: ${initialReceiverUnshieldedBalance} unshielded tokens`);
+      logger.info(`Wallet 2: ${initialReceiverNativeToken1Balance} native 1 tokens`);
+      logger.info(`Wallet 2: ${initialReceiverNativeToken2Balance} native 2 tokens`);
 
       const outputsToCreate: CombinedTokenTransfer[] = [
         {
@@ -226,8 +224,8 @@ describe('Token transfer', () => {
       await utils.waitForFacadePendingClear(sender);
       await utils.waitForFacadePendingClear(stableWallet);
       const finalReceiverState = await firstValueFrom(stableWallet.state());
-      expect(finalReceiverState.shielded.balances[nativeToken1Raw] ?? 0n).toBe(nativeToken1Amount);
-      expect(finalReceiverState.shielded.balances[nativeToken2Raw] ?? 0n).toBe(nativeToken2Amount);
+      expect(finalReceiverState.shielded.balances[nativeToken1Raw]).toBe(nativeToken1Amount);
+      expect(finalReceiverState.shielded.balances[nativeToken2Raw]).toBe(nativeToken2Amount);
     },
     timeout,
   );

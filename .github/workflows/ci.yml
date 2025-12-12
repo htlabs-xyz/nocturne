@@ -206,9 +206,9 @@ jobs:
       - name: Run tests
         run: yarn test
 
-      # - name: Run smoke e2e tests
-      #   run: |
-      #     yarn dlx turbo test-undeployed -- -t @smoke
+      - name: Run smoke e2e tests
+        run: |
+          yarn dlx turbo test-undeployed -- -t @smoke
 
       - name: Create allure properties
         if: success() || failure()

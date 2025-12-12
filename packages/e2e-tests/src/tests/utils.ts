@@ -378,6 +378,7 @@ export const waitForFacadePendingClear = (wallet: WalletFacade) =>
         const dustPending = state.dust.pendingCoins.length;
         logger.info(`Dust wallet pending coins: ${dustPending}, waiting for pending coins to clear...`);
       }),
+      rx.debounceTime(10_000),
       rx.filter(
         (state) =>
           // Allow progress only if there are no pending coins

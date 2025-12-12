@@ -10,6 +10,6 @@ jobs:
     name: Healthcheck tests
     uses: ./.github/workflows/e2e-tests.yml
     with:
-      network: devnet
+      network: preview
       modifier: '-t @healthcheck'
     secrets: inherit

@@ -59,7 +59,7 @@ describe('Dust tests', () => {
       expect(unregisteredUtxosNumber).toBeGreaterThan(0);
       logger.info(`utxo length: ${unregisteredUtxosNumber}`);
 
-      const [firstNightUtxo] = unregisteredNightUtxos;
+      const firstNightUtxo = unregisteredNightUtxos[0];
 
       const dustRegistrationRecipe = await walletFacade.registerNightUtxosForDustGeneration(
         [firstNightUtxo],

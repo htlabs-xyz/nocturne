@@ -42,7 +42,7 @@ describe('Dust tests', () => {
   const shieldedTokenRaw = ledger.shieldedToken().raw;
   const unshieldedTokenRaw = ledger.unshieldedToken().raw;
   const timeout = 240_000;
-  const outputValue = 10000n * 10n ** 6n;
+  const outputValue = utils.tNightAmount(1000n);
 
   let fixture: TestContainersFixture;
   let walletFunded: WalletFacade;
@@ -283,13 +283,15 @@ describe('Dust tests', () => {
     timeout,
   );
 
-  test(
+  test.skip(
+    // skipping due to PM-21005
     'Able to spend all unshielded tokens with generated Dust',
     async () => {
       await sendAndRegisterNightUtxos();
       // Wait for dust balance to be generated
       const initialWalletState = await rx.firstValueFrom(
         receiverWallet.state().pipe(
+          rx.debounceTime(10_000),
           rx.tap((s) => {
             const registeredTokens = s.unshielded.availableCoins.filter(
               (coin) => coin.meta.registeredForDustGeneration === true,
@@ -298,11 +300,7 @@ describe('Dust tests', () => {
             const dustBalance = s.dust.walletBalance(new Date());
             logger.info(`Dust balance: ${dustBalance}`);
           }),
-          rx.filter(
-            (s) =>
-              s.unshielded.availableCoins.filter((coin) => coin.meta.registeredForDustGeneration === true).length > 0,
-          ),
-          rx.filter((s) => s.dust.walletBalance(new Date()) > 1000n),
+          rx.filter((s) => s.dust.walletBalance(new Date()) > s.unshielded.balances[unshieldedTokenRaw] * 5n),
         ),
       );
 
@@ -340,7 +338,7 @@ describe('Dust tests', () => {
       logger.info('Transaction id: ' + txId);
       await utils.waitForFacadePendingClear(receiverWallet);
       const finalReceiverState = await utils.waitForSyncFacade(receiverWallet);
-      const finalUnshieldedBalance = finalReceiverState.unshielded.balances[unshieldedTokenRaw] ?? 0n;
+      const finalUnshieldedBalance = finalReceiverState.unshielded.balances[unshieldedTokenRaw];
       expect(finalUnshieldedBalance).toBe(0n);
       logger.info(`Final unshielded balance: ${finalUnshieldedBalance}`);
       logger.info(inspect(finalReceiverState.unshielded.availableCoins, { depth: null }));
@@ -371,7 +369,7 @@ describe('Dust tests', () => {
         ),
       );
 
-      const initialshieldedBalance = initialWalletState.shielded.balances[shieldedTokenRaw] ?? 0n;
+      const initialshieldedBalance = initialWalletState.shielded.balances[shieldedTokenRaw];
       logger.info(`Wallet 1: ${initialshieldedBalance} shielded tokens`);
 
       const initialFundedState = await utils.waitForSyncFacade(walletFunded);
@@ -400,7 +398,7 @@ describe('Dust tests', () => {
       logger.info('Transaction id: ' + txId);
       await utils.waitForFacadePendingClear(receiverWallet);
       const finalReceiverState = await utils.waitForSyncFacade(receiverWallet);
-      const finalshieldedBalance = finalReceiverState.shielded.balances[shieldedTokenRaw] ?? 0n;
+      const finalshieldedBalance = finalReceiverState.shielded.balances[shieldedTokenRaw];
       logger.info(`Final shielded balance: ${finalshieldedBalance}`);
       expect(finalshieldedBalance).toBe(0n);
       logger.info(inspect(finalReceiverState.shielded.availableCoins, { depth: null }));

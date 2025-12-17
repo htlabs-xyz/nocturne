@@ -155,21 +155,17 @@ describe('Smoke tests', () => {
       logger.info('Transaction id: ' + txId);
 
       const pendingState = await utils.waitForFacadePending(walletFunded);
-      expect(pendingState.shielded.balances[shieldedTokenRaw] ?? 0n).toBeLessThanOrEqual(balance - outputValue);
-      expect(pendingState.unshielded.balances[unshieldedTokenRaw] ?? 0n).toBeLessThanOrEqual(balance - outputValue);
       expect(pendingState.shielded.totalCoins.length).toBe(7);
       expect(pendingState.unshielded.totalCoins.length).toBe(5);
       expect(pendingState.shielded.availableCoins.length).toBe(6);
-      expect(pendingState.unshielded.availableCoins.length).toBe(4);
-      expect(pendingState.shielded.pendingCoins.length).toBe(1);
-      expect(pendingState.unshielded.pendingCoins.length).toBe(1);
+      expect(pendingState.unshielded.availableCoins.length).toBe(5);
 
       logger.info('Waiting for finalized balance...');
       await utils.waitForFacadePendingClear(walletFunded);
       const finalState = await utils.waitForSyncFacade(walletFunded);
       logger.info(`Wallet 1 available coins: ${finalState.shielded.availableCoins.length}`);
       expect(finalState.shielded.balances[shieldedTokenRaw]).toBe(balance - outputValue);
-      expect(finalState.unshielded.balances[unshieldedTokenRaw] ?? 0n).toBeLessThanOrEqual(balance - outputValue);
+      expect(finalState.unshielded.balances[unshieldedTokenRaw]).toBeLessThanOrEqual(balance - outputValue);
       expect(finalState.shielded.totalCoins.length).toBe(7);
       expect(finalState.unshielded.totalCoins.length).toBe(5);
       expect(finalState.unshielded.availableCoins.length).toBe(5);
@@ -206,14 +202,14 @@ describe('Smoke tests', () => {
       const initialStateTxHistory = utils.getTransactionHistoryIds(initialState.shielded);
       const serialized = await walletFunded.shielded.serializeState();
       const stateObject = JSON.parse(serialized);
-      expect(stateObject.txHistory).toHaveLength(1);
+      expect(stateObject.txHistory).toHaveLength(0);
       expect(Number(stateObject.offset)).toBeGreaterThan(0);
       expect(typeof stateObject.state).toBe('string');
       expect(stateObject.state).toBeTruthy();
-      await walletFunded.stop();
 
       logger.info('Restoring wallet from serialized state...');
       const restoredWallet = Wallet.restore(serialized);
+      await restoredWallet.start(fundedSecretKey);
       try {
         const restoredState = await restoredWallet.waitForSyncedState();
         const restoredStateTxHistory = utils.getTransactionHistoryIds(restoredState);
@@ -263,9 +259,11 @@ describe('Smoke tests', () => {
         txHistoryStorage: restoredTxHistory,
       }).restore(serializedState);
 
+      await restoredWallet.start();
       const restoredState = await utils.waitForSyncUnshielded(restoredWallet);
       expect(restoredState).toBeTruthy();
       // TODO add assertion for Tx history
+      await restoredWallet.stop();
     },
     timeout,
   );

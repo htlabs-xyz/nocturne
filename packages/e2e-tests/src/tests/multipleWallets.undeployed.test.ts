@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import { DustParameters, nativeToken } from '@midnight-ntwrk/ledger-v6';
+import { LedgerParameters, nativeToken } from '@midnight-ntwrk/ledger-v6';
 import { firstValueFrom } from 'rxjs';
 import { logger } from './logger.js';
 import { TestContainersFixture, useTestContainersFixture } from './test-fixture.js';
@@ -56,8 +56,8 @@ describe('Syncing', () => {
     allure.step('Start multiple wallets', function () {
       fixture = getFixture();
       Wallet = ShieldedWallet(fixture.getWalletConfig());
-      const Dust = DustWallet(fixture.getDustWalletConfig());
-      const dustParameters = new DustParameters(5_000_000_000n, 8_267n, 3n * 60n * 60n);
+      const Dust = DustWallet({ ...fixture.getWalletConfig(), ...fixture.getDustWalletConfig() });
+      const dustParameters = LedgerParameters.initialParameters().dust;
 
       function buildWallets(seeds: Uint8Array<ArrayBufferLike>[]) {
         for (let i = 0; i < seeds.length; i++) {

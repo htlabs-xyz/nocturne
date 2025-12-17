@@ -266,7 +266,7 @@ export const buildWalletFacade = (walletSeed: string, fixture: TestContainersFix
     ...fixture.getWalletConfig(),
     ...fixture.getDustWalletConfig(),
   });
-  const dustParameters = new ledger.DustParameters(5_000_000_000n, 8267n, 3n * 60n * 60n);
+  const dustParameters = ledger.LedgerParameters.initialParameters().dust;
   const dustWallet = Dust.startWithSeed(dustSeed, dustParameters);
 
   return new WalletFacade(shieldedWallet, unshieldedWallet, dustWallet);

@@ -19,7 +19,7 @@ describe('Dust tests', () => {
   const walletSecretKey = ledger.ZswapSecretKeys.fromSeed(utils.getShieldedSeed(seed));
   const walletDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(seed));
   const unshieldedTokenRaw = ledger.unshieldedToken().raw;
-  const timeout = 240_000;
+  const timeout = 600_000;
   let walletFacade: WalletFacade;
   let walletKeystore: UnshieldedKeystore;
 

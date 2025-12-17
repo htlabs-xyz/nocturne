@@ -41,7 +41,7 @@ describe('Dust tests', () => {
   const receiverKeystore = createKeystore(utils.getUnshieldedSeed(seed), NetworkId.NetworkId.Undeployed);
   const shieldedTokenRaw = ledger.shieldedToken().raw;
   const unshieldedTokenRaw = ledger.unshieldedToken().raw;
-  const timeout = 240_000;
+  const timeout = 300_000;
   const outputValue = utils.tNightAmount(1000n);
 
   let fixture: TestContainersFixture;

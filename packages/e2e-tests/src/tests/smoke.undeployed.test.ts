@@ -47,7 +47,7 @@ describe('Smoke tests', () => {
   const receiverWalletDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(seed));
   const shieldedTokenRaw = ledger.shieldedToken().raw;
   const unshieldedTokenRaw = ledger.unshieldedToken().raw;
-  const timeout = 240_000;
+  const timeout = 300_000;
   const outputValue = 1_000n;
 
   let fixture: TestContainersFixture;

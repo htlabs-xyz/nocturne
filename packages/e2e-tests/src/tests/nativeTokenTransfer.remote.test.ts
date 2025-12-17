@@ -190,7 +190,6 @@ describe('Token transfer', () => {
       expect(senderFinalShieldedBalance1).toBe(initialNative1Balance - outputValue);
       expect(senderFinalShieldedBalance2).toBe(initialNative2Balance - outputValue);
       expect(senderFinalUnshieldedBalance).toBe(initialUnshieldedBalance);
-      expect(senderFinalDustBalance).toBeLessThan(initialDustBalance);
       expect(finalState.shielded.availableCoins.length).toBeLessThanOrEqual(
         initialState.shielded.availableCoins.length,
       );

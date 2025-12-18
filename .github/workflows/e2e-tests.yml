@@ -156,7 +156,6 @@ jobs:
       - name: Run e2e tests
         env:
           NETWORK: ${{ inputs.network }}
-          DEPLOYMENT: ${{ inputs.deployment }}
           SEED: ${{ inputs.seed || secrets.E2E_TESTS_SEED }}
           SEED2: ${{ inputs.seed2 || secrets.E2E_TESTS_SEED2 }}
           SEED_STABLE: ${{ env.SEED_STABLE }}

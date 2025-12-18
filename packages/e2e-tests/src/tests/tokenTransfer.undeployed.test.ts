@@ -20,7 +20,6 @@ import * as allure from 'allure-js-commons';
 import { CombinedTokenTransfer, WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { createKeystore } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import { randomBytes } from 'node:crypto';
-import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 
 /**
  * Tests performing a token transfer

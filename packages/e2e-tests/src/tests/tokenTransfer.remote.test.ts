@@ -52,8 +52,6 @@ describe('Token transfer', () => {
   let receiver: WalletFacade;
   let wallet: WalletFacade;
   let wallet2: WalletFacade;
-  let senderSeed: string;
-  let receiverSeed: string;
   let senderShieldedSecretKey: ledger.ZswapSecretKeys;
   let senderDustKey: ledger.DustSecretKey;
   let receiverShieldedSecretKey: ledger.ZswapSecretKeys;
@@ -84,8 +82,6 @@ describe('Token transfer', () => {
       receiverDustKey = initialReceiverDustSecretKey;
       receiver = wallet2;
       senderKeyStore = createKeystore(utils.getUnshieldedSeed(seedFunded), networkId);
-      senderSeed = seedFunded;
-      receiverSeed = seed;
     } else {
       logger.info('Using SEED2 as sender');
       sender = wallet2;
@@ -95,8 +91,6 @@ describe('Token transfer', () => {
       receiverDustKey = initialFundedDustSecretKey;
       receiver = wallet;
       senderKeyStore = createKeystore(utils.getUnshieldedSeed(seed), networkId);
-      senderSeed = seed;
-      receiverSeed = seedFunded;
     }
   }, syncTimeout);
 

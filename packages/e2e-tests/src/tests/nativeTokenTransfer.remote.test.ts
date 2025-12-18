@@ -29,13 +29,13 @@ import { createKeystore, UnshieldedKeystore } from '@midnight-ntwrk/wallet-sdk-u
  */
 
 describe('Token transfer', () => {
-  if (process.env['SEED'] === undefined || process.env['SEED2'] === undefined) {
-    logger.info('SEED or SEED2 env vars not set');
+  if (process.env['NT_SEED'] === undefined || process.env['NT_SEED2'] === undefined) {
+    logger.info('NT_SEED or NT_SEED2 env vars not set');
     exit(1);
   }
   const getFixture = useTestContainersFixture();
-  const receivingSeed = process.env['SEED2'];
-  const fundedSeed = process.env['SEED'];
+  const receivingSeed = process.env['NT_SEED2'];
+  const fundedSeed = process.env['NT_SEED'];
   const initialReceiverSecretKey = ledger.ZswapSecretKeys.fromSeed(utils.getShieldedSeed(receivingSeed));
   const initialFundedSecretKey = ledger.ZswapSecretKeys.fromSeed(utils.getShieldedSeed(fundedSeed));
   const receiverDustSecretKey = ledger.DustSecretKey.fromSeed(utils.getDustSeed(receivingSeed));
@@ -58,9 +58,6 @@ describe('Token transfer', () => {
   let networkId: NetworkId.NetworkId;
   const syncTimeout = (1 * 60 + 30) * 60 * 1000; // 1 hour + 30 minutes in milliseconds
   const timeout = 600_000;
-
-  const filenameWallet = `${fundedSeed.substring(0, 7)}-${TestContainersFixture.network}.state`;
-  const filenameWallet2 = `${receivingSeed.substring(0, 7)}-${TestContainersFixture.network}.state`;
 
   beforeAll(async () => {
     fixture = getFixture();

@@ -111,13 +111,6 @@ describe('Dust tests', () => {
   test(
     'Able to deregister night tokens for dust decay @healhcheck',
     async () => {
-      // allure.tag('smoke');
-      // allure.tag('heanthcheck');
-      // allure.tms('PM-8916', 'PM-8916');
-      // allure.epic('Headless wallet');
-      // allure.feature('Transactions');
-      // allure.story('Valid transfer transaction');
-
       const initialWalletState = await utils.waitForSyncFacade(walletFacade);
       const initialDustBalance = initialWalletState.dust.walletBalance(new Date());
       logger.info(`Initial Dust Balance: ${initialDustBalance}`);

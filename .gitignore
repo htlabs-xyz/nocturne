@@ -54,3 +54,9 @@ reports
 # user files
 **/.sync_cache
 /packages/e2e-tests/res
+
+.claude
+.repomixignore
+CLAUDE.md
+.gitignore
+**/plans/templates/

@@ -1,12 +1,29 @@
 {
-  "name": "test",
-  "module": "index.ts",
+  "name": "@midnight-ntwrk/test",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "test": "bun test",
+    "run:shield": "bun run src/shield.ts",
+    "run:unshield": "bun run src/unshield.ts",
+    "run:dust": "bun run src/dust.ts",
+    "run:all": "bun run src/index.ts"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "dependencies": {
+    "@midnight-ntwrk/ledger-v6": "6.1.0-alpha.6",
+    "@midnight-ntwrk/wallet-sdk-abstractions": "1.0.0-beta.9",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.0.0-beta.9",
+    "@midnight-ntwrk/wallet-sdk-shielded": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-unshielded-wallet": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-dust-wallet": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-hd": "workspace:*",
+    "@midnight-ntwrk/wallet-sdk-utilities": "1.0.0-beta.7",
+    "effect": "^3.17.3",
+    "rxjs": "^7.5"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
   }
 }

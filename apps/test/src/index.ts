@@ -1,11 +1,22 @@
-import { runShieldedWalletTest } from './shield';
-import { runUnshieldedWalletTest } from './unshield';
-import { runDustWalletTest } from './dust';
-import { NETWORK_CONFIG } from './config';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
+import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
+import {
+  UnshieldedWallet,
+  createKeystore,
+  PublicKey,
+  InMemoryTransactionHistoryStorage,
+} from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
+import * as rx from 'rxjs';
+import { NETWORK_CONFIG, TEST_MNEMONIC } from './config';
+import { deriveWalletKeys, printWalletInfo } from './wallet';
 
 async function main() {
   console.log('╔════════════════════════════════════════════════════════════╗');
-  console.log('║         Midnight Wallet SDK Test Suite                     ║');
+  console.log('║         Midnight Wallet SDK - Facade Test                  ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
   console.log(`Network: ${NETWORK_CONFIG.networkId}`);
@@ -13,69 +24,94 @@ async function main() {
   console.log(`Node: ${NETWORK_CONFIG.nodeUrl}`);
   console.log(`Prover: ${NETWORK_CONFIG.proofServer}\n`);
 
-  const results: { name: string; success: boolean; error?: unknown }[] = [];
-
-  console.log('\n┌────────────────────────────────────────────────────────────┐');
-  console.log('│ 1. SHIELDED WALLET TEST                                    │');
+  console.log('┌────────────────────────────────────────────────────────────┐');
+  console.log('│ Deriving Wallet Keys from Mnemonic                         │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
 
-  try {
-    const shieldedSuccess = await runShieldedWalletTest();
-    results.push({ name: 'Shielded Wallet', success: shieldedSuccess });
-  } catch (error) {
-    console.error('Shielded wallet test error:', error);
-    results.push({ name: 'Shielded Wallet', success: false, error });
-  }
+  console.log(`Mnemonic: ${TEST_MNEMONIC.split(' ').slice(0, 4).join(' ')}...\n`);
+
+  const walletKeys = deriveWalletKeys(TEST_MNEMONIC, 0, 0);
+  printWalletInfo(walletKeys);
+
+  const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
+  const dustParameters = ledger.LedgerParameters.initialParameters().dust;
 
   console.log('\n┌────────────────────────────────────────────────────────────┐');
-  console.log('│ 2. UNSHIELDED WALLET TEST                                  │');
+  console.log('│ Creating Wallet Configuration                              │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
 
-  try {
-    const unshieldedSuccess = await runUnshieldedWalletTest();
-    results.push({ name: 'Unshielded Wallet', success: unshieldedSuccess });
-  } catch (error) {
-    console.error('Unshielded wallet test error:', error);
-    results.push({ name: 'Unshielded Wallet', success: false, error });
-  }
+  const config = {
+    indexerClientConnection: {
+      indexerHttpUrl: NETWORK_CONFIG.indexerHttp,
+      indexerWsUrl: NETWORK_CONFIG.indexerWs,
+    },
+    provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
+    relayURL: new URL(NETWORK_CONFIG.nodeUrl),
+    networkId,
+  };
 
-  console.log('\n┌────────────────────────────────────────────────────────────┐');
-  console.log('│ 3. DUST WALLET TEST                                        │');
+  console.log('Creating Shielded Wallet...');
+  const shieldedWallet = ShieldedWallet(config).startWithShieldedSeed(walletKeys.shieldedSeed);
+  const shieldedAddress = await shieldedWallet.getAddress();
+  console.log(`Shielded Address: ${ShieldedAddress.codec.encode(networkId, shieldedAddress).asString()}\n`);
+
+  console.log('Creating Unshielded Wallet...');
+  const unshieldedKeystore = createKeystore(walletKeys.unshieldedExternalSeed, networkId);
+  const unshieldedWallet = UnshieldedWallet({
+    ...config,
+    txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+  }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
+  const unshieldedAddress = await unshieldedWallet.getAddress();
+  console.log(`Unshielded Address: ${UnshieldedAddress.codec.encode(networkId, unshieldedAddress).asString()}\n`);
+
+  console.log('Creating Dust Wallet...');
+  const dustWallet = DustWallet({
+    ...config,
+    costParameters: {
+      additionalFeeOverhead: 300_000_000_000_000n,
+      feeBlocksMargin: 5,
+    },
+  }).startWithSeed(walletKeys.dustSeed, dustParameters);
+  const dustState = await rx.firstValueFrom(dustWallet.state);
+  console.log(`Dust Address: ${dustState.dustAddress}\n`);
+
+  console.log('┌────────────────────────────────────────────────────────────┐');
+  console.log('│ Creating Wallet Facade                                     │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
 
-  try {
-    const dustSuccess = await runDustWalletTest();
-    results.push({ name: 'Dust Wallet', success: dustSuccess });
-  } catch (error) {
-    console.error('Dust wallet test error:', error);
-    results.push({ name: 'Dust Wallet', success: false, error });
-  }
+  const facade = new WalletFacade(shieldedWallet, unshieldedWallet, dustWallet);
+  console.log('Facade created successfully!\n');
 
-  console.log('\n╔════════════════════════════════════════════════════════════╗');
-  console.log('║                      TEST SUMMARY                          ║');
-  console.log('╠════════════════════════════════════════════════════════════╣');
+  console.log('Starting wallet sync...');
+  await facade.start(walletKeys.shieldedSecretKeys, walletKeys.dustSecretKey);
+  console.log('Wallet sync started\n');
 
-  for (const result of results) {
-    const status = result.success ? '✅ PASSED' : '❌ FAILED';
-    const name = result.name.padEnd(30);
-    console.log(`║ ${name} ${status.padEnd(24)} ║`);
-  }
-
-  const allPassed = results.every((r) => r.success);
-  const passedCount = results.filter((r) => r.success).length;
-
-  console.log('╠════════════════════════════════════════════════════════════╣');
-  console.log(
-    `║ Total: ${passedCount}/${results.length} tests passed${' '.repeat(38 - String(passedCount).length - String(results.length).length)}║`,
+  console.log('Waiting for sync to complete...');
+  const state = await rx.firstValueFrom(
+    facade.state().pipe(rx.filter((s) => s.isSynced)),
   );
+
+  console.log('\n┌────────────────────────────────────────────────────────────┐');
+  console.log('│ Wallet State                                               │');
+  console.log('└────────────────────────────────────────────────────────────┘\n');
+
+  console.log('=== Shielded Wallet ===');
+  console.log(`Available coins: ${state.shielded.availableCoins.length}`);
+  console.log(`Balances: ${JSON.stringify(state.shielded.balances)}\n`);
+
+  console.log('=== Unshielded Wallet ===');
+  console.log(`Available coins: ${state.unshielded.availableCoins.length}`);
+  console.log(`Balances: ${JSON.stringify(state.unshielded.balances)}\n`);
+
+  console.log('=== Dust Wallet ===');
+  console.log(`Available coins: ${state.dust.availableCoins.length}`);
+  console.log(`Balance: ${state.dust.walletBalance(new Date())}\n`);
+
+  console.log('╔════════════════════════════════════════════════════════════╗');
+  console.log('║                      TEST COMPLETE                         ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
-  if (!allPassed) {
-    console.log('Some tests failed. Check output above for details.\n');
-    process.exit(1);
-  }
-
-  console.log('All tests passed!\n');
+  await facade.stop();
   process.exit(0);
 }
 

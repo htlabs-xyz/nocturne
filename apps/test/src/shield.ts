@@ -13,7 +13,8 @@ import {
 } from '@midnight-ntwrk/wallet-sdk-shielded/v1';
 import { Effect, pipe } from 'effect';
 import * as rx from 'rxjs';
-import { NETWORK_CONFIG } from './config';
+import { NETWORK_CONFIG, TEST_MNEMONIC } from './config';
+import { deriveWalletKeys, generateMnemonic } from './wallet';
 
 const shieldedTokenType = (ledger.shieldedToken() as { tag: 'shielded'; raw: string }).raw;
 
@@ -22,17 +23,19 @@ export async function runShieldedWalletTest() {
   console.log(`Network: ${NETWORK_CONFIG.networkId}\n`);
 
   return Effect.gen(function* () {
-    const senderSeed = Buffer.alloc(32, 0);
-    const receiverSeed = Buffer.alloc(32, 1);
+    console.log('Deriving wallet keys from mnemonic...');
+    const senderKeys = deriveWalletKeys(TEST_MNEMONIC, 0, 0);
+    const receiverMnemonic = generateMnemonic();
+    const receiverKeys = deriveWalletKeys(receiverMnemonic, 0, 0);
 
-    const senderKeys = ledger.ZswapSecretKeys.fromSeed(senderSeed);
-    const receiverKeys = ledger.ZswapSecretKeys.fromSeed(receiverSeed);
+    console.log(`Sender mnemonic: ${TEST_MNEMONIC.split(' ').slice(0, 3).join(' ')}...`);
+    console.log(`Receiver mnemonic: ${receiverMnemonic.split(' ').slice(0, 3).join(' ')}...\n`);
 
     const genesisMints = [
       {
         amount: 10_000_000n,
         type: shieldedTokenType,
-        recipient: senderKeys,
+        recipient: senderKeys.shieldedSecretKeys,
       },
     ] as const;
 
@@ -40,10 +43,12 @@ export async function runShieldedWalletTest() {
     const simulator = yield* Simulator.Simulator.init(genesisMints);
     console.log('Simulator initialized with genesis mint of 10,000,000 tokens\n');
 
+    const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
+
     const Wallet = CustomShieldedWallet(
       {
         simulator,
-        networkId: NETWORK_CONFIG.networkId as NetworkId.NetworkId,
+        networkId,
       },
       new V1Builder()
         .withTransactionType<ledger.ProofErasedTransaction>()
@@ -59,22 +64,18 @@ export async function runShieldedWalletTest() {
     );
 
     console.log('Creating sender wallet...');
-    const senderWallet = Wallet.startWithSecretKeys(senderKeys);
+    const senderWallet = Wallet.startWithSecretKeys(senderKeys.shieldedSecretKeys);
     const senderAddress = yield* Effect.promise(() => senderWallet.getAddress());
-    console.log(
-      `Sender address: ${ShieldedAddress.codec.encode(NETWORK_CONFIG.networkId as NetworkId.NetworkId, senderAddress).asString()}\n`,
-    );
+    console.log(`Sender address: ${ShieldedAddress.codec.encode(networkId, senderAddress).asString()}\n`);
 
     console.log('Creating receiver wallet...');
-    const receiverWallet = Wallet.startWithSecretKeys(receiverKeys);
+    const receiverWallet = Wallet.startWithSecretKeys(receiverKeys.shieldedSecretKeys);
     const receiverAddress = yield* Effect.promise(() => receiverWallet.getAddress());
-    console.log(
-      `Receiver address: ${ShieldedAddress.codec.encode(NETWORK_CONFIG.networkId as NetworkId.NetworkId, receiverAddress).asString()}\n`,
-    );
+    console.log(`Receiver address: ${ShieldedAddress.codec.encode(networkId, receiverAddress).asString()}\n`);
 
     console.log('Starting wallets sync...');
-    yield* Effect.promise(() => senderWallet.start(senderKeys));
-    yield* Effect.promise(() => receiverWallet.start(receiverKeys));
+    yield* Effect.promise(() => senderWallet.start(senderKeys.shieldedSecretKeys));
+    yield* Effect.promise(() => receiverWallet.start(receiverKeys.shieldedSecretKeys));
     console.log('Wallets sync started\n');
 
     console.log('Waiting for sender to receive genesis coins...');
@@ -92,13 +93,11 @@ export async function runShieldedWalletTest() {
 
     console.log('Creating transfer transaction (42 tokens to receiver)...');
     const recipe = yield* Effect.promise(() =>
-      senderWallet.transferTransaction(senderKeys, [
+      senderWallet.transferTransaction(senderKeys.shieldedSecretKeys, [
         {
           type: shieldedTokenType,
           amount: 42n,
-          receiverAddress: ShieldedAddress.codec
-            .encode(NETWORK_CONFIG.networkId as NetworkId.NetworkId, receiverAddress)
-            .asString(),
+          receiverAddress: ShieldedAddress.codec.encode(networkId, receiverAddress).asString(),
         },
       ]),
     );

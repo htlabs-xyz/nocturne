@@ -97,11 +97,11 @@ async function main() {
 
   console.log('=== Shielded Wallet ===');
   console.log(`Available coins: ${state.shielded.availableCoins.length}`);
-  console.log(`Balances: ${JSON.stringify(state.shielded.balances)}\n`);
+  console.log(`Balances: ${JSON.stringify(state.shielded.balances, (_, v) => typeof v === 'bigint' ? v.toString() : v)}\n`);
 
   console.log('=== Unshielded Wallet ===');
   console.log(`Available coins: ${state.unshielded.availableCoins.length}`);
-  console.log(`Balances: ${JSON.stringify(state.unshielded.balances)}\n`);
+  console.log(`Balances: ${JSON.stringify(state.unshielded.balances, (_, v) => typeof v === 'bigint' ? v.toString() : v)}\n`);
 
   console.log('=== Dust Wallet ===');
   console.log(`Available coins: ${state.dust.availableCoins.length}`);

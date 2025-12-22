@@ -22,29 +22,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
-
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
+          bun --version
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Verify that a changeset exists
         run: |
-          yarn changeset status --since=origin/main --verbose
+          bun run changeset:check

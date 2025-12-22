@@ -1,0 +1,5 @@
+[install]
+registry = "https://registry.npmjs.org"
+
+[install.scopes]
+"@midnight-ntwrk" = "https://registry.npmjs.org"

@@ -29,12 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ matrix.version }}
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
+          bun-version: latest
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
@@ -43,18 +40,14 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Build wallet and install dependencies
         run: |
-          yarn install
-          yarn turbo dist
+          bun install
+          bun run turbo dist
 
       - name: Run e2e tests
         run: |
-          yarn turbo test-undeployed
+          bun run turbo test-undeployed
 
       - name: Create allure properties
         if: success() || failure()
@@ -81,7 +74,7 @@ jobs:
         if: success() || failure()
         working-directory: ./packages/e2e-tests
         run: |
-          yarn allure-generate
+          bun run allure-generate
 
       - name: Publish artifacts (test reports)
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0

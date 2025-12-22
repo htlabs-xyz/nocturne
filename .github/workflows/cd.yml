@@ -28,28 +28,21 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
-          # This is required for the npm publish step
           token: ${{ env.MIDNIGHT_GH_TOKEN }}
           registry-url: 'https://npm.pkg.github.com'
           scope: '@midnight-ntwrk'
 
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Check tool versions
         run: |
+          bun --version
           node --version
-          corepack --version
-          yarn --version
-
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
 
       - name: Import GPG key
         id: gpg
@@ -69,15 +62,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install --immutable
+          bun install --frozen-lockfile
 
       - name: Create Release Pull Request / Publish
         id: changesets
         uses: changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba #v1.5.3
         with:
           title: 'chore: release'
-          version: yarn changeset:version
-          publish: yarn changeset:publish
+          version: bun run changeset:version
+          publish: bun run changeset:publish
           setupGitUser: false
 
         env:

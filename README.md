@@ -14,8 +14,8 @@ It provides components for:
 
 ## Modules structure
 
-This project is a yarn workspaces combined with Turborepo. In many of them `package.json` files can be found and they
-are registered as workspaces in yarn, so yarn can resolve the dependencies. Main packages/sub-projects are:
+This project is a bun workspaces combined with Turborepo. In many of them `package.json` files can be found and they
+are registered as workspaces in bun, so bun can resolve the dependencies. Main packages/sub-projects are:
 
 - `wallet/v1` - the shielded wallet variant
 - `wallet` - wallet runtime and builder - allows orchestrating variants of a wallet across migration points (most
@@ -35,14 +35,12 @@ For a reference about structure and internal rules to follow, consult [Design Do
 
 ### Tools
 
-We use [nvm](https://github.com/nvm-sh/nvm) to manage the node version and the version of yarn is managed by
-[.yarnrc.yml](.yarnrc.yml).
+We use [bun](https://bun.sh) as our package manager and runtime. Install bun from https://bun.sh.
 
 To start development from a new machine it is recommended to run the following
 
 ```shell
-nvm use
-corepack enable
+curl -fsSL https://bun.sh/install | bash
 ```
 
 Another option is to use [Nix](https://nixos.org). This project provides a [flake](flake.nix) with a devshell
@@ -65,10 +63,10 @@ Follow all authentication steps from the
 
 ## Install dependencies
 
-Install all project dependencies using Yarn.
+Install all project dependencies using bun.
 
 ```shell
-yarn
+bun install
 ```
 
 ## Build
@@ -76,7 +74,7 @@ yarn
 Build the projects once, generated Javascript code is written to the project's `dist` directory.
 
 ```shell
-turbo dist
+bun run dist
 ```
 
 ## Build and watch
@@ -85,7 +83,7 @@ Build the project and watch for changes to automatically rebuild. Generated Java
 `dist` directory
 
 ```shell
-turbo watch dist
+bunx turbo watch dist
 ```
 
 ## Clean
@@ -93,7 +91,7 @@ turbo watch dist
 Clean exiting `dist` directories.
 
 ```shell
-turbo clean
+bun run clean
 ```
 
 ## Format
@@ -101,7 +99,7 @@ turbo clean
 Formats source code.
 
 ```shell
-turbo format
+bun run format
 ```
 
 ## Test
@@ -130,7 +128,7 @@ enter the directory, making the variables available to any commands you run in t
 ### Unit tests
 
 ```shell
-turbo test
+bun run test
 ```
 
 ### Integration tests
@@ -144,7 +142,7 @@ sbt integrationTests/test
 To run the same checks as CI does, run
 
 ```shell
-turbo verify
+bun run verify
 ```
 
 It runs across all workspaces:

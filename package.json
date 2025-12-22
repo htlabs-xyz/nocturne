@@ -1,5 +1,5 @@
 {
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "bun@1.2.20",
   "name": "@midnight-ntwrk/wallet-sdk-monorepo",
   "type": "module",
   "private": true,
@@ -49,9 +49,9 @@
     "test": "turbo run test",
     "dist": "turbo run dist",
     "dist:publish": "turbo run dist:publish",
-    "changeset:publish": "yarn dist:publish && yarn changeset publish",
-    "changeset:version": "yarn changeset version && yarn install --mode=update-lockfile",
-    "changeset:check": "yarn changeset status --since=origin/main --verbose",
+    "changeset:publish": "bun run dist:publish && bun changeset publish",
+    "changeset:version": "bun changeset version && bun install",
+    "changeset:check": "bun changeset status --since=origin/main --verbose",
     "clean": "turbo run clean"
   }
 }

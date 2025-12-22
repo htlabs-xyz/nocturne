@@ -28,21 +28,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
@@ -59,8 +51,8 @@ jobs:
           SEED: ${{ env.FAUCET_SEED_HALO2 }}
           SEED_STABLE: ${{ env.SEED_STABLE }}
         run: |
-          yarn install --immutable
-          yarn dlx turbo test-e2e -- packages/e2e-tests/src/tests/fundTestWallets.test.ts
+          bun install --frozen-lockfile
+          bunx turbo test-e2e -- packages/e2e-tests/src/tests/fundTestWallets.test.ts
 
       - name: Run funding script for testnet envs
         if: env.NETWORK == 'testnet'
@@ -71,5 +63,5 @@ jobs:
           SEED_STABLE: ${{ env.SEED_STABLE }}
           ADDRESSES: ${{ vars.TESTNET_ADDRESSES }}
         run: |
-          yarn install --immutable
-          yarn dlx turbo test-e2e -- packages/e2e-tests/src/tests/fundTestWallets.test.ts
+          bun install --frozen-lockfile
+          bunx turbo test-e2e -- packages/e2e-tests/src/tests/fundTestWallets.test.ts

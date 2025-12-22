@@ -29,22 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
-        id: setup-node
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef #v3
@@ -53,15 +44,11 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Run dist
-        run: yarn dist
+        run: bun run dist
 
       - name: Save turbo cache
         if: always()
@@ -86,22 +73,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
-        id: setup-node
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef #v3
@@ -110,12 +88,8 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Restore turbo cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 #v4.3.0
@@ -132,17 +106,14 @@ jobs:
           name: build-artifacts-${{ github.run_id }}
           path: .
 
-      # The following 3 steps are the equivalent of running `yarn verify:check`/`turbo verify:check`
-      # They are separated into 3 steps to give better visibility of the errors in the ci.
-      # Future changes to verify:check should be reflected in these steps.
       - name: Run typecheck
-        run: yarn typecheck
+        run: bun run typecheck
 
       - name: Run format check
-        run: yarn format:check
+        run: bun run format:check
 
       - name: Run linter
-        run: yarn lint
+        run: bun run lint
 
       - name: Save turbo cache
         if: always()
@@ -158,22 +129,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
-        id: setup-node
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef #v3
@@ -182,12 +144,8 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Restore turbo cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 #v4.3.0
@@ -204,47 +162,7 @@ jobs:
           path: .
 
       - name: Run tests
-        run: yarn test
-
-      # - name: Run smoke e2e tests
-      #   run: |
-      #     yarn dlx turbo test-undeployed -- -t @smoke
-
-      # - name: Create allure properties
-      #   if: success() || failure()
-      #   working-directory: ./packages/e2e-tests/allure-results
-      #   run: |
-      #     echo "
-      #     env=${{ env.NETWORK }}
-      #     tags=@smoke
-      #     deployment=${{ env.DEPLOYMENT }}
-      #     platform=Linux
-      #     " > environment.properties
-
-      # - name: Send Results to Allure Server
-      #   uses: robkatona/send-allure-results@v1.0.5
-      #   if: ${{ always() }}
-      #   with:
-      #     allure-server-url: https://allure-server.prd.midnight.tools
-      #     allure-results-directory: ./packages/e2e-tests/reports/allure-results
-      #     project-id: headless-wallet-${{ env.DEPLOYMENT }}
-      #     security-user: ${{ env.ALLURE_ADMIN_USER }}
-      #     security-pass: ${{ env.ALLURE_ADMIN_PASSWORD }}
-
-      # - name: Publish wallet TS Test Report
-      #   uses: dorny/test-reporter@v1
-      #   if: success() || failure()
-      #   with:
-      #     name: Wallet TS packages Junit Tests Report
-      #     reporter: java-junit
-      #     path: |
-      #       ./packages/e2e-tests/reports/test-report.xml
-
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
-      #   with:
-      #     name: 'test-results-junit'
-      #     path: ./packages/e2e-tests/reports/report.xml
+        run: bun run test
 
   build-publish:
     name: Build for Publishing
@@ -253,22 +171,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
-        id: setup-node
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef #v3
@@ -277,15 +186,11 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Run dist:publish
-        run: yarn dist:publish
+        run: bun run dist:publish
 
       - name: Save turbo cache
         if: always()
@@ -310,22 +215,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
 
-      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f #v6.1.0
-        id: setup-node
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: yarn.lock
-          token: ${{ env.MIDNIGHT_GH_TOKEN }}
-
-      - name: Enable corepack
-        run: corepack enable
+          bun-version: latest
 
       - name: Check tool versions
         run: |
-          node --version
-          corepack --version
-          yarn --version
+          bun --version
 
       - name: Log in to GitHub Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef #v3
@@ -334,12 +230,8 @@ jobs:
           username: ${{ env.MIDNIGHT_GH_USER }}
           password: ${{ env.MIDNIGHT_GH_TOKEN }}
 
-      - name: Configure yarn
-        run: |
-          yarn config set 'npmScopes.midnight-ntwrk.npmAuthToken' "${{ env.MIDNIGHT_GH_TOKEN }}"
-
       - name: Install dependencies
-        run: yarn install --immutable
+        run: bun install --frozen-lockfile
 
       - name: Restore turbo cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 #v4.3.0
@@ -357,4 +249,4 @@ jobs:
         continue-on-error: true
 
       - name: Run publint
-        run: yarn publint
+        run: bun run publint

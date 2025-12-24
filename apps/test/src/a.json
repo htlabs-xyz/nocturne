@@ -1,0 +1,105 @@
+shield {
+  "protocolVersion": "0",
+  "state": {
+    "state": {
+      "__wbg_ptr": 24769624
+    },
+    "publicKeys": {
+      "coinPublicKey": "f34146ce836fad8a5c56916ce1d27f8a522c9a94f81a37d32028e03fdef01d49",
+      "encryptionPublicKey": "c9ced5020fff74cfdcd4fd78b64a5a9814470b5705433af386277cce5fdcc60a"
+    },
+    "networkId": "preview",
+    "coinHashes": {},
+    "txHistoryArray": [],
+    "progress": {
+      "appliedIndex": "5290",
+      "highestRelevantWalletIndex": "5290",
+      "highestIndex": "0",
+      "highestRelevantIndex": "0",
+      "isConnected": true
+    },
+    "protocolVersion": "0"
+  },
+  "capabilities": {
+    "coinsAndBalances": {},
+    "keys": {},
+    "serialization": {},
+    "transactionHistory": {}
+  }
+}
+unshield {
+  "protocolVersion": "0",
+  "state": {
+    "state": {
+      "availableUtxos": {
+        "_id": "HashMap",
+        "values": [
+          [
+            "ed1ddc6195cfad71ab1c2fb63b8e2bcecc6445b88da8a9f850aa7eebb5920ed6#1",
+            {
+              "utxo": {
+                "value": "999000000",
+                "owner": "mn_addr_preview10fm6s20ev7fzupv0kd6ncmqc8rwfkqjd5g57xduyfmj5jsma4pzsvccaqh",
+                "type": "0000000000000000000000000000000000000000000000000000000000000000",
+                "intentHash": "ed1ddc6195cfad71ab1c2fb63b8e2bcecc6445b88da8a9f850aa7eebb5920ed6",
+                "outputNo": 1
+              },
+              "meta": {
+                "ctime": "2025-12-23T02:16:18.000Z",
+                "registeredForDustGeneration": true
+              }
+            }
+          ]
+        ]
+      },
+      "pendingUtxos": {
+        "_id": "HashMap",
+        "values": []
+      }
+    },
+    "publicKey": {
+      "publicKey": "e0946b4a29d17f81a97171fee47840bc302a4da6cd046e3c3c35ea4ce3d9d68e",
+      "addressHex": "7a77a829f967922e058fb3753c6c1838dc9b024da229e337844ee549437da845",
+      "address": "mn_addr_preview10fm6s20ev7fzupv0kd6ncmqc8rwfkqjd5g57xduyfmj5jsma4pzsvccaqh"
+    },
+    "protocolVersion": "0",
+    "progress": {
+      "appliedId": "5090",
+      "highestTransactionId": "5090",
+      "isConnected": true
+    },
+    "networkId": "preview"
+  },
+  "capabilities": {
+    "coinsAndBalances": {},
+    "keys": {},
+    "serialization": {},
+    "transactionHistory": {}
+  }
+}
+dust {
+  "protocolVersion": "0",
+  "state": {
+    "state": {
+      "__wbg_ptr": 191711184
+    },
+    "publicKey": {
+      "publicKey": "49103429695155869946407334176939746866128673604915787552412434226153166987948"
+    },
+    "protocolVersion": "0",
+    "progress": {
+      "appliedIndex": "5571",
+      "highestRelevantWalletIndex": "5571",
+      "highestIndex": "0",
+      "highestRelevantIndex": "0",
+      "isConnected": true
+    },
+    "networkId": "preview",
+    "pendingDustTokens": []
+  },
+  "capabilities": {
+    "coinsAndBalances": {},
+    "keys": {},
+    "serialization": {}
+  }
+}

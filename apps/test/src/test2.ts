@@ -1,6 +1,5 @@
-import type { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { MNEMONIC_2, NETWORK_CONFIG } from './config.js';
-import { deriveWalletKeys, printWalletInfo } from './wallet.js';
+import { config, MNEMONIC_2, networkId } from './config';
+import { deriveWalletKeys, printWalletInfo } from './wallet';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
@@ -18,18 +17,6 @@ const walletKeys = deriveWalletKeys(MNEMONIC_2, 0, 0);
 // console.log(JSON.stringify(walletKeys, null, 2));
 printWalletInfo(walletKeys);
 
-const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
-const dustParameters = ledger.LedgerParameters.initialParameters().dust;
-
-const config = {
-  indexerClientConnection: {
-    indexerHttpUrl: NETWORK_CONFIG.indexerHttp,
-    indexerWsUrl: NETWORK_CONFIG.indexerWs,
-  },
-  provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
-  relayURL: new URL(NETWORK_CONFIG.nodeWs),
-  networkId,
-};
 // shield
 const shieldedWallet = ShieldedWallet(config).startWithShieldedSeed(walletKeys.shieldedSeed);
 const shieldedAddress = await shieldedWallet.getAddress();
@@ -40,6 +27,7 @@ const unshieldedWallet = UnshieldedWallet({
   ...config,
   txHistoryStorage: new InMemoryTransactionHistoryStorage(),
 }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedKeystore));
+
 const unshieldedAddress = await unshieldedWallet.getAddress();
 console.log(`Unshielded Address: ${UnshieldedAddress.codec.encode(networkId, unshieldedAddress).asString()}`);
 //dust
@@ -49,7 +37,7 @@ const dustWallet = DustWallet({
     additionalFeeOverhead: 300_000_000_000_000n,
     feeBlocksMargin: 5,
   },
-}).startWithSeed(walletKeys.dustSeed, dustParameters);
+}).startWithSeed(walletKeys.dustSeed, ledger.LedgerParameters.initialParameters().dust);
 const dustState = await rx.firstValueFrom(dustWallet.state);
 console.log(`Dust Address: ${dustState.dustAddress}\n`);
 

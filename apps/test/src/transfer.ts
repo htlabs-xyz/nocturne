@@ -16,10 +16,12 @@ import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-a
 
 const senderKeys = deriveWalletKeys(MNEMONIC_1, 0, 0);
 const shieldedWallet = ShieldedWallet(config).startWithShieldedSeed(senderKeys.shieldedSeed);
+
+const senderUnshieldedKeystore = createKeystore(senderKeys.unshieldedExternalSeed, networkId);
 const unshieldedWallet = UnshieldedWallet({
   ...config,
   txHistoryStorage: new InMemoryTransactionHistoryStorage(),
-}).startWithPublicKey(PublicKey.fromKeyStore(createKeystore(senderKeys.unshieldedExternalSeed, networkId)));
+}).startWithPublicKey(PublicKey.fromKeyStore(senderUnshieldedKeystore));
 const dustWallet = DustWallet({
   ...config,
   costParameters: {
@@ -40,6 +42,53 @@ await senderFacade.start(senderKeys.shieldedSecretKeys, senderKeys.dustSecretKey
 await rx.firstValueFrom(senderFacade.state().pipe(rx.filter((s) => s.isSynced)));
 const senderState = await rx.firstValueFrom(senderFacade.state());
 
-console.log('shield', senderState.shielded.availableCoins);
-console.log('unshield', senderState.unshielded.availableCoins);
-console.log('dust', senderState.dust.availableCoins);
+const bigIntReplacer = (_key: string, value: unknown) => (typeof value === 'bigint' ? value.toString() : value);
+
+console.log('shield', JSON.stringify(senderState.shielded, bigIntReplacer, 2));
+console.log('unshield', JSON.stringify(senderState.unshielded, bigIntReplacer, 2));
+console.log('dust', JSON.stringify(senderState.dust, bigIntReplacer, 2));
+
+const nightBalance = senderState.unshielded.balances[ledger.nativeToken().raw] ?? 0n;
+console.log(`Night (unshielded): ${formatAmount(nightBalance)}`);
+
+const receiverUnshieldedAddress = 'mn_addr_preview1uw802k35dvqxyqs7xm9p3fa8s4yvfy8qax8ufdr8tkxsa4f70kqs5g8gaz';
+
+const transferOutputs = [
+  {
+    type: 'unshielded' as const,
+    outputs: [
+      {
+        amount: 5_000_000n,
+        receiverAddress: receiverUnshieldedAddress,
+        type: ledger.unshieldedToken().raw,
+      },
+    ],
+  },
+];
+
+const expiryTime = new Date(Date.now() + 30 * 60 * 1000);
+const recipe = await senderFacade.transferTransaction(
+  senderKeys.shieldedSecretKeys,
+  senderKeys.dustSecretKey,
+  transferOutputs,
+  expiryTime,
+);
+
+console.log('Transaction recipe created ✓', recipe.transaction);
+
+console.log('Signing transaction...');
+const signedTx = await senderFacade.signTransaction(recipe.transaction, (payload) =>
+  senderUnshieldedKeystore.signData(payload),
+);
+// console.log('Transaction signed ✓', signedTx);
+
+console.log('Finalizing transaction (generating proofs)...');
+const finalizedTx = await senderFacade.finalizeTransaction({
+  type: 'TransactionToProve',
+  transaction: signedTx,
+});
+console.log('Transaction finalized ✓', finalizedTx);
+
+console.log('Submitting transaction...');
+const txId = await senderFacade.submitTransaction(finalizedTx);
+console.log(`Transaction ID: ${txId}\n`);

@@ -27,6 +27,24 @@ const screens = [
   { id: 'settings-about', name: '26. About', category: 'Settings' }
 ]
 
+const mainScreens = ['home-dashboard', 'night-holdings', 'dust-management', 'address-management', 'history-list']
+
+let headerHtml = ''
+let footerHtml = ''
+
+async function loadComponents() {
+  try {
+    const [headerRes, footerRes] = await Promise.all([
+      fetch('/src/components/header-main.html'),
+      fetch('/src/components/footer-nav.html')
+    ])
+    headerHtml = await headerRes.text()
+    footerHtml = await footerRes.text()
+  } catch (e) {
+    console.warn('Failed to load components:', e)
+  }
+}
+
 function buildNavigation() {
   const navList = document.getElementById('nav-list')
   let currentCategory = ''
@@ -49,6 +67,22 @@ function buildNavigation() {
   })
 }
 
+function updateFooterActiveState(screenId) {
+  const footer = document.querySelector('footer')
+  if (!footer) return
+
+  footer.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active')
+    if (item.dataset.navigate === screenId ||
+        (screenId === 'home-dashboard' && item.dataset.navigate === 'home-dashboard') ||
+        (screenId.startsWith('history') && item.dataset.navigate === 'history-list') ||
+        (screenId.startsWith('send') && item.dataset.navigate === 'send-choose') ||
+        (screenId === 'address-management' && item.dataset.navigate === 'address-management')) {
+      item.classList.add('active')
+    }
+  })
+}
+
 async function loadScreen(screenId) {
   const container = document.getElementById('screen-container')
 
@@ -63,7 +97,23 @@ async function loadScreen(screenId) {
     const response = await fetch(`/src/screens/${screenId}.html`)
     if (!response.ok) throw new Error('Screen not found')
     const html = await response.text()
-    container.innerHTML = html
+
+    const isMainScreen = mainScreens.includes(screenId)
+
+    if (isMainScreen && headerHtml && footerHtml) {
+      container.innerHTML = `
+        <div class="flex flex-col h-full bg-midnight-900">
+          ${headerHtml}
+          <div class="flex-1 overflow-y-auto scrollbar-hide">
+            ${html}
+          </div>
+          ${footerHtml}
+        </div>
+      `
+      updateFooterActiveState(screenId)
+    } else {
+      container.innerHTML = html
+    }
 
     container.querySelectorAll('[data-navigate]').forEach(el => {
       el.addEventListener('click', () => loadScreen(el.dataset.navigate))
@@ -83,5 +133,10 @@ async function loadScreen(screenId) {
   }
 }
 
-buildNavigation()
-loadScreen('onboarding-welcome')
+async function init() {
+  await loadComponents()
+  buildNavigation()
+  loadScreen('home-dashboard')
+}
+
+init()

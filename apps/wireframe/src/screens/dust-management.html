@@ -1,131 +1,119 @@
-<div class="flex flex-col h-full bg-midnight-900">
-  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
-    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="home-dashboard">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+<div class="px-4 py-4">
+  <div class="text-center mb-4">
+    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-dust to-dust-light flex items-center justify-center mx-auto mb-3">
+      <svg class="w-8 h-8 text-midnight-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
       </svg>
+    </div>
+    <p class="text-midnight-400 text-xs mb-1">DUST Capacity</p>
+    <div class="flex items-baseline justify-center gap-1">
+      <span class="text-3xl font-heading font-bold text-white">800</span>
+      <span class="text-midnight-400 text-sm">/ 1,000</span>
+    </div>
+  </div>
+
+  <div class="glass-card p-3 mb-3">
+    <div class="mb-2">
+      <div class="flex justify-between text-xs mb-1">
+        <span class="text-midnight-400">Capacity</span>
+        <span class="text-dust font-medium">80%</span>
+      </div>
+      <div class="capacity-bar h-2">
+        <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 80%"></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+      <div>
+        <p class="text-midnight-400 mb-0.5">Current</p>
+        <p class="text-white font-medium">800</p>
+      </div>
+      <div>
+        <p class="text-midnight-400 mb-0.5">Cap</p>
+        <p class="text-white font-medium">1,000</p>
+      </div>
+      <div>
+        <p class="text-midnight-400 mb-0.5">Rate</p>
+        <p class="text-dust font-medium">+50/day</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card p-3 mb-3">
+    <p class="text-xs text-midnight-400 uppercase tracking-wider mb-2">Generation Details</p>
+    <div class="space-y-2 text-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-300">From NIGHT</span>
+        <span class="text-night font-medium">2.5 NIGHT</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-300">Rate</span>
+        <span class="text-white">50 DUST / 24h</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-300">Shield Address</span>
+        <div class="flex items-center gap-1">
+          <span class="text-shield text-xs font-mono">0xabcd...ef12</span>
+          <button class="text-midnight-400 hover:text-white">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-300">Status</span>
+        <span class="badge-dust">Generating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card p-3 mb-3 bg-yellow-500/5 border-yellow-500/20">
+    <div class="flex items-start gap-2">
+      <div class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="font-medium text-yellow-500 text-xs mb-0.5">Decay Information</p>
+        <p class="text-yellow-500/70 text-[10px]">If DUST is disconnected from NIGHT, it decays within 30 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="text-xs text-midnight-400 uppercase tracking-wider mb-2">Actions</p>
+  <div class="grid grid-cols-2 gap-2 mb-3">
+    <button class="glass-card-hover p-3 flex flex-col items-center gap-1.5" data-navigate="send-dust">
+      <div class="w-9 h-9 rounded-lg bg-shield/20 flex items-center justify-center">
+        <svg class="w-4 h-4 text-shield" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+        </svg>
+      </div>
+      <span class="text-xs text-white">Send DUST</span>
     </button>
-    <span class="font-heading font-semibold text-white">DUST Management</span>
-    <div class="w-9"></div>
-  </header>
-
-  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
-    <div class="text-center mb-6">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-dust to-dust-light flex items-center justify-center mx-auto mb-4">
-        <svg class="w-10 h-10 text-midnight-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    <button class="glass-card-hover p-3 flex flex-col items-center gap-1.5" data-navigate="dust-generation">
+      <div class="w-9 h-9 rounded-lg bg-dust/20 flex items-center justify-center">
+        <svg class="w-4 h-4 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
         </svg>
       </div>
-      <p class="text-midnight-400 text-sm mb-2">DUST Capacity</p>
-      <div class="flex items-baseline justify-center gap-2">
-        <span class="text-4xl font-heading font-bold text-white">800</span>
-        <span class="text-midnight-400">/ 1,000</span>
-      </div>
-    </div>
-
-    <div class="glass-card p-4 mb-4">
-      <div class="mb-3">
-        <div class="flex justify-between text-sm mb-2">
-          <span class="text-midnight-400">Capacity</span>
-          <span class="text-dust font-medium">80%</span>
-        </div>
-        <div class="capacity-bar h-3">
-          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 80%"></div>
-        </div>
-      </div>
-      <div class="grid grid-cols-3 gap-3 text-center">
-        <div>
-          <p class="text-xs text-midnight-400 mb-1">Current</p>
-          <p class="text-white font-medium">800</p>
-        </div>
-        <div>
-          <p class="text-xs text-midnight-400 mb-1">Cap</p>
-          <p class="text-white font-medium">1,000</p>
-        </div>
-        <div>
-          <p class="text-xs text-midnight-400 mb-1">Rate</p>
-          <p class="text-dust font-medium">+50/day</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass-card p-4 mb-4">
-      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-3">Generation Details</p>
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-midnight-300 text-sm">From NIGHT</span>
-          <span class="text-night font-medium">2.5 NIGHT</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-midnight-300 text-sm">Rate</span>
-          <span class="text-white">50 DUST / 24h</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-midnight-300 text-sm">Shield Address</span>
-          <div class="flex items-center gap-1">
-            <span class="text-shield text-sm font-mono">0xabcd...ef12</span>
-            <button class="text-midnight-400 hover:text-white">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-midnight-300 text-sm">Status</span>
-          <span class="badge-dust">Generating</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="glass-card p-4 mb-4 bg-yellow-500/5 border-yellow-500/20">
-      <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-          </svg>
-        </div>
-        <div>
-          <p class="font-medium text-yellow-500 text-sm mb-1">Decay Information</p>
-          <p class="text-yellow-500/70 text-xs">If DUST is disconnected from NIGHT, it decays within 30 days. Keep your NIGHT balance to maintain DUST.</p>
-        </div>
-      </div>
-    </div>
-
-    <p class="text-xs text-midnight-400 uppercase tracking-wider mb-3">Actions</p>
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <button class="glass-card-hover p-4 flex flex-col items-center gap-2" data-navigate="send-dust">
-        <div class="w-10 h-10 rounded-xl bg-shield/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-shield" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
-          </svg>
-        </div>
-        <span class="text-sm text-white">Send DUST</span>
-      </button>
-      <button class="glass-card-hover p-4 flex flex-col items-center gap-2" data-navigate="dust-generation">
-        <div class="w-10 h-10 rounded-xl bg-dust/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-        </div>
-        <span class="text-sm text-white">History</span>
-      </button>
-    </div>
-
-    <button class="glass-card-hover p-4 flex items-center gap-3 w-full" data-navigate="settings-address">
-      <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-        </svg>
-      </div>
-      <div class="flex-1">
-        <p class="text-white font-medium text-sm">Change Recipient</p>
-        <p class="text-midnight-400 text-xs">Update where DUST is sent</p>
-      </div>
-      <svg class="w-5 h-5 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-      </svg>
+      <span class="text-xs text-white">History</span>
     </button>
   </div>
+
+  <button class="glass-card-hover p-3 flex items-center gap-2.5 w-full" data-navigate="settings-address">
+    <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </div>
+    <div class="flex-1">
+      <p class="text-white font-medium text-xs">Change Recipient</p>
+      <p class="text-midnight-400 text-[10px]">Update where DUST is sent</p>
+    </div>
+    <svg class="w-4 h-4 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+  </button>
 </div>

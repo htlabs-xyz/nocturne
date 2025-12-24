@@ -40,13 +40,7 @@ export function deriveWalletKeys(mnemonic: string, account: number = 0, index: n
   const hdWallet = hdResult.hdWallet;
   const accountKey = hdWallet.selectAccount(account);
 
-  const allRoles = [
-    Roles.NightExternal,
-    Roles.NightInternal,
-    Roles.Dust,
-    Roles.Zswap,
-    Roles.Metadata,
-  ] as const;
+  const allRoles = [Roles.NightExternal, Roles.NightInternal, Roles.Dust, Roles.Zswap, Roles.Metadata] as const;
 
   const keysResult = accountKey.selectRoles(allRoles).deriveKeysAt(index);
 
@@ -77,8 +71,8 @@ export function deriveWalletKeys(mnemonic: string, account: number = 0, index: n
 
 export function printWalletInfo(keys: WalletKeys): void {
   console.log('=== Wallet Keys Derived ===');
-  console.log(`Shielded seed: ${Buffer.from(keys.shieldedSeed).toString('hex').slice(0, 16)}...`);
-  console.log(`Dust seed: ${Buffer.from(keys.dustSeed).toString('hex').slice(0, 16)}...`);
-  console.log(`Unshielded external: ${Buffer.from(keys.unshieldedExternalSeed).toString('hex').slice(0, 16)}...`);
-  console.log(`Unshielded internal: ${Buffer.from(keys.unshieldedInternalSeed).toString('hex').slice(0, 16)}...`);
+  console.log(`Shielded seed: ${Buffer.from(keys.shieldedSeed).toString('hex')}`);
+  console.log(`Dust seed: ${Buffer.from(keys.dustSeed).toString('hex')}`);
+  console.log(`Unshielded external: ${Buffer.from(keys.unshieldedExternalSeed).toString('hex')}`);
+  console.log(`Unshielded internal: ${Buffer.from(keys.unshieldedInternalSeed).toString('hex')}`);
 }

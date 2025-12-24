@@ -29,7 +29,7 @@ import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-a
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade, type CombinedTokenTransfer } from '@midnight-ntwrk/wallet-sdk-facade';
-import { config, MNEMONIC_1, MNEMONIC_2 } from './config.js';
+import { config, MNEMONIC_1, MNEMONIC_2, networkId } from './config.js';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 200_000 });
 
@@ -46,8 +46,8 @@ describe('Wallet Facade Transfer', () => {
   const dustSenderSeed = getDustSeed(SENDER_SEED);
   const dustReceiverSeed = getDustSeed(RECEIVER_SEED);
 
-  const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, NetworkId.NetworkId.Undeployed);
-  const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, NetworkId.NetworkId.Undeployed);
+  const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, networkId);
+  const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, networkId);
   let senderFacade: WalletFacade;
   let receiverFacade: WalletFacade;
 
@@ -251,7 +251,7 @@ describe('Wallet Facade Transfer', () => {
     const intent = ledger.Intent.new(new Date(Date.now() + 30 * 60 * 1000));
     intent.guaranteedUnshieldedOffer = ledger.UnshieldedOffer.new([], outputs, []);
 
-    const arbitraryTx = ledger.Transaction.fromParts(NetworkId.NetworkId.Undeployed, undefined, undefined, intent);
+    const arbitraryTx = ledger.Transaction.fromParts(networkId, undefined, undefined, intent);
 
     const recipe = await senderFacade.balanceTransaction(
       ledger.ZswapSecretKeys.fromSeed(shieldedSenderSeed),

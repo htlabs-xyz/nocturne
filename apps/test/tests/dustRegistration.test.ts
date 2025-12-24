@@ -55,8 +55,8 @@ describe('Dust Registration', () => {
   const dustSenderSeed = getDustSeed(SENDER_SEED);
   const dustReceiverSeed = getDustSeed(RECEIVER_SEED);
 
-  const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, NetworkId.NetworkId.Undeployed);
-  const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, NetworkId.NetworkId.Undeployed);
+  const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, networkId);
+  const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, networkId);
 
   const unshieldedTxHistoryStorage = new InMemoryTransactionHistoryStorage();
 

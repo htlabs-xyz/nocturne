@@ -1,6 +1,6 @@
-import type { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
+import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 
-export const networkId = 'preview' as NetworkId.NetworkId;
+export const networkId = NetworkId.NetworkId.Preview;
 
 export const network = {
   indexerHttp: 'https://indexer.preview.midnight.network/api/v3/graphql',

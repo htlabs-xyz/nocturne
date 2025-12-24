@@ -1,0 +1,70 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-3 py-2 border-b border-white/5">
+    <button class="p-1.5 -ml-1 text-midnight-400 hover:text-white" data-navigate="send-choose">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white text-sm">Send NIGHT</span>
+    <div class="w-8"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+    <div class="mb-4">
+      <label class="block text-xs text-midnight-300 mb-1.5">Recipient Address</label>
+      <div class="relative">
+        <input type="text" class="input-field pr-10 text-sm" placeholder="Enter unshielded address" value="0x5678...abcd" />
+        <button class="absolute right-2.5 top-1/2 -translate-y-1/2 text-midnight-400 hover:text-white">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="flex items-center gap-1 mt-1.5">
+        <svg class="w-3.5 h-3.5 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="text-dust text-[10px]">Valid unshielded address</span>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-xs text-midnight-300 mb-1.5">Amount</label>
+      <div class="glass-card p-3">
+        <div class="flex items-center gap-2 mb-2">
+          <input type="text" class="flex-1 bg-transparent text-2xl font-heading font-bold text-white focus:outline-none" value="2.5" placeholder="0" />
+          <span class="text-night font-semibold text-sm">NIGHT</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">≈ $5,000 USD</span>
+          <button class="text-night hover:underline">Available: 2.5 NIGHT</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <div class="flex items-center gap-1.5 mb-2">
+        <span class="badge-public">Public Transaction</span>
+      </div>
+      <p class="text-midnight-400 text-[10px]">This transaction will be visible on the blockchain. Everyone can see the sender, recipient, and amount.</p>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-2">Network Fee (in DUST)</p>
+      <div class="flex gap-1.5 mb-2">
+        <button class="flex-1 py-1.5 px-2 bg-white/5 rounded-lg text-xs text-midnight-300 hover:bg-white/10">Slow</button>
+        <button class="flex-1 py-1.5 px-2 bg-night/20 rounded-lg text-xs text-night font-medium">Standard</button>
+        <button class="flex-1 py-1.5 px-2 bg-white/5 rounded-lg text-xs text-midnight-300 hover:bg-white/10">Fast</button>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-400 text-xs">Estimated fee</span>
+        <span class="text-dust font-medium text-sm">50 DUST</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
+    <button class="btn-secondary" data-navigate="send-choose">Cancel</button>
+    <button class="btn-primary" data-navigate="send-confirm">Review</button>
+  </div>
+</div>

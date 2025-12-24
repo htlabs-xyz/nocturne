@@ -1,0 +1,76 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="onboarding-seed">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="flex gap-1">
+      <div class="w-8 h-1 rounded-full bg-night"></div>
+      <div class="w-8 h-1 rounded-full bg-night"></div>
+      <div class="w-8 h-1 rounded-full bg-night"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+    </div>
+    <div class="w-9"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
+    <h1 class="text-xl font-heading font-bold text-white mb-2">Confirm Your Phrase</h1>
+    <p class="text-midnight-400 text-sm mb-6">Select words in the correct order</p>
+
+    <div class="glass-card p-4 mb-6">
+      <div class="flex flex-wrap gap-2 min-h-[100px]">
+        <div class="bg-night/20 text-night px-3 py-1.5 rounded-lg text-sm font-medium">
+          1. abandon
+        </div>
+        <div class="bg-night/20 text-night px-3 py-1.5 rounded-lg text-sm font-medium">
+          2. ability
+        </div>
+        <div class="bg-night/20 text-night px-3 py-1.5 rounded-lg text-sm font-medium">
+          3. able
+        </div>
+        <div class="border-2 border-dashed border-white/20 px-3 py-1.5 rounded-lg text-sm text-midnight-400">
+          4. _____
+        </div>
+      </div>
+    </div>
+
+    <p class="text-midnight-400 text-xs mb-3">Select word #4:</p>
+
+    <div class="grid grid-cols-3 gap-2">
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        absent
+      </button>
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        about
+      </button>
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        above
+      </button>
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        absorb
+      </button>
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        abuse
+      </button>
+      <button class="bg-white/5 hover:bg-white/10 text-white px-3 py-2.5 rounded-lg text-sm transition-colors">
+        access
+      </button>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center gap-2">
+      <div class="w-2 h-2 rounded-full bg-night"></div>
+      <div class="w-2 h-2 rounded-full bg-night"></div>
+      <div class="w-2 h-2 rounded-full bg-night"></div>
+      <div class="w-2 h-2 rounded-full bg-white/20"></div>
+      <div class="w-2 h-2 rounded-full bg-white/20"></div>
+      <div class="w-2 h-2 rounded-full bg-white/20"></div>
+    </div>
+    <p class="text-center text-midnight-400 text-xs mt-2">3 of 6 words confirmed</p>
+  </div>
+
+  <div class="p-4 border-t border-white/5">
+    <button class="btn-primary" data-navigate="onboarding-dust">Continue</button>
+  </div>
+</div>

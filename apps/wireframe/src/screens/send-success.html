@@ -1,0 +1,66 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <div class="flex-1 flex flex-col items-center justify-center px-4 py-6">
+    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-dust to-dust-light flex items-center justify-center mb-4">
+      <svg class="w-7 h-7 text-midnight-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+
+    <h1 class="text-xl font-heading font-bold text-white mb-1">Success!</h1>
+    <p class="text-midnight-400 text-sm text-center mb-5">Transaction Submitted</p>
+
+    <div class="glass-card p-3 w-full mb-3">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Sent</span>
+          <span class="text-white font-medium text-sm">2.5 NIGHT</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">To</span>
+          <span class="text-white font-mono text-xs">0x5678...efgh</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Fee</span>
+          <span class="text-dust text-sm">50 DUST</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 w-full mb-3">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-midnight-400 text-xs">Transaction Hash</span>
+        <button class="text-night text-xs hover:underline flex items-center gap-1">
+          Copy
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+        </button>
+      </div>
+      <p class="text-white font-mono text-xs break-all">0xabcdef1234567890abcdef1234567890</p>
+    </div>
+
+    <div class="glass-card p-2.5 w-full mb-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-yellow-500/20 flex items-center justify-center animate-pulse">
+          <svg class="w-3.5 h-3.5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <p class="text-white text-xs font-medium">Pending Confirmation</p>
+          <p class="text-midnight-400 text-[10px]">Est. 30-60 seconds</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5 mb-2">
+      <span class="badge-public">Public Transaction</span>
+    </div>
+    <p class="text-midnight-400 text-[10px] text-center">Transaction visible on blockchain explorer</p>
+  </div>
+
+  <div class="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
+    <button class="btn-secondary" data-navigate="history-night-detail">View Details</button>
+    <button class="btn-primary" data-navigate="home-dashboard">Done</button>
+  </div>
+</div>

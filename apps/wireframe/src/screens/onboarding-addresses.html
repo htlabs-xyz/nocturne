@@ -1,0 +1,114 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="onboarding-welcome">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="flex gap-1">
+      <div class="w-8 h-1 rounded-full bg-night"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+      <div class="w-8 h-1 rounded-full bg-white/20"></div>
+    </div>
+    <div class="w-9"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
+    <h1 class="text-xl font-heading font-bold text-white mb-2">Understand Your Addresses</h1>
+    <p class="text-midnight-400 text-sm mb-6">Midnight uses 3 address types for privacy</p>
+
+    <div class="space-y-4">
+      <div class="glass-card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-night/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-night" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-medium text-white">NIGHT Address</p>
+            <span class="badge-public">Public</span>
+          </div>
+        </div>
+        <ul class="text-sm text-midnight-300 space-y-1.5 ml-1">
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Holds NIGHT tokens (governance)
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Visible on blockchain explorer
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Generates DUST continuously
+          </li>
+        </ul>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-shield/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-shield" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-medium text-white">Shield Address</p>
+            <span class="badge-private">Private</span>
+          </div>
+        </div>
+        <ul class="text-sm text-midnight-300 space-y-1.5 ml-1">
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Holds DUST tokens
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Hidden from blockchain
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Private transactions
+          </li>
+        </ul>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-dust/20 flex items-center justify-center">
+            <svg class="w-5 h-5 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-medium text-white">DUST Recipient</p>
+            <span class="badge-dust">Capacity</span>
+          </div>
+        </div>
+        <ul class="text-sm text-midnight-300 space-y-1.5 ml-1">
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Receives generated DUST
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Cap based on NIGHT amount
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+            Decays if disconnected
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <a href="#" class="block text-center text-night text-sm mt-4 hover:underline">Learn more →</a>
+  </div>
+
+  <div class="p-4 border-t border-white/5">
+    <button class="btn-primary" data-navigate="onboarding-seed">Continue</button>
+  </div>
+</div>

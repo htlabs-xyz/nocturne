@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Midnight Wallet Extension - Wireframe (360×600)</title>
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body class="h-full bg-midnight-900 text-white antialiased">
+  <div class="flex h-full">
+    <aside id="screen-nav" class="w-64 bg-midnight-800 border-r border-white/10 overflow-y-auto scrollbar-hide p-4">
+      <h2 class="text-lg font-heading font-semibold text-night mb-4">Screens</h2>
+      <nav class="space-y-1" id="nav-list"></nav>
+    </aside>
+
+    <main class="flex-1 flex items-center justify-center p-8 bg-midnight-900/50">
+      <div class="relative">
+        <div class="absolute -inset-4 bg-gradient-to-r from-night/20 to-shield/20 rounded-2xl blur-xl"></div>
+        <div id="extension-frame" class="relative w-[360px] h-[600px] bg-midnight-900 rounded-xl border border-midnight-600 overflow-hidden shadow-2xl">
+          <div id="screen-container" class="h-full overflow-y-auto scrollbar-hide"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

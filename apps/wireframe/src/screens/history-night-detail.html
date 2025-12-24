@@ -1,0 +1,128 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-3 py-2 border-b border-white/5">
+    <button class="p-1.5 -ml-1 text-midnight-400 hover:text-white" data-navigate="history-list">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white text-sm">Transaction Detail</span>
+    <div class="w-8"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+    <div class="text-center mb-4">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-night to-night-light flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-midnight-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-heading font-bold text-white mb-1">Public NIGHT Transaction</h2>
+      <div class="flex items-center justify-center gap-1.5">
+        <span class="badge-public">Unshielded</span>
+        <span class="text-dust text-xs font-medium">Confirmed</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Type</span>
+          <span class="text-white font-medium text-sm">Sent NIGHT</span>
+        </div>
+        <div>
+          <p class="text-midnight-400 text-xs mb-1">From</p>
+          <div class="address-display py-1.5 px-2.5">
+            <span class="text-white font-mono text-xs truncate">0x1234567890abcdef...</span>
+            <button class="text-midnight-400 hover:text-white flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div>
+          <p class="text-midnight-400 text-xs mb-1">To</p>
+          <div class="address-display py-1.5 px-2.5">
+            <span class="text-white font-mono text-xs truncate">0x5678abcdef123456...</span>
+            <button class="text-midnight-400 hover:text-white flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Amount</span>
+          <div class="text-right">
+            <span class="text-night font-bold block">2.5 NIGHT</span>
+            <span class="text-midnight-400 text-xs">≈ $5,000 USD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Fee (DUST)</span>
+          <span class="text-dust font-medium text-sm">50 DUST</span>
+        </div>
+        <div class="border-t border-white/10 pt-2 flex items-center justify-between">
+          <span class="text-white font-medium text-sm">Total Spent</span>
+          <span class="text-night font-bold text-sm">2.5 NIGHT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-2">Network Details</p>
+      <div class="space-y-2">
+        <div>
+          <p class="text-midnight-400 text-[10px] mb-1">Transaction Hash</p>
+          <div class="address-display py-1.5 px-2.5">
+            <span class="text-white font-mono text-xs truncate">0xabcdef1234567890abcdef...</span>
+            <button class="text-midnight-400 hover:text-white flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Block</span>
+          <span class="text-white font-mono text-xs">12345678</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Timestamp</span>
+          <span class="text-white text-xs">Dec 18, 1:15 PM</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Confirmations</span>
+          <span class="text-dust text-xs">30 confirmations</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-2.5 bg-yellow-500/5 border-yellow-500/20">
+      <div class="flex items-start gap-2">
+        <svg class="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <p class="font-medium text-yellow-500 text-xs mb-0.5">Public Transaction</p>
+          <p class="text-yellow-500/70 text-[10px]">Everyone on the blockchain can see the sender, recipient, and amount.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
+    <button class="btn-secondary flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+      </svg>
+      Explorer
+    </button>
+    <button class="btn-primary" data-navigate="history-list">Done</button>
+  </div>
+</div>

@@ -1,0 +1,139 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="settings-security">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white">Privacy Settings</span>
+    <div class="w-9"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Address Display</p>
+      <div class="space-y-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Hide sensitive addresses</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Show full address on click</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Hide DUST balance by default</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Transaction Display</p>
+      <div class="space-y-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Hide DUST from/to details</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Hide NIGHT amounts (masked)</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Show only transaction hashes</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Screenshot Protection</p>
+      <div class="space-y-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Disable screenshots</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Blur sensitive data</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Data Collection</p>
+      <div class="space-y-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Share anonymous analytics</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Help improve Midnight UX</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="glass-card p-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Advanced Privacy</p>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">DUST Decay Period</span>
+          <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dust/50">
+            <option>30 days</option>
+            <option>60 days</option>
+            <option>90 days</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Privacy Mode</span>
+          <select class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-dust/50">
+            <option>Standard</option>
+            <option>Strict</option>
+            <option>Maximum</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

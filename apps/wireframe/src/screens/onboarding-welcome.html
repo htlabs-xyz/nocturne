@@ -1,0 +1,56 @@
+<div class="flex flex-col h-full bg-gradient-to-b from-midnight-800 to-midnight-900">
+  <div class="flex-1 flex flex-col items-center justify-center px-6 pt-8">
+    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-night to-shield flex items-center justify-center mb-6 shadow-glow">
+      <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+    </div>
+
+    <h1 class="text-xl font-heading font-bold text-white mb-1">Welcome to Midnight</h1>
+    <p class="text-midnight-300 text-center text-sm mb-6">Private transactions. Zero-knowledge privacy.</p>
+
+    <div class="w-full space-y-2 mb-6">
+      <div class="glass-card p-3 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-shield/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-shield" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-medium text-white text-sm">Shield Addresses</p>
+          <p class="text-midnight-400 text-xs">Private transactions with hidden metadata</p>
+        </div>
+      </div>
+
+      <div class="glass-card p-3 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-night/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-night" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-medium text-white text-sm">NIGHT Tokens</p>
+          <p class="text-midnight-400 text-xs">Governance token & DUST generator</p>
+        </div>
+      </div>
+
+      <div class="glass-card p-3 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-dust/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="font-medium text-white text-sm">DUST Generation</p>
+          <p class="text-midnight-400 text-xs">Auto-renewable transaction fuel</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 space-y-2">
+    <button class="btn-primary" data-navigate="onboarding-addresses">Create New Wallet</button>
+    <button class="btn-secondary">Import Wallet</button>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="dust-management">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white">DUST Generation History</span>
+    <div class="w-9"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
+    <div class="glass-card p-4 mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-midnight-400 text-sm">Source NIGHT</span>
+        <span class="text-night font-bold">2.5 NIGHT</span>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-midnight-400 text-sm">Daily Rate</span>
+        <span class="text-dust font-medium">50 DUST/day</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-midnight-400 text-sm">Current Cap</span>
+        <span class="text-white font-medium">1,000 DUST</span>
+      </div>
+    </div>
+
+    <p class="text-xs text-midnight-400 uppercase tracking-wider mb-3">Recent Generation</p>
+
+    <div class="space-y-4">
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white font-medium">Today (Dec 20)</span>
+          <span class="text-dust font-bold">+50 DUST</span>
+        </div>
+        <div class="capacity-bar mb-2">
+          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 80%"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">Running total</span>
+          <span class="text-midnight-300">800 / 1,000</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white font-medium">Yesterday (Dec 19)</span>
+          <span class="text-dust font-bold">+50 DUST</span>
+        </div>
+        <div class="capacity-bar mb-2">
+          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 75%"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">Running total</span>
+          <span class="text-midnight-300">750 / 1,000</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white font-medium">Dec 18</span>
+          <span class="text-dust font-bold">+50 DUST</span>
+        </div>
+        <div class="capacity-bar mb-2">
+          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 70%"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">Running total</span>
+          <span class="text-midnight-300">700 / 1,000</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white font-medium">Dec 17</span>
+          <span class="text-dust font-bold">+50 DUST</span>
+        </div>
+        <div class="capacity-bar mb-2">
+          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 65%"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">Running total</span>
+          <span class="text-midnight-300">650 / 1,000</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-white font-medium">Dec 16</span>
+          <span class="text-dust font-bold">+50 DUST</span>
+        </div>
+        <div class="capacity-bar mb-2">
+          <div class="capacity-fill bg-gradient-to-r from-dust to-dust-light" style="width: 60%"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-midnight-400">Running total</span>
+          <span class="text-midnight-300">600 / 1,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mt-6 bg-yellow-500/5 border-yellow-500/20">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <div>
+          <p class="font-medium text-yellow-500 text-sm mb-1">Decay Information</p>
+          <p class="text-yellow-500/70 text-xs">If orphaned from NIGHT, DUST will decay within 30 days at 10% per day.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

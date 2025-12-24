@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  code, pre, .mono {
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-glass border border-white/10 rounded-xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:bg-white/10 hover:border-white/20 cursor-pointer;
+  }
+
+  .btn-primary {
+    @apply w-full py-2.5 px-4 bg-night text-midnight-900 font-semibold rounded-lg text-sm
+           transition-all duration-200 hover:bg-night-light active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply w-full py-2.5 px-4 bg-white/10 text-white font-semibold rounded-lg text-sm
+           border border-white/20 transition-all duration-200
+           hover:bg-white/20 active:scale-[0.98];
+  }
+
+  .btn-shield {
+    @apply w-full py-2.5 px-4 bg-shield text-white font-semibold rounded-lg text-sm
+           transition-all duration-200 hover:bg-shield-light active:scale-[0.98];
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm
+           text-white placeholder-midnight-400 focus:outline-none
+           focus:border-night/50 focus:ring-1 focus:ring-night/30
+           transition-all duration-200;
+  }
+
+  .badge-public {
+    @apply inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium
+           bg-night/20 text-night rounded-full;
+  }
+
+  .badge-private {
+    @apply inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium
+           bg-shield/20 text-shield rounded-full;
+  }
+
+  .badge-dust {
+    @apply inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium
+           bg-dust/20 text-dust rounded-full;
+  }
+
+  .capacity-bar {
+    @apply h-2 bg-white/10 rounded-full overflow-hidden;
+  }
+
+  .capacity-fill {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+
+  .address-display {
+    @apply font-mono text-sm bg-white/5 px-3 py-2 rounded-lg
+           border border-white/10 flex items-center justify-between;
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center gap-1 p-2 text-midnight-400
+           transition-colors duration-200 hover:text-white cursor-pointer;
+  }
+
+  .nav-item.active {
+    @apply text-night;
+  }
+
+  .screen {
+    @apply hidden;
+  }
+
+  .screen.active {
+    @apply flex flex-col;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-night to-night-light bg-clip-text text-transparent;
+  }
+
+  .text-gradient-purple {
+    @apply bg-gradient-to-r from-shield to-shield-light bg-clip-text text-transparent;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

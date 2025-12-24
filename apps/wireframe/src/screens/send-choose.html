@@ -1,0 +1,84 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-3 py-2 border-b border-white/5">
+    <button class="p-1.5 -ml-1 text-midnight-400 hover:text-white" data-navigate="home-dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white text-sm">Send</span>
+    <div class="w-8"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-3 py-4 scrollbar-hide">
+    <h2 class="text-base font-heading font-semibold text-white mb-1">What do you want to send?</h2>
+    <p class="text-midnight-400 text-xs mb-4">Choose between public or private transaction</p>
+
+    <div class="space-y-3">
+      <button class="glass-card-hover p-3 w-full text-left" data-navigate="send-night">
+        <div class="flex items-start gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-night to-night-light flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-midnight-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="font-semibold text-white text-sm">Send NIGHT</span>
+              <span class="badge-public">Public</span>
+            </div>
+            <ul class="text-xs text-midnight-400 space-y-0.5">
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                Visible on blockchain
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                Balance: 2.5 NIGHT
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                Fees paid in DUST
+              </li>
+            </ul>
+          </div>
+          <svg class="w-4 h-4 text-midnight-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </button>
+
+      <button class="glass-card-hover p-3 w-full text-left" data-navigate="send-dust">
+        <div class="flex items-start gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-shield to-shield-light flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="font-semibold text-white text-sm">Send DUST</span>
+              <span class="badge-private">Private</span>
+            </div>
+            <ul class="text-xs text-midnight-400 space-y-0.5">
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                Private metadata
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                Balance: 800 DUST
+              </li>
+              <li class="flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-midnight-400"></span>
+                No fees (capacity based)
+              </li>
+            </ul>
+          </div>
+          <svg class="w-4 h-4 text-midnight-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,116 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-3 py-2 border-b border-white/5">
+    <button class="p-1.5 -ml-1 text-midnight-400 hover:text-white" data-navigate="history-list">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white text-sm">Transaction Detail</span>
+    <div class="w-8"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+    <div class="text-center mb-4">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-shield to-shield-light flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-heading font-bold text-white mb-1">Private DUST Transaction</h2>
+      <div class="flex items-center justify-center gap-1.5">
+        <span class="badge-private">Shielded</span>
+        <span class="text-dust text-xs font-medium">Confirmed</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Type</span>
+          <span class="text-white font-medium text-sm">Received DUST</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">From</span>
+          <span class="text-shield font-medium text-sm">Hidden (Shielded)</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">To</span>
+          <span class="text-shield font-medium text-sm">Hidden (Shielded)</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Amount</span>
+          <span class="text-dust font-bold">+200 DUST</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-2">Network Details</p>
+      <div class="space-y-2">
+        <div>
+          <p class="text-midnight-400 text-[10px] mb-1">Transaction Hash</p>
+          <div class="address-display py-1.5 px-2.5">
+            <span class="text-white font-mono text-xs truncate">0xabcdef1234567890abcdef...</span>
+            <button class="text-midnight-400 hover:text-white flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Block</span>
+          <span class="text-white font-mono text-xs">12345678</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Timestamp</span>
+          <span class="text-white text-xs">Dec 20, 2:30 PM</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-400 text-xs">Confirmations</span>
+          <span class="text-dust text-xs">30 confirmations</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 bg-shield/5 border-shield/20">
+      <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-2">Privacy Status</p>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-1.5 text-dust text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Sender hidden</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-dust text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Recipient hidden</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-dust text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Amount shielded</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-dust text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Metadata private</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-3 border-t border-white/5 grid grid-cols-2 gap-2">
+    <button class="btn-secondary flex items-center justify-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+      </svg>
+      Explorer
+    </button>
+    <button class="btn-primary" data-navigate="history-list">Done</button>
+  </div>
+</div>

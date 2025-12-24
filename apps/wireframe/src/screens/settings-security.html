@@ -1,0 +1,142 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-3 py-2 border-b border-white/5">
+    <button class="p-1.5 -ml-1 text-midnight-400 hover:text-white" data-navigate="home-dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white text-sm">Settings</span>
+    <div class="w-8"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+    <div class="glass-card p-3 mb-3">
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-medium text-white text-sm">Password Protection</p>
+        <span class="badge-dust">Set</span>
+      </div>
+      <div class="flex gap-1.5">
+        <button class="flex-1 py-1.5 px-2 bg-white/5 rounded-lg text-xs text-white hover:bg-white/10">
+          Change Password
+        </button>
+        <button class="flex-1 py-1.5 px-2 bg-white/5 rounded-lg text-xs text-white hover:bg-white/10">
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-medium text-white text-sm">Seed Phrase Backup</p>
+        <span class="badge-dust">Backed Up</span>
+      </div>
+      <p class="text-midnight-400 text-[10px] mb-2">Last backup: Dec 1, 2024</p>
+      <div class="flex gap-1.5 mb-2">
+        <button class="flex-1 py-1.5 px-2 bg-shield/20 rounded-lg text-xs text-shield font-medium hover:bg-shield/30">
+          Reveal Phrase
+        </button>
+        <button class="flex-1 py-1.5 px-2 bg-white/5 rounded-lg text-xs text-white hover:bg-white/10">
+          Export
+        </button>
+      </div>
+      <div class="flex items-start gap-1.5 text-[10px] text-midnight-400">
+        <svg class="w-3.5 h-3.5 text-shield flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span>Controls both NIGHT and Shield addresses</span>
+      </div>
+    </div>
+
+    <div class="glass-card p-3 mb-3 bg-yellow-500/5 border-yellow-500/20">
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-medium text-yellow-500 text-sm">DUST Recovery Key</p>
+        <span class="badge-public">Not Backed Up</span>
+      </div>
+      <p class="text-yellow-500/70 text-[10px] mb-2">Generate a recovery key for DUST address recovery</p>
+      <button class="w-full py-1.5 px-2 bg-yellow-500/20 rounded-lg text-xs text-yellow-500 font-medium hover:bg-yellow-500/30">
+        Generate Recovery Key
+      </button>
+    </div>
+
+    <div class="glass-card p-3 mb-3">
+      <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-3">Auto-lock Settings</p>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-xs">Lock after</span>
+          <select class="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-xs focus:outline-none focus:border-dust/50">
+            <option>5 minutes</option>
+            <option>15 minutes</option>
+            <option>30 minutes</option>
+            <option>1 hour</option>
+          </select>
+        </div>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-xs">Biometric unlock</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-9 h-5 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-4"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <p class="text-[10px] text-midnight-400 uppercase tracking-wider mb-2">Quick Settings</p>
+    <div class="space-y-1.5 mb-4">
+      <button class="glass-card-hover p-2.5 flex items-center gap-2.5 w-full" data-navigate="settings-address">
+        <div class="w-8 h-8 rounded-lg bg-night/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-night" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+        <span class="text-white text-xs flex-1">Address Settings</span>
+        <svg class="w-4 h-4 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <button class="glass-card-hover p-2.5 flex items-center gap-2.5 w-full" data-navigate="settings-privacy">
+        <div class="w-8 h-8 rounded-lg bg-shield/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-shield" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <span class="text-white text-xs flex-1">Privacy Settings</span>
+        <svg class="w-4 h-4 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <button class="glass-card-hover p-2.5 flex items-center gap-2.5 w-full" data-navigate="settings-dust">
+        <div class="w-8 h-8 rounded-lg bg-dust/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-dust" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="text-white text-xs flex-1">DUST Settings</span>
+        <svg class="w-4 h-4 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <button class="glass-card-hover p-2.5 flex items-center gap-2.5 w-full" data-navigate="settings-about">
+        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span class="text-white text-xs flex-1">About</span>
+        <svg class="w-4 h-4 text-midnight-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex gap-2">
+      <button class="flex-1 btn-secondary text-xs py-2">Clear Cache</button>
+      <button class="flex-1 py-2 px-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 font-semibold text-xs hover:bg-red-500/20 transition-colors">
+        Reset Wallet
+      </button>
+    </div>
+  </div>
+</div>

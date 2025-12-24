@@ -1,0 +1,115 @@
+<div class="flex flex-col h-full bg-midnight-900">
+  <header class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+    <button class="p-2 -ml-2 text-midnight-400 hover:text-white" data-navigate="settings-security">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <span class="font-heading font-semibold text-white">DUST Settings</span>
+    <div class="w-9"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-hide">
+    <div class="glass-card p-4 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <p class="font-medium text-white">DUST Generation</p>
+        <span class="badge-dust">Generating</span>
+      </div>
+      <div class="space-y-3 mb-4">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">From NIGHT</span>
+          <span class="text-night font-medium">2.5 NIGHT</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Rate</span>
+          <span class="text-dust font-medium">50 DUST/24h</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button class="flex-1 py-2 px-3 bg-white/5 rounded-lg text-sm text-midnight-300 hover:bg-white/10">
+          Pause Generation
+        </button>
+        <button class="flex-1 py-2 px-3 bg-dust/20 rounded-lg text-sm text-dust font-medium">
+          Resume
+        </button>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">DUST Cap Information</p>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Current Cap</span>
+          <span class="text-white font-medium">1,000 DUST</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Formula</span>
+          <span class="text-midnight-400 text-sm">[NIGHT] × 400</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Next adjustment</span>
+          <span class="text-white">Dec 21, 2024</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Decay Settings</p>
+      <div class="space-y-3 mb-4">
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Decay period</span>
+          <span class="text-white">30 days</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Decay rate</span>
+          <span class="text-white">10% per day</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-midnight-300 text-sm">Status</span>
+          <span class="text-dust">Default (no decay)</span>
+        </div>
+      </div>
+      <button class="w-full text-night text-sm hover:underline flex items-center justify-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Learn about DUST decay
+      </button>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <p class="text-xs text-midnight-400 uppercase tracking-wider mb-4">Notifications</p>
+      <div class="space-y-4">
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Alert when cap reached</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Alert when decay starts</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+        <label class="flex items-center justify-between cursor-pointer">
+          <span class="text-white text-sm">Daily generation report</span>
+          <div class="relative">
+            <input type="checkbox" class="sr-only peer" checked />
+            <div class="w-11 h-6 bg-midnight-600 rounded-full peer peer-checked:bg-dust"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button class="flex-1 btn-secondary">Reset to Default</button>
+      <button class="flex-1 btn-secondary">Export Settings</button>
+    </div>
+  </div>
+</div>

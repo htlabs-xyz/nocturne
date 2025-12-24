@@ -127,6 +127,7 @@ describe('Wallet Facade Transfer', () => {
     const finalizedTx = await senderFacade.finalizeTransaction(transfer);
 
     const submittedTxHash = await senderFacade.submitTransaction(finalizedTx);
+    console.log('transfer shielded tokens only: ', submittedTxHash);
 
     expect(submittedTxHash).toBeTypeOf('string');
 
@@ -177,6 +178,7 @@ describe('Wallet Facade Transfer', () => {
     });
 
     const submittedTxHash = await senderFacade.submitTransaction(finalizedTx);
+    console.log('transfer unShielded tokens txhash: ', submittedTxHash);
 
     expect(submittedTxHash).toBeTruthy();
 
@@ -227,6 +229,7 @@ describe('Wallet Facade Transfer', () => {
     const finalizedTx = await senderFacade.finalizeTransaction(balancedTx);
 
     const submittedTxHash = await senderFacade.submitTransaction(finalizedTx);
+    console.log('balance and submit an arbitrary shielded transaction', submittedTxHash);
 
     expect(submittedTxHash).toBeTypeOf('string');
 
@@ -276,6 +279,7 @@ describe('Wallet Facade Transfer', () => {
     });
 
     const submittedTxHash = await senderFacade.submitTransaction(finalizedTx);
+    console.log('balance and submit an arbitrary unshielded transaction', submittedTxHash);
 
     expect(submittedTxHash).toBeTypeOf('string');
 

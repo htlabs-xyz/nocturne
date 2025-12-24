@@ -8,6 +8,10 @@
     "test2": "bun run src/test2.ts",
     "gendust": "bun run src/dust-from-night.ts",
     "tran": "bun run src/transfer.ts",
+    "swap": "bun run src/swap.ts",
+    "dust:register": "bun run src/dust-registration.ts",
+    "dust:deregister": "bun run src/dust-deregistration.ts",
+    "balance": "bun run src/balance-transaction.ts",
     "start": "bun run src/index.ts"
   },
   "dependencies": {

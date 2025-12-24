@@ -11,7 +11,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import type { UtxoWithMeta } from '@midnight-ntwrk/wallet-sdk-facade';
 import * as rx from 'rxjs';
-import { MNEMONIC_1, NETWORK_CONFIG } from './config';
+import { config, MNEMONIC_1, networkId } from './config';
 import { deriveWalletKeys, printWalletInfo } from './wallet';
 
 async function waitForFullySynced(facade: WalletFacade): Promise<void> {
@@ -37,11 +37,6 @@ export async function runDustFromNightTest() {
   console.log('║         Midnight Wallet SDK - Dust from Night              ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
-  console.log(`Network: ${NETWORK_CONFIG.networkId}`);
-  console.log(`Indexer: ${NETWORK_CONFIG.indexerHttp}`);
-  console.log(`Node: ${NETWORK_CONFIG.nodeWs}`);
-  console.log(`Prover: ${NETWORK_CONFIG.proofServer}\n`);
-
   console.log('┌────────────────────────────────────────────────────────────┐');
   console.log('│ Deriving Wallet Keys from Mnemonic                         │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
@@ -51,22 +46,11 @@ export async function runDustFromNightTest() {
   const walletKeys = deriveWalletKeys(MNEMONIC_1, 0, 0);
   printWalletInfo(walletKeys);
 
-  const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
   const dustParameters = ledger.LedgerParameters.initialParameters().dust;
 
   console.log('\n┌────────────────────────────────────────────────────────────┐');
   console.log('│ Creating Wallet Configuration                              │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
-
-  const config = {
-    indexerClientConnection: {
-      indexerHttpUrl: NETWORK_CONFIG.indexerHttp,
-      indexerWsUrl: NETWORK_CONFIG.indexerWs,
-    },
-    provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
-    relayURL: new URL(NETWORK_CONFIG.nodeWs),
-    networkId,
-  };
 
   const unshieldedKeystore = createKeystore(walletKeys.unshieldedExternalSeed, networkId);
 

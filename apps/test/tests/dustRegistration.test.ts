@@ -12,10 +12,8 @@
 // limitations under the License.
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
-import { randomUUID } from 'node:crypto';
-import os from 'node:os';
-import { DockerComposeEnvironment, StartedDockerComposeEnvironment, Wait } from 'testcontainers';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { StartedDockerComposeEnvironment } from 'testcontainers';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   getShieldedSeed,
   getUnshieldedSeed,
@@ -25,7 +23,6 @@ import {
   waitForDustGenerated,
   mnemonicToHexSeed,
 } from './utils.js';
-import { buildTestEnvironmentVariables, getComposeDirectory } from '@midnight-ntwrk/wallet-sdk-utilities/testing';
 import {
   createKeystore,
   UnshieldedWallet,
@@ -33,7 +30,6 @@ import {
   PublicKey,
 } from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
 import * as rx from 'rxjs';
-import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet, type DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { ArrayOps } from '@midnight-ntwrk/wallet-sdk-utilities';

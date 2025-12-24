@@ -56,7 +56,7 @@ export const runProofServerContainer = (
 
 export const runTxGenerator = (
   config: {
-    nodeUrl: string;
+    nodeWs: string;
     destPath: string;
     fileName: string;
     txsPerBatch: number;
@@ -69,7 +69,7 @@ export const runTxGenerator = (
     .withCommand([
       'generate-txs',
       '--src-url',
-      config.nodeUrl,
+      config.nodeWs,
       '--dest-file',
       `/tmp/${config.fileName}`,
       'batches',

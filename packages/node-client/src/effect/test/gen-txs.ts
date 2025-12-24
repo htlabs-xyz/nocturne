@@ -33,11 +33,11 @@ const cleanDir = () =>
   });
 
 export const generateTxs = (
-  nodeUrl: string,
+  nodeWs: string,
   proofServerUrl: string,
   network: StartedNetwork,
 ): Effect.Effect<void, Error | PlatformError, Scope.Scope> =>
   Effect.gen(function* () {
     yield* cleanDir();
-    yield* generateTestTransactions(nodeUrl, proofServerUrl, network, paths.outputPath, paths.fileName);
+    yield * generateTestTransactions(nodeWs, proofServerUrl, network, paths.outputPath, paths.fileName);
   }).pipe(Effect.provide(NodeContext.layer));

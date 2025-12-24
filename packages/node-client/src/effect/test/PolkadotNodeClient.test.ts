@@ -23,7 +23,7 @@ import { generateTxs, getTestTxsPath } from './gen-txs.js';
 
 const clientLayer = (nodePort: number) =>
   PolkadotNodeClient.layer({
-    nodeURL: new URL(`ws://127.0.0.1:${nodePort}`),
+    nodeWs: new URL(`ws://127.0.0.1:${nodePort}`),
   });
 
 // It takes some time to pass through enough rounds of consensus, even in tests

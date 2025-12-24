@@ -134,26 +134,28 @@ const generateUnbalancedTransaction = (proofServerUrl: string) => {
 };
 
 export const generateTestTransactions = (
-  nodeUrl: string,
+  nodeWs: string,
   proofServerUrl: string,
   network: StartedNetwork,
   outputPath: string,
   fileName: string,
 ): Effect.Effect<void, Error | Error.PlatformError, FileSystem.FileSystem | Scope> =>
   Effect.gen(function* () {
-    const [, unbalancedTx] = yield* Effect.all([
-      TestContainers.runTxGenerator(
-        {
-          nodeUrl: nodeUrl,
-          destPath: outputPath,
-          fileName: fileName,
-          txsPerBatch: 1,
-          batches: 1,
-        },
-        (c) => c.withNetwork(network),
-      ),
-      generateUnbalancedTransaction(proofServerUrl),
-    ]);
+    const [, unbalancedTx] =
+      yield *
+      Effect.all([
+        TestContainers.runTxGenerator(
+          {
+            nodeWs: nodeWs,
+            destPath: outputPath,
+            fileName: fileName,
+            txsPerBatch: 1,
+            batches: 1,
+          },
+          (c) => c.withNetwork(network),
+        ),
+        generateUnbalancedTransaction(proofServerUrl),
+      ]);
 
     yield* normalizeAndSaveUnbalancedTx(`${outputPath}/${fileName}`, unbalancedTx);
   });

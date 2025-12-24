@@ -58,9 +58,11 @@ export const makeDefaultSubmissionService = (
 
   const makeScopeAndClient: Effect.Effect<ScopeAndClient, NodeClientError.NodeClientError> = Effect.gen(function* () {
     const scope = yield* Scope.make();
-    const client = yield* PolkadotNodeClient.make({
-      nodeURL: config.relayURL,
-    }).pipe(Effect.provideService(Scope.Scope, scope));
+    const client =
+      yield *
+      PolkadotNodeClient.make({
+        nodeWs: config.relayURL,
+      }).pipe(Effect.provideService(Scope.Scope, scope));
 
     return { scope, client };
   });

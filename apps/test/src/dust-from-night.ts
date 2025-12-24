@@ -11,7 +11,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import type { UtxoWithMeta } from '@midnight-ntwrk/wallet-sdk-facade';
 import * as rx from 'rxjs';
-import { NETWORK_CONFIG, TEST_MNEMONIC } from './config';
+import { MNEMONIC_1, NETWORK_CONFIG } from './config';
 import { deriveWalletKeys, printWalletInfo } from './wallet';
 
 async function waitForFullySynced(facade: WalletFacade): Promise<void> {
@@ -39,16 +39,16 @@ export async function runDustFromNightTest() {
 
   console.log(`Network: ${NETWORK_CONFIG.networkId}`);
   console.log(`Indexer: ${NETWORK_CONFIG.indexerHttp}`);
-  console.log(`Node: ${NETWORK_CONFIG.nodeUrl}`);
+  console.log(`Node: ${NETWORK_CONFIG.nodeWs}`);
   console.log(`Prover: ${NETWORK_CONFIG.proofServer}\n`);
 
   console.log('┌────────────────────────────────────────────────────────────┐');
   console.log('│ Deriving Wallet Keys from Mnemonic                         │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
 
-  console.log(`Mnemonic: ${TEST_MNEMONIC.split(' ').slice(0, 4).join(' ')}...\n`);
+  console.log(`Mnemonic: ${MNEMONIC_1.split(' ').slice(0, 4).join(' ')}...\n`);
 
-  const walletKeys = deriveWalletKeys(TEST_MNEMONIC, 0, 0);
+  const walletKeys = deriveWalletKeys(MNEMONIC_1, 0, 0);
   printWalletInfo(walletKeys);
 
   const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
@@ -64,7 +64,7 @@ export async function runDustFromNightTest() {
       indexerWsUrl: NETWORK_CONFIG.indexerWs,
     },
     provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
-    relayURL: new URL(NETWORK_CONFIG.nodeUrl),
+    relayURL: new URL(NETWORK_CONFIG.nodeWs),
     networkId,
   };
 
@@ -146,11 +146,7 @@ export async function runDustFromNightTest() {
   });
 
   const nightUtxos: UtxoWithMeta[] = state.unshielded.availableCoins
-    .filter(
-      (coin) =>
-        coin.meta.registeredForDustGeneration === false &&
-        coin.utxo.type === ledger.nativeToken().raw,
-    )
+    .filter((coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw)
     .map((coin) => ({
       utxo: coin.utxo,
       meta: { ctime: coin.meta.ctime },

@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "bun test",
+    "test": "bun run src/test.ts",
     "gendust": "bun run src/dust-from-night.ts",
     "transfer": "bun run src/transfer-token.ts",
     "start": "bun run src/index.ts"

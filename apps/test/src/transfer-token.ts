@@ -11,7 +11,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as rx from 'rxjs';
-import { NETWORK_CONFIG, TEST_MNEMONIC } from './config';
+import { MNEMONIC_1, NETWORK_CONFIG } from './config';
 import { deriveWalletKeys, generateMnemonic, printWalletInfo, type WalletKeys } from './wallet';
 
 type TransferType = 'night' | 'shielded' | 'both';
@@ -49,7 +49,7 @@ function createWalletFacade(walletKeys: WalletKeys, networkId: NetworkId.Network
       indexerWsUrl: NETWORK_CONFIG.indexerWs,
     },
     provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
-    relayURL: new URL(NETWORK_CONFIG.nodeUrl),
+    relayURL: new URL(NETWORK_CONFIG.nodeWs),
     networkId,
   };
 
@@ -90,7 +90,7 @@ export async function runTransferTest(transferConfig: TransferConfig = DEFAULT_T
   console.log('│ Setting Up Sender Wallet                                   │');
   console.log('└────────────────────────────────────────────────────────────┘\n');
 
-  const senderKeys = deriveWalletKeys(TEST_MNEMONIC, 0, 0);
+  const senderKeys = deriveWalletKeys(MNEMONIC_1, 0, 0);
   console.log('Sender wallet keys:');
   printWalletInfo(senderKeys);
 
@@ -156,7 +156,9 @@ export async function runTransferTest(transferConfig: TransferConfig = DEFAULT_T
   if (transferConfig.type === 'night' || transferConfig.type === 'both') {
     if (!transferConfig.nightAmount) throw new Error('Night amount required');
     if (nightBalance < transferConfig.nightAmount) {
-      console.log(`⚠️ Insufficient Night balance. Have: ${formatAmount(nightBalance)}, Need: ${formatAmount(transferConfig.nightAmount)}`);
+      console.log(
+        `⚠️ Insufficient Night balance. Have: ${formatAmount(nightBalance)}, Need: ${formatAmount(transferConfig.nightAmount)}`,
+      );
     } else {
       transferOutputs.push({
         type: 'unshielded',
@@ -168,14 +170,18 @@ export async function runTransferTest(transferConfig: TransferConfig = DEFAULT_T
           },
         ],
       });
-      console.log(`✓ Night transfer: ${formatAmount(transferConfig.nightAmount)} → ${receiverUnshieldedAddress.slice(0, 20)}...`);
+      console.log(
+        `✓ Night transfer: ${formatAmount(transferConfig.nightAmount)} → ${receiverUnshieldedAddress.slice(0, 20)}...`,
+      );
     }
   }
 
   if (transferConfig.type === 'shielded' || transferConfig.type === 'both') {
     if (!transferConfig.shieldedAmount) throw new Error('Shielded amount required');
     if (shieldedBalance < transferConfig.shieldedAmount) {
-      console.log(`⚠️ Insufficient Shielded balance. Have: ${formatAmount(shieldedBalance)}, Need: ${formatAmount(transferConfig.shieldedAmount)}`);
+      console.log(
+        `⚠️ Insufficient Shielded balance. Have: ${formatAmount(shieldedBalance)}, Need: ${formatAmount(transferConfig.shieldedAmount)}`,
+      );
     } else {
       transferOutputs.push({
         type: 'shielded',
@@ -187,7 +193,9 @@ export async function runTransferTest(transferConfig: TransferConfig = DEFAULT_T
           },
         ],
       });
-      console.log(`✓ Shielded transfer: ${formatAmount(transferConfig.shieldedAmount)} → ${receiverShieldedAddress.slice(0, 20)}...`);
+      console.log(
+        `✓ Shielded transfer: ${formatAmount(transferConfig.shieldedAmount)} → ${receiverShieldedAddress.slice(0, 20)}...`,
+      );
     }
   }
 

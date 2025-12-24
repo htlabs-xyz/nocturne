@@ -33,7 +33,7 @@ import BN from 'bn.js';
 import { u8aToHex } from '@polkadot/util';
 
 export type Config = {
-  nodeURL: URL;
+  nodeWs: URL;
   reconnectionTimeout: Duration.Duration;
   reconnectionDelay: Duration.Duration;
 };
@@ -43,21 +43,21 @@ export const DEFAULT_CONFIG = {
   reconnectionDelay: Duration.seconds(1),
 };
 
-export const makeConfig = (input: Partial<Config> & Pick<Config, 'nodeURL'>): Config => ({
+export const makeConfig = (input: Partial<Config> & Pick<Config, 'nodeWs'>): Config => ({
   ...DEFAULT_CONFIG,
   ...input,
 });
 
 export class PolkadotNodeClient implements NodeClient.Service {
   static make(
-    configInput: Partial<Config> & Pick<Config, 'nodeURL'>,
+    configInput: Partial<Config> & Pick<Config, 'nodeWs'>,
   ): Effect.Effect<PolkadotNodeClient, NodeClientError.NodeClientError, Scope.Scope> {
     const config = makeConfig(configInput);
     return Effect.acquireRelease(
       Effect.promise(() =>
         ApiPromise.create({
           // @ts-expect-error -- exactOptionalPropertyTypes cause an incompatibility here
-          provider: new WsProvider(config.nodeURL.toString()),
+          provider: new WsProvider(config.nodeWs.toString()),
           throwOnConnect: false,
           noInitWarn: true,
         }),
@@ -67,7 +67,7 @@ export class PolkadotNodeClient implements NodeClient.Service {
   }
 
   static layer(
-    configInput: Partial<Config> & Pick<Config, 'nodeURL'>,
+    configInput: Partial<Config> & Pick<Config, 'nodeWs'>,
   ): Layer.Layer<NodeClient.NodeClient, NodeClientError.NodeClientError, Scope.Scope> {
     return Layer.effect(NodeClient.NodeClient, PolkadotNodeClient.make(configInput));
   }

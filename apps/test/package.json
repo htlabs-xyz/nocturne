@@ -8,6 +8,8 @@
     "run:shield": "bun run src/shield.ts",
     "run:unshield": "bun run src/unshield.ts",
     "run:dust": "bun run src/dust.ts",
+    "run:gendust": "bun run src/dust-from-night.ts",
+    "run:transfer": "bun run src/transfer-token.ts",
     "run:all": "bun run src/index.ts"
   },
   "dependencies": {

@@ -2,7 +2,7 @@ export const NETWORK_CONFIG = {
   networkId: 'preview' as const,
   indexerHttp: 'https://indexer.preview.midnight.network/api/v3/graphql',
   indexerWs: 'wss://indexer.preview.midnight.network/api/v3/graphql/ws',
-  nodeUrl: 'https://rpc.preview.midnight.network',
+  nodeUrl: 'wss://rpc.preview.midnight.network',
   proofServer: 'https://lace-proof-pub.preview.midnight.network',
 };
 

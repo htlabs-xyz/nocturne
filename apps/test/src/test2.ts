@@ -1,6 +1,6 @@
 import type { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
-import { MNEMONIC_1, NETWORK_CONFIG } from './config';
-import { deriveWalletKeys, printWalletInfo } from './wallet';
+import { MNEMONIC_2, NETWORK_CONFIG } from './config.js';
+import { deriveWalletKeys, printWalletInfo } from './wallet.js';
 import * as ledger from '@midnight-ntwrk/ledger-v6';
 import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
 import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
@@ -14,7 +14,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import * as rx from 'rxjs';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 
-const walletKeys = deriveWalletKeys(MNEMONIC_1, 0, 0);
+const walletKeys = deriveWalletKeys(MNEMONIC_2, 0, 0);
 // console.log(JSON.stringify(walletKeys, null, 2));
 printWalletInfo(walletKeys);
 

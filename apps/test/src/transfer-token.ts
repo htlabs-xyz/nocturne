@@ -11,7 +11,7 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import { MidnightBech32m } from '@midnight-ntwrk/wallet-sdk-address-format';
 import * as rx from 'rxjs';
-import { MNEMONIC_1, NETWORK_CONFIG } from './config';
+import { config, MNEMONIC_1, networkId } from './config';
 import { deriveWalletKeys, generateMnemonic, printWalletInfo, type WalletKeys } from './wallet';
 
 type TransferType = 'night' | 'shielded' | 'both';
@@ -43,16 +43,6 @@ function formatAmount(value: bigint, decimals: number = 6): string {
 }
 
 function createWalletFacade(walletKeys: WalletKeys, networkId: NetworkId.NetworkId) {
-  const config = {
-    indexerClientConnection: {
-      indexerHttpUrl: NETWORK_CONFIG.indexerHttp,
-      indexerWsUrl: NETWORK_CONFIG.indexerWs,
-    },
-    provingServerUrl: new URL(NETWORK_CONFIG.proofServer),
-    relayURL: new URL(NETWORK_CONFIG.nodeWs),
-    networkId,
-  };
-
   const dustParameters = ledger.LedgerParameters.initialParameters().dust;
   const unshieldedKeystore = createKeystore(walletKeys.unshieldedExternalSeed, networkId);
 
@@ -79,12 +69,10 @@ export async function runTransferTest(transferConfig: TransferConfig = DEFAULT_T
   console.log('║         Midnight Wallet SDK - Token Transfer               ║');
   console.log('╚════════════════════════════════════════════════════════════╝\n');
 
-  console.log(`Network: ${NETWORK_CONFIG.networkId}`);
+  console.log(`Network: ${networkId}`);
   console.log(`Transfer Type: ${transferConfig.type}`);
   if (transferConfig.nightAmount) console.log(`Night Amount: ${formatAmount(transferConfig.nightAmount)}`);
   if (transferConfig.shieldedAmount) console.log(`Shielded Amount: ${formatAmount(transferConfig.shieldedAmount)}\n`);
-
-  const networkId = NETWORK_CONFIG.networkId as NetworkId.NetworkId;
 
   console.log('┌────────────────────────────────────────────────────────────┐');
   console.log('│ Setting Up Sender Wallet                                   │');

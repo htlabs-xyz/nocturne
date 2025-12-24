@@ -4,9 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "bun run src/test.ts",
+    "test1": "bun run src/test1.ts",
+    "test2": "bun run src/test2.ts",
     "gendust": "bun run src/dust-from-night.ts",
-    "transfer": "bun run src/transfer-token.ts",
+    "tran": "bun run src/transfer.ts",
     "start": "bun run src/index.ts"
   },
   "dependencies": {

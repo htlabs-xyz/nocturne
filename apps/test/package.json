@@ -4,15 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test1": "bun run src/test1.ts",
-    "test2": "bun run src/test2.ts",
-    "gendust": "bun run src/dust-from-night.ts",
-    "tran": "bun run src/transfer.ts",
-    "swap": "bun run src/swap.ts",
-    "dust:register": "bun run src/dust-registration.ts",
-    "dust:deregister": "bun run src/dust-deregistration.ts",
-    "balance": "bun run src/balance-transaction.ts",
-    "start": "bun run src/index.ts"
+    "typecheck": "tsc -b ./tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint --max-warnings 0",
+    "format": "prettier --write \"**/*.{ts,js,json,yaml,yml,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,yaml,yml,md}\""
   },
   "dependencies": {
     "@midnight-ntwrk/ledger-v6": "6.1.0-alpha.6",
@@ -30,6 +26,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   }
 }

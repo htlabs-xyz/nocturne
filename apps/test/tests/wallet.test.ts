@@ -10,7 +10,6 @@ import {
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
-import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import * as rx from 'rxjs';
 import { config, networkId, MNEMONIC_1 } from './config.js';
 import { mnemonicToHexSeed, getShieldedSeed, getUnshieldedSeed, getDustSeed, waitForFullySynced } from './utils.js';
@@ -24,7 +23,7 @@ describe('Wallet Build', () => {
   const unshieldedWalletSeed = getUnshieldedSeed(SEED);
   const dustWalletSeed = getDustSeed(SEED);
 
-  const unshieldedWalletKeystore = createKeystore(unshieldedWalletSeed, NetworkId.NetworkId.Undeployed);
+  const unshieldedWalletKeystore = createKeystore(unshieldedWalletSeed, networkId);
 
   let walletFacade: WalletFacade;
 

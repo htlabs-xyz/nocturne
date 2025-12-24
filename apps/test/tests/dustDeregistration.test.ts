@@ -24,7 +24,7 @@ import * as rx from 'rxjs';
 import { NetworkId } from '@midnight-ntwrk/wallet-sdk-abstractions';
 import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
-import { config, MNEMONIC_1 } from './config';
+import { config, MNEMONIC_1 } from './config.js';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 120_000 });
 

@@ -33,7 +33,7 @@
     "vitest": "^3.2.4"
   },
   "resolutions": {
-    "vite": "^7.1.11"
+    "vite": "^6.0.0"
   },
   "scripts": {
     "format:root": "prettier --write --ignore-path .prettierignore.root \"**/*.{ts,js,json,yaml,yml,md}\"",

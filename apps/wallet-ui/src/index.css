@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  code, pre {
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-midnight-800/50 backdrop-blur-[16px] border border-midnight-700/50 rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-night text-midnight-900 font-semibold px-4 py-2 rounded-lg
+           hover:bg-night-light transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-midnight-700 text-midnight-100 font-medium px-4 py-2 rounded-lg
+           hover:bg-midnight-600 transition-colors duration-200;
+  }
+
+  .btn-ghost {
+    @apply text-midnight-300 hover:text-midnight-100 hover:bg-midnight-700/50
+           px-3 py-2 rounded-lg transition-colors duration-200;
+  }
+}

@@ -11,8 +11,8 @@ import { DustWallet } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
 import { ShieldedAddress, UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { WalletFacade } from '@midnight-ntwrk/wallet-sdk-facade';
 import * as rx from 'rxjs';
+import { config, networkId, MNEMONIC_1 } from './config.js';
 import { mnemonicToHexSeed, getShieldedSeed, getUnshieldedSeed, getDustSeed, waitForFullySynced } from './utils.js';
-import { MNEMONIC_1, networkId } from './config.js';
 
 vi.setConfig({ testTimeout: 200_000, hookTimeout: 120_000 });
 

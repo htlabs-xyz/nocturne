@@ -1,0 +1,203 @@
+// This file is part of MIDNIGHT-WALLET-SDK.
+// Copyright (C) 2025 Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+import { ShieldedWallet } from '@midnight-ntwrk/wallet-sdk-shielded';
+import * as ledger from '@midnight-ntwrk/ledger-v6';
+import { StartedDockerComposeEnvironment } from 'testcontainers';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  getShieldedSeed,
+  getUnshieldedSeed,
+  getDustSeed,
+  tokenValue,
+  waitForFullySynced,
+  waitForDustGenerated,
+  mnemonicToHexSeed,
+} from './utils.js';
+import {
+  createKeystore,
+  UnshieldedWallet,
+  InMemoryTransactionHistoryStorage,
+  PublicKey,
+} from '@midnight-ntwrk/wallet-sdk-unshielded-wallet';
+import * as rx from 'rxjs';
+import { DustWallet, type DefaultV1Configuration } from '@midnight-ntwrk/wallet-sdk-dust-wallet';
+import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
+import { ArrayOps } from '@midnight-ntwrk/wallet-sdk-utilities';
+import { config, networkId, MNEMONIC_1, MNEMONIC_2 } from './config.js';
+import { WalletFacade, type CombinedTokenTransfer } from '@midnight-ntwrk/wallet-sdk-facade';
+
+vi.setConfig({ testTimeout: 200_000, hookTimeout: 200_000 });
+
+describe('Dust Registration', () => {
+  const SENDER_SEED = mnemonicToHexSeed(MNEMONIC_1);
+  const RECEIVER_SEED = mnemonicToHexSeed(MNEMONIC_2);
+
+  const shieldedSenderSeed = getShieldedSeed(SENDER_SEED);
+  const shieldedReceiverSeed = getShieldedSeed(RECEIVER_SEED);
+
+  const unshieldedSenderSeed = getUnshieldedSeed(SENDER_SEED);
+  const unshieldedReceiverSeed = getUnshieldedSeed(RECEIVER_SEED);
+
+  const dustSenderSeed = getDustSeed(SENDER_SEED);
+  const dustReceiverSeed = getDustSeed(RECEIVER_SEED);
+
+  const unshieldedSenderKeystore = createKeystore(unshieldedSenderSeed, networkId);
+  const unshieldedReceiverKeystore = createKeystore(unshieldedReceiverSeed, networkId);
+
+  const unshieldedTxHistoryStorage = new InMemoryTransactionHistoryStorage();
+
+  let startedEnvironment: StartedDockerComposeEnvironment;
+  let configuration: DefaultV1Configuration;
+
+  let senderFacade: WalletFacade;
+  let receiverFacade: WalletFacade;
+
+  beforeEach(async () => {
+    const Shielded = ShieldedWallet(config);
+    const shieldedSender = Shielded.startWithShieldedSeed(shieldedSenderSeed);
+    const shieldedReceiver = Shielded.startWithShieldedSeed(shieldedReceiverSeed);
+
+    const Dust = DustWallet({
+      ...config,
+      costParameters: {
+        additionalFeeOverhead: 300_000_000_000_000n,
+        feeBlocksMargin: 5,
+      },
+    });
+    const dustParameters = ledger.LedgerParameters.initialParameters().dust;
+    const dustSender = Dust.startWithSeed(dustSenderSeed, dustParameters);
+    const dustReceiver = Dust.startWithSeed(dustReceiverSeed, dustParameters);
+
+    const unshieldedSender = UnshieldedWallet({
+      ...config,
+      txHistoryStorage: new InMemoryTransactionHistoryStorage(),
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedSenderKeystore));
+
+    const unshieldedReceiver = UnshieldedWallet({
+      ...config,
+      txHistoryStorage: unshieldedTxHistoryStorage,
+    }).startWithPublicKey(PublicKey.fromKeyStore(unshieldedReceiverKeystore));
+
+    senderFacade = new WalletFacade(shieldedSender, unshieldedSender, dustSender);
+    receiverFacade = new WalletFacade(shieldedReceiver, unshieldedReceiver, dustReceiver);
+
+    await Promise.all([
+      senderFacade.start(
+        ledger.ZswapSecretKeys.fromSeed(shieldedSenderSeed),
+        ledger.DustSecretKey.fromSeed(dustSenderSeed),
+      ),
+      receiverFacade.start(
+        ledger.ZswapSecretKeys.fromSeed(shieldedReceiverSeed),
+        ledger.DustSecretKey.fromSeed(dustReceiverSeed),
+      ),
+    ]);
+  });
+
+  afterEach(async () => {
+    await Promise.all([senderFacade.stop(), receiverFacade.stop()]);
+  });
+
+  it('registers dust generation after receiving unshielded tokens', async () => {
+    await Promise.all([waitForFullySynced(senderFacade), waitForFullySynced(receiverFacade)]);
+
+    const unshieldedReceiverState: any = await rx.firstValueFrom(receiverFacade.unshielded.state);
+
+    const tokenTransfer: CombinedTokenTransfer[] = [
+      {
+        type: 'unshielded',
+        outputs: [
+          {
+            amount: tokenValue(150_000_000n),
+            receiverAddress: UnshieldedAddress.codec.encode(networkId, unshieldedReceiverState.address).asString(),
+            type: ledger.unshieldedToken().raw,
+          },
+        ],
+      },
+    ];
+
+    const ttl = new Date(Date.now() + 30 * 60 * 1000);
+    const transferRecipe = await senderFacade.transferTransaction(
+      ledger.ZswapSecretKeys.fromSeed(shieldedSenderSeed),
+      ledger.DustSecretKey.fromSeed(dustSenderSeed),
+      tokenTransfer,
+      ttl,
+    );
+
+    const signedTransferTx = await senderFacade.signTransaction(transferRecipe.transaction, (payload) =>
+      unshieldedSenderKeystore.signData(payload),
+    );
+
+    const finalizedTransferTx = await senderFacade.finalizeTransaction({
+      ...transferRecipe,
+      transaction: signedTransferTx,
+    });
+
+    const transferTxHash = await senderFacade.submitTransaction(finalizedTransferTx);
+    expect(transferTxHash).toBeTypeOf('string');
+
+    const receiverStateWithNight = await rx.firstValueFrom(
+      receiverFacade
+        .state()
+        .pipe(
+          rx.filter(
+            (s) =>
+              s.unshielded.availableCoins.length > 0 &&
+              s.unshielded.availableCoins.some((coin) => coin.meta.registeredForDustGeneration === false),
+          ),
+        ),
+    );
+
+    const nightBalanceBeforeRegistration = receiverStateWithNight.unshielded.balances[ledger.nativeToken().raw];
+
+    const nightUtxos = receiverStateWithNight.unshielded.availableCoins.filter(
+      (coin) => coin.meta.registeredForDustGeneration === false && coin.utxo.type === ledger.nativeToken().raw,
+    );
+
+    expect(ArrayOps.sumBigInt(nightUtxos.map(({ utxo }) => utxo.value))).toEqual(nightBalanceBeforeRegistration);
+
+    await waitForDustGenerated();
+
+    const dustRegistrationRecipe = await receiverFacade.registerNightUtxosForDustGeneration(
+      nightUtxos,
+      unshieldedReceiverKeystore.getPublicKey(),
+      (payload) => unshieldedReceiverKeystore.signData(payload),
+    );
+
+    const finalizedDustTx = await receiverFacade.finalizeTransaction(dustRegistrationRecipe);
+
+    const dustRegistrationTxHash = await receiverFacade.submitTransaction(finalizedDustTx);
+
+    expect(dustRegistrationTxHash).toBeTypeOf('string');
+
+    const receiverStateAfterRegistration = await rx.firstValueFrom(
+      receiverFacade.state().pipe(
+        rx.mergeMap(async (state) => {
+          const txInHistory = await state.unshielded.transactionHistory.get(finalizedDustTx.transactionHash());
+
+          return {
+            state,
+            txFound: txInHistory !== undefined,
+          };
+        }),
+        rx.filter(({ state, txFound }) => txFound && state.isSynced && state.dust.availableCoins.length > 0),
+        rx.map(({ state }) => state),
+      ),
+    );
+
+    expect(receiverStateAfterRegistration.dust.walletBalance(new Date())).toBeGreaterThan(0n);
+
+    const nightBalanceAfterRegistration = receiverStateAfterRegistration.unshielded.balances[ledger.nativeToken().raw];
+
+    expect(nightBalanceAfterRegistration).toEqual(nightBalanceBeforeRegistration);
+  });
+});

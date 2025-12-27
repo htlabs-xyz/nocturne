@@ -69,7 +69,7 @@ export const getDustSeed = (seed: string): Uint8Array<ArrayBufferLike> => {
     hdWallet: HDWallet;
   };
 
-  const derivationResult = hdWallet.selectAccount(0).selectRole(Roles.Dust).deriveKeyAt(0);
+  const derivationResult = hdWallet.selectAccount(0).selectRole(Roles.NightExternal).deriveKeyAt(0);
 
   if (derivationResult.type === 'keyOutOfBounds') {
     throw new Error('Key derivation out of bounds');

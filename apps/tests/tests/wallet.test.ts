@@ -74,9 +74,9 @@ describe('Wallet Build', () => {
     console.log('Unshielded Address:', unshieldedAddressStr);
     console.log('Dust Address:', dustState.dustAddress);
 
-    console.log('Shielded coins:', state.shielded.availableCoins.length);
-    console.log('Unshielded coins:', state.unshielded.availableCoins.length);
-    console.log('Dust coins:', state.dust.availableCoins.length);
+    console.log('Shielded coins:', state.shielded.availableCoins);
+    console.log('Unshielded coins:', state.unshielded.availableCoins);
+    console.log('Dust coins:', state.dust.availableCoins);
 
     expect(state.isSynced).toBe(true);
   });

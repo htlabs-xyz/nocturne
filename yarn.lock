@@ -2151,6 +2151,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@midnight-ntwrk/test@workspace:apps/tests":
+  version: 0.0.0-use.local
+  resolution: "@midnight-ntwrk/test@workspace:apps/tests"
+  dependencies:
+    "@midnight-ntwrk/ledger-v6": "npm:6.1.0-alpha.6"
+    "@midnight-ntwrk/wallet-sdk-abstractions": "npm:1.0.0-beta.9"
+    "@midnight-ntwrk/wallet-sdk-address-format": "npm:3.0.0-beta.9"
+    "@midnight-ntwrk/wallet-sdk-dust-wallet": "workspace:*"
+    "@midnight-ntwrk/wallet-sdk-facade": "workspace:*"
+    "@midnight-ntwrk/wallet-sdk-hd": "workspace:*"
+    "@midnight-ntwrk/wallet-sdk-shielded": "workspace:*"
+    "@midnight-ntwrk/wallet-sdk-unshielded-wallet": "workspace:*"
+    "@midnight-ntwrk/wallet-sdk-utilities": "npm:1.0.0-beta.7"
+    "@scure/bip39": "npm:^1.5.4"
+    "@types/bun": "npm:latest"
+    effect: "npm:^3.17.3"
+    rxjs: "npm:^7.5"
+    typescript: "npm:^5.9.3"
+    vitest: "npm:^3.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@midnight-ntwrk/wallet-api@npm:^3.5.0":
   version: 3.5.0
   resolution: "@midnight-ntwrk/wallet-api@npm:3.5.0"
@@ -3923,6 +3945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/bun@npm:latest":
+  version: 1.3.5
+  resolution: "@types/bun@npm:1.3.5"
+  dependencies:
+    bun-types: "npm:1.3.5"
+  checksum: 10c0/ec3b364bcad3faeed6e5033f76c3618d4469719d04c5c4f31659953461c6b36509cf9befb05ad3c455f2584f64eff6ff636bca8a36590ae4184caf146ad86601
+  languageName: node
+  linkType: hard
+
 "@types/chai@npm:^5.2.2":
   version: 5.2.3
   resolution: "@types/chai@npm:5.2.3"
@@ -5532,6 +5563,15 @@ __metadata:
   version: 0.0.7
   resolution: "buildcheck@npm:0.0.7"
   checksum: 10c0/987c605267b1b6311bb2ac0638b073d322370267445a6d059da27985fce0b41f85a59d3a9aa9af839e8ac2d63da8af07be6dc737f8bd5323e1dfe6779ad67228
+  languageName: node
+  linkType: hard
+
+"bun-types@npm:1.3.5":
+  version: 1.3.5
+  resolution: "bun-types@npm:1.3.5"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/f46aa39af49cb7f06e101e57c10f80a33df3ddd162e3d22aee87f96923b5b5782dd6a2cf52ef475d84148e0a73a326a4e7df82b7457da5c142a52170c76bce92
   languageName: node
   linkType: hard
 
@@ -12866,7 +12906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^3.2.4":
+"vitest@npm:^3.0.0, vitest@npm:^3.2.4":
   version: 3.2.4
   resolution: "vitest@npm:3.2.4"
   dependencies:

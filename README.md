@@ -1,5 +1,7 @@
 # Nocturne Wallet - User Guide
 
+This project integrates with the Midnight Network.
+
 > A self-custodial browser extension wallet for the [Midnight Network](https://midnight.network/) — privacy-preserving blockchain powered by zero-knowledge proofs.
 
 ---
@@ -29,9 +31,9 @@ If you already have a Midnight wallet:
 
 The home screen shows your wallet overview at a glance:
 
-- **Total balance** across all token types
-- **Token list** — tap any token to see details (balance breakdown, actions)
-- **Quick actions** — Send, Receive, and DUST registration
+- **Total balance** in USD across all token types (powered by CoinGecko)
+- **Token list** with shielded and unshielded balance breakdown — tap any token to see details
+- **Quick actions** — Send, Receive, Swap, and DUST registration
 - **Sync status** — indicator showing blockchain sync progress
 
 ---
@@ -80,7 +82,7 @@ DUST is the gas token on Midnight Network. To earn DUST passively:
 
 ### Deregister from DUST
 
-1. Go to **Settings** or **Token Details**
+1. Go to **Token Details**
 2. Tap **Deregister DUST**
 3. Confirm and submit the deregistration transaction
 
@@ -117,20 +119,26 @@ The **Activity** tab shows your transaction history, grouped by date. Tap any tr
 
 ---
 
-## Network Settings
+## Settings
+
+### Network Settings
 
 Nocturne supports multiple Midnight networks:
 
-| Network | Description |
-|---|---|
-| **Preview** | Public preview network (default) |
-| **Testnet** | Testing environment |
-| **Devnet** | Development network |
-| **Pre-prod** | Pre-production staging |
+| Network | Description | Status |
+|---|---|---|
+| **Mainnet** | Midnight main network | Coming soon |
+| **Testnet** | Midnight test network | Available |
+| **Preprod** | Pre-production network | Available |
+| **Custom** | Manual endpoint configuration | Available |
 
-To switch networks: **Settings > Network** > select your network > confirm.
+To switch networks: **Settings > Active Networks** > select your network > confirm.
 
-> **Note:** Switching networks will trigger a wallet resync. Your balances will update to reflect the selected network.
+> **Note:** Switching networks will lock your wallet and restart synchronization. Your balances will update to reflect the selected network.
+
+### Connected Apps
+
+View and manage dApps connected to your wallet. Revoke access to any connected application from **Settings > Connected Apps**.
 
 ---
 
@@ -142,16 +150,6 @@ If your balances appear incorrect or sync seems stuck:
 2. Tap **Resync Wallet**
 3. Enter your password to confirm
 4. The wallet will perform a full blockchain resync
-
----
-
-## Address Book
-
-Save frequently used addresses for quick access:
-
-- **Add Contact** — save an address with a name
-- **Edit / Delete** — manage your saved contacts
-- **Quick Send** — select a contact directly from the Send screen
 
 ---
 

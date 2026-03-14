@@ -1,8 +1,43 @@
-# Nocturne Wallet - User Guide
+<p align="center">
+  <img src="assets/logo.png" alt="Nocturne Wallet" width="80" />
+</p>
+
+<h1 align="center">Nocturne Wallet</h1>
+
+<p align="center">
+  <strong>Privacy-first browser wallet for the Midnight Network</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/htlabs-xyz/nocturne/releases"><img src="https://img.shields.io/badge/version-1.0.8-blue?style=flat-square" alt="Version" /></a>
+  <a href="https://midnight.network"><img src="https://img.shields.io/badge/network-Midnight-7c3aed?style=flat-square" alt="Midnight Network" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/manifest-v3-green?style=flat-square" alt="Manifest V3" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/chrome-extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension" /></a>
+  <a href="#"><img src="https://img.shields.io/badge/license-proprietary-lightgrey?style=flat-square" alt="License" /></a>
+</p>
+
+<p align="center">
+  <a href="https://nocturne.cash">Website</a> •
+  <a href="https://docs.midnight.network">Midnight Docs</a> •
+  <a href="#getting-started">Get Started</a>
+</p>
+
+---
 
 This project integrates with the Midnight Network.
 
 > A self-custodial browser extension wallet for the [Midnight Network](https://midnight.network/) — privacy-preserving blockchain powered by zero-knowledge proofs.
+
+## Features
+
+| | Feature | Description |
+|---|---|---|
+| 🔐 | **Zero-Knowledge Privacy** | Shielded transactions using zk-proofs — balances and amounts stay private |
+| 💰 | **Multi-Token Support** | NIGHT, DUST, and custom tokens with real-time USD pricing via CoinGecko |
+| 🛡️ | **Self-Custodial** | Your keys, your crypto — BIP-39 HD wallet with AES-256-GCM encryption |
+| 🌐 | **Multi-Network** | Mainnet, Testnet, Preprod, and custom network endpoints |
+| 🔗 | **dApp Connector** | Connect securely to Midnight dApps with permission management |
+| 👥 | **Multiple Accounts** | Create or import multiple accounts under one wallet |
 
 ---
 
@@ -127,10 +162,10 @@ Nocturne supports multiple Midnight networks:
 
 | Network | Description | Status |
 |---|---|---|
-| **Mainnet** | Midnight main network | Coming soon |
-| **Testnet** | Midnight test network | Available |
-| **Preprod** | Pre-production network | Available |
-| **Custom** | Manual endpoint configuration | Available |
+| **Mainnet** | Midnight main network | 🔒 Coming soon |
+| **Testnet** | Midnight test network | ✅ Available |
+| **Preprod** | Pre-production network | ✅ Available |
+| **Custom** | Manual endpoint configuration | ✅ Available |
 
 To switch networks: **Settings > Active Networks** > select your network > confirm.
 
@@ -189,8 +224,27 @@ A: Yes. Import your wallet using the same recovery phrase on each browser. Accou
 
 ---
 
+## Tech Stack
+
+<p>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Zustand-443E38?style=flat-square" alt="Zustand" />
+  <img src="https://img.shields.io/badge/Webpack-8DD6F9?style=flat-square&logo=webpack&logoColor=black" alt="Webpack" />
+  <img src="https://img.shields.io/badge/Manifest_V3-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Manifest V3" />
+</p>
+
+---
+
 ## Support
 
 - **Website**: [nocturne.cash](https://nocturne.cash)
 - **Midnight Network**: [midnight.network](https://midnight.network)
 - **Documentation**: [docs.midnight.network](https://docs.midnight.network)
+
+---
+
+<p align="center">
+  Built with ❤️ by <a href="https://htlabs.xyz">HTLabs</a> for the Midnight ecosystem
+</p>

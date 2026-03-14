@@ -12,11 +12,12 @@
   <a href="https://github.com/htlabs-xyz/nocturne/releases"><img src="https://img.shields.io/badge/version-1.0.8-blue?style=flat-square" alt="Version" /></a>
   <a href="https://midnight.network"><img src="https://img.shields.io/badge/network-Midnight-7c3aed?style=flat-square" alt="Midnight Network" /></a>
   <a href="#"><img src="https://img.shields.io/badge/manifest-v3-green?style=flat-square" alt="Manifest V3" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/chrome-extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension" /></a>
+  <a href="https://chromewebstore.google.com/detail/nocturne/ijfdfgajlffijenjneoppbfnhjkdibna"><img src="https://img.shields.io/badge/chrome-extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension" /></a>
   <a href="#"><img src="https://img.shields.io/badge/license-proprietary-lightgrey?style=flat-square" alt="License" /></a>
 </p>
 
 <p align="center">
+  <a href="https://chromewebstore.google.com/detail/nocturne/ijfdfgajlffijenjneoppbfnhjkdibna">Chrome Web Store</a> •
   <a href="https://nocturne.cash">Website</a> •
   <a href="https://docs.midnight.network">Midnight Docs</a> •
   <a href="#getting-started">Get Started</a>
@@ -45,7 +46,7 @@ This project integrates with the Midnight Network.
 
 ### Create a New Wallet
 
-1. Install the Nocturne extension from your browser's extension store
+1. Install the Nocturne extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/nocturne/ijfdfgajlffijenjneoppbfnhjkdibna)
 2. Click **Create New Wallet**
 3. Set a strong password (used to unlock the wallet)
 4. **Write down your 24-word recovery phrase** on paper and store it safely — this is the only way to recover your wallet if you lose access
@@ -239,6 +240,7 @@ A: Yes. Import your wallet using the same recovery phrase on each browser. Accou
 
 ## Support
 
+- **Chrome Web Store**: [Install Nocturne](https://chromewebstore.google.com/detail/nocturne/ijfdfgajlffijenjneoppbfnhjkdibna)
 - **Website**: [nocturne.cash](https://nocturne.cash)
 - **Midnight Network**: [midnight.network](https://midnight.network)
 - **Documentation**: [docs.midnight.network](https://docs.midnight.network)

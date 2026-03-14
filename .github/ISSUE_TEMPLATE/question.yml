@@ -1,0 +1,39 @@
+name: ❓ Question
+description: Ask a question about using Nocturne Wallet
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're happy to help! Check our [README](https://github.com/htlabs-xyz/nocturne#readme) first.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Setup / Installation
+        - Wallet Recovery
+        - Transactions (Send / Receive)
+        - DUST Registration
+        - Network Configuration
+        - dApp Connection
+        - Account Management
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: Describe your question in detail.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any relevant details (version, network, browser, screenshots).

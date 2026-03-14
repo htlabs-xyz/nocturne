@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://docs.midnight.network
+    about: Check the Midnight Network documentation
+  - name: 🌐 Website
+    url: https://nocturne.cash
+    about: Visit the Nocturne website
+  - name: 🛒 Chrome Web Store
+    url: https://chromewebstore.google.com/detail/nocturne/ijfdfgajlffijenjneoppbfnhjkdibna
+    about: Install or update Nocturne from Chrome Web Store
